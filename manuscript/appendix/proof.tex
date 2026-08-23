@@ -1,0 +1,177 @@
+\section{Proof Details}
+\label{app:proofs}
+
+\subsection{Conditional validity of the trial pseudo-outcome}
+
+Fix \(q=(q_0,q_1)\) and condition on \(X\).  Under trial randomization and
+consistency,
+\begin{align}
+\mathbb E_R\left[\frac{A}{e(X)}\{Y-q_1(X)\}\mid X\right]
+&=\mathbb E_R\{Y(1)-q_1(X)\mid X\},
+\\
+\mathbb E_R\left[\frac{1-A}{1-e(X)}\{Y-q_0(X)\}\mid X\right]
+&=\mathbb E_R\{Y(0)-q_0(X)\mid X\}.
+\end{align}
+Substituting these two equalities into the definition of \(\varphi\) cancels the
+two fitted regressions and yields
+\(\mathbb E_R\{\varphi(V;q)\mid X\}=\tau(X)\).  Applying the identity to
+\(q=\widehat\mu_R\), \(q=\widehat\mu_O\), and their affine blend gives
+\begin{align}
+\mathbb E_R(Z_\lambda\mid X)&=\tau(X),
+&
+\mathbb E_R(\Delta\mid X)&=0.
+\end{align}
+These statements are conditional on the pre-evaluation sigma-field so that the
+fitted functions are fixed.
+
+\subsection{Proof of Theorem~\ref{thm:ate-variance}}
+
+Using \(\mathbb E_R(Z_\lambda)=\theta\) and exact transport,
+\begin{align}
+\mathbb E_O\{r(X)g(X)\}=\mathbb E_R\{g(X)\},
+\end{align}
+the conditional mean of Equation~\eqref{eq:ate-estimator} is \(\theta\).  Rewrite
+the centered estimator as
+\begin{align}
+\widehat\theta_r(\lambda,\omega)-\theta
+&=
+(\mathbb P_{R,n}-P_R)\{Z_\lambda-\omega g\}
++(\mathbb P_{O,N}-P_O)\{\omega rg\}.
+\end{align}
+The two summands are independent conditional on \(\mathcal F\).  The variance of
+an empirical mean of \(m\) independent observations is the population variance
+divided by \(m\), which proves Equation~\eqref{eq:ate-variance}.  Unbiased sample
+variances on the two independent evaluation blocks therefore give the displayed
+fixed-selected-coefficient variance estimator in Section~\ref{sec:ate}.  Coverage
+of its Wald interval additionally uses the stated conditional Lindeberg and
+moment assumptions; variance unbiasedness alone is not a central limit theorem.
+
+If an estimated ratio \(\widehat r\) replaces \(r\), the conditional mean changes
+by exactly
+\begin{align}
+\omega P_O\{(\widehat r-r)g\}.
+\end{align}
+Thus honest evaluation does not restore exact unbiasedness.  Negligibility of
+both the root-\(n\) drift and the OBS empirical remainder is required before the
+fixed-ratio evaluation variance can be used as a first-order variance formula.
+
+\subsection{Proof of Theorem~\ref{thm:joint-oracle}}
+
+Expand the first variance in Equation~\eqref{eq:ate-variance} using
+\(Z_\lambda=Z_0+\lambda\Delta\).  After collecting terms and multiplying by
+\(n\), the coefficient-dependent part is
+\begin{align}
+2C\lambda-2D\omega+A\lambda^2-2E\lambda\omega+B\omega^2,
+\end{align}
+which is \(2\ell^\top\beta+\beta^\top\mathbf H\beta\).  The representation
+\begin{align}
+\begin{pmatrix}u&v\end{pmatrix}\mathbf H\begin{pmatrix}u\\v\end{pmatrix}
+&=\operatorname{Var}_R(u\Delta-vg)
++\frac nN v^2\operatorname{Var}_O(rg)
+\end{align}
+proves positive semidefiniteness.  If \(AB-E^2>0\), the first-order condition
+\(\mathbf H\beta=-\ell\) has the unique solution
+\begin{align}
+\lambda^\star&=\frac{ED-BC}{AB-E^2},
+&
+\omega^\star&=\frac{AD-EC}{AB-E^2}.
+\end{align}
+When \(\mathbf H\) is singular, nonnegativity of the variance quadratic implies
+\(\ell\in\operatorname{Range}(\mathbf H)\); otherwise a null-space direction
+would make the expression arbitrarily negative.  The complete minimizer set is
+therefore \(-\mathbf H^+\ell+\operatorname{Null}(\mathbf H)\).  Continuity of the
+quadratic proves attainment on every prespecified compact feasible set.
+
+Finally, because \(g\) is \(X\)-measurable,
+\begin{align}
+E
+&=\mathbb E_R[\{g(X)-P_Rg\}\mathbb E_R(\Delta\mid X)]=0,
+\\
+D
+&=\operatorname{Cov}_R\{\mathbb E_R(Z_0\mid X),g(X)\}
+=\operatorname{Cov}_R\{\tau(X),g(X)\}.
+\end{align}
+Substitution yields Equation~\eqref{eq:axis-oracle}.  Since the population
+objective is minimized over a set containing \((0,0)\), its oracle value cannot
+exceed the trial-only value.  This comparison concerns the population objective,
+not coefficients estimated from a finite tuning sample.
+
+\subsection{Prediction-powered CATE risk identity}
+
+Fix \(t\) and condition on \(X\).  Since
+\(\mathbb E_R(Z_\lambda-\tau(X)\mid X)=0\),
+\begin{align}
+\mathbb E_R\{Z_\lambda-t(X)\}^2
+&=
+\mathbb E_R\{Z_\lambda-\tau(X)\}^2
++\mathbb E_R\{t(X)-\tau(X)\}^2.
+\end{align}
+Exact transport also gives
+\begin{align}
+\mathbb E_O\{r(X)(g(X)-t(X))^2\}
+&=\mathbb E_R\{(g(X)-t(X))^2\}.
+\end{align}
+The correction in Equation~\eqref{eq:dr-fusion-loss} therefore has mean zero,
+which proves Equation~\eqref{eq:cate-target}.  In particular, population expected
+loss is flat in \(\omega\).  The part depending on \(\lambda\) is
+\begin{align}
+Q(\lambda)
+&=Q(0)+2C\lambda+A\lambda^2,
+\end{align}
+so when \(A>0\) its minimizer is \(-C/A\), the same integrated-noise oracle as
+in the population-orthogonal ATE problem.  If \(A=0\), then \(\Delta=0\) almost
+surely by conditional mean zero, and \(Q\) is flat in \(\lambda\).
+
+For a fixed \(t\) and \(\lambda\), the empirical loss is the sum of independent
+empirical means of \(U_{t,\lambda}-\omega G_t\) under the trial and
+\(\omega rG_t\) under the observational law.  Expanding its variance as a
+quadratic in \(\omega\) and differentiating gives
+Equation~\eqref{eq:loss-variance-omega}.  Because \(t\) is fixed in this
+calculation, the formula does not identify the coefficient minimizing the risk
+of a learner chosen after seeing the same loss.
+
+For the linear sieve, expand Equation~\eqref{eq:dr-fusion-loss} in \(\beta\), add
+\(\rho\beta^\top P\beta\), and set the gradient to zero.  The resulting normal
+equation is
+\begin{align}
+\{(1-\omega)H_R+\omega H_{O,r}+\rho P\}\beta
+&=h_\lambda+\omega d_g,
+\end{align}
+which proves Equation~\eqref{eq:linear-sieve} whenever the matrix is invertible.
+
+\subsection{Loss-targeted balance and approximate drift}
+
+Suppose a nonnegative out-of-sample-evaluable weight \(w\) satisfies
+\begin{align}
+P_O\{w(g-t)^2\}=P_R\{(g-t)^2\}
+\quad\text{for every }t\in\mathcal T.
+\end{align}
+Replacing \(r\) by \(w\) then leaves the population correction exactly zero for
+every candidate, so the target identity remains valid.  If
+\(t_\beta=b^\top\beta\), expanding
+\begin{align}
+(g-b^\top\beta)^2
+&=g^2-2\beta^\top bg+\beta^\top bb^\top\beta
+\end{align}
+shows that balancing \(bg\) and \(bb^\top\) preserves the minimizer.  Balancing
+\(g^2\) is needed only to preserve the absolute loss value.
+
+For approximate weights, the difference between the weighted and target
+population losses is bounded uniformly over \(\mathcal T\) by
+\(|\omega|\Delta_\mathcal T(w)\).  Let \(t_w\) minimize the weighted population
+loss and \(t_0\) minimize the target loss.  Applying the uniform bound at both
+minimizers gives
+\begin{align}
+L_0(t_w)
+&\leq L_w(t_w)+|\omega|\Delta_\mathcal T(w)
+\\
+&\leq L_w(t_0)+|\omega|\Delta_\mathcal T(w)
+\\
+&\leq L_0(t_0)+2|\omega|\Delta_\mathcal T(w),
+\end{align}
+which is the claimed excess-risk bound.  If the same finite sample is used both
+to impose exact sieve balance and to fit \(\beta\), the balanced linear and
+quadratic coefficient terms cancel from the empirical correction (and the
+constant cancels as well if \(g^2\) is balanced).  This algebra explains why
+weight learning and candidate fitting require honest separation or a separate
+outer-fold argument.

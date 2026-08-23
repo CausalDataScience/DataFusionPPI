@@ -1,0 +1,183 @@
+\section{Prediction-Powered Fusion for the ATE}
+\label{sec:ate}
+
+\subsection{Estimator and exact variance}
+
+For fixed \((\lambda,\omega)\), define
+\begin{align}
+\widehat\theta_r(\lambda,\omega)
+&=
+\mathbb P_{R,n}Z_\lambda
++
+\omega\left\{
+\mathbb P_{O,N}\{r(X)g(X)\}
+-
+\mathbb P_{R,n}g(X)
+\right\}.
+\label{eq:ate-estimator}
+\end{align}
+The first term averages an RCT-valid pseudo-outcome. The expression in braces is a mean-zero control variate under Assumption~\ref{ass:covariates}. Thus, the RCT identifies the target, \(\lambda\) changes within-covariate score noise, and \(\omega\) uses the large OBS covariate sample to remove predictable between-covariate variation.
+
+\begin{theorem}[Exact conditional mean and variance]
+\label{thm:ate-variance}
+Under Assumptions~\ref{ass:trial} and \ref{ass:covariates}, honest conditioning, and square integrability of the displayed scores, every fixed \((\lambda,\omega)\) satisfies
+\begin{align}
+\mathbb E\{\widehat\theta_r(\lambda,\omega)\mid\mathcal F\}
+&=\theta,
+\\
+\operatorname{Var}\{\widehat\theta_r(\lambda,\omega)\mid\mathcal F\}
+&=
+\frac1n\operatorname{Var}_R\{Z_\lambda-\omega g(X)\}
++
+\frac{\omega^2}{N}\operatorname{Var}_O\{r(X)g(X)\}.
+\label{eq:ate-variance}
+\end{align}
+\end{theorem}
+
+The mean follows from \(\mathbb E_R(Z_\lambda)=\theta\) and \(\mathbb E_O(rg)=\mathbb E_R(g)\). The variance follows after rewriting Equation~\eqref{eq:ate-estimator} as the sum of independent RCT and OBS empirical means.
+
+\subsection{Joint and population-orthogonal oracles}
+
+Define the five conditional population moments
+\begin{align}
+A&=\operatorname{Var}_R(\Delta),
+&
+B&=\operatorname{Var}_R(g)+\frac nN\operatorname{Var}_O(rg),
+\\
+C&=\operatorname{Cov}_R(Z_0,\Delta),
+&
+D&=\operatorname{Cov}_R(Z_0,g),
+&
+E&=\operatorname{Cov}_R(\Delta,g).
+\end{align}
+With
+\begin{align}
+\mathbf H
+&=
+\begin{pmatrix}A&-E\\-E&B\end{pmatrix},
+&
+\ell
+&=
+\begin{pmatrix}C\\-D\end{pmatrix},
+&
+\beta
+&=
+\begin{pmatrix}\lambda\\\omega\end{pmatrix},
+\end{align}
+the compact variance in Equation~\eqref{eq:ate-variance} becomes
+\begin{align}
+\operatorname{Var}\{\widehat\theta_r(\beta)\mid\mathcal F\}
+&=
+\frac1n\left\{
+\operatorname{Var}_R(Z_0)+2\ell^\top\beta+\beta^\top\mathbf H\beta
+\right\}.
+\label{eq:ate-quadratic}
+\end{align}
+The matrix \(\mathbf H\) is positive semidefinite because
+\begin{align}
+\begin{pmatrix}u&v\end{pmatrix}
+\mathbf H
+\begin{pmatrix}u\\v\end{pmatrix}
+&=
+\operatorname{Var}_R(u\Delta-vg)
++\frac nN v^2\operatorname{Var}_O(rg)
+\geq0.
+\end{align}
+
+\begin{theorem}[Joint population oracle]
+\label{thm:joint-oracle}
+If \(AB-E^2>0\), the unique unrestricted minimizer of Equation~\eqref{eq:ate-quadratic} is
+\begin{align}
+\lambda_{\mathrm{joint}}^\star
+&=\frac{ED-BC}{AB-E^2},
+&
+\omega_{\mathrm{joint}}^\star
+&=\frac{AD-EC}{AB-E^2}.
+\label{eq:joint-oracle}
+\end{align}
+If \(\mathbf H\) is singular, the minimizer set is \(-\mathbf H^+\ell+\operatorname{Null}(\mathbf H)\). For a prespecified compact feasible set, a constrained minimizer exists and is obtained by minimizing the same quadratic.
+\end{theorem}
+
+For \(\rho>0\), a ridge-stabilized population coefficient is
+\begin{align}
+\beta_\rho^\star
+&=-(\mathbf H+\rho I_2)^{-1}\ell.
+\end{align}
+It minimizes the penalized quadratic
+\(2\ell^\top\beta+\beta^\top\mathbf H\beta+\rho\lVert\beta\rVert_2^2\).
+This is a penalized stability oracle, not the oracle for the unpenalized variance in
+Equation~\eqref{eq:ate-quadratic}.
+
+The conditional identity \(\mathbb E_R(\Delta\mid X)=0\) gives the exact population orthogonality
+\begin{align}
+E
+&=\operatorname{Cov}_R\{\Delta,g(X)\}=0.
+\end{align}
+It also gives \(D=\operatorname{Cov}_R\{\tau(X),g(X)\}\). When \(A,B>0\), the population oracle therefore separates:
+\begin{align}
+\lambda^\star
+&=-\frac CA,
+&
+\omega^\star
+&=\frac DB.
+\label{eq:axis-oracle}
+\end{align}
+The population oracle weakly improves the variance objective whenever \((0,0)\) is feasible. Estimated coefficients have no universal finite-sample no-harm guarantee.
+
+\subsection{Estimable honest algorithm}
+
+Let \(s_R(h_1,h_2)\) and \(s_O(h_1,h_2)\) denote unbiased sample covariances on independent tuning blocks, with \(s_S^2(h)=s_S(h,h)\). Compute
+\begin{align}
+\widehat A&=s_R^2(\Delta),
+&
+\widehat B&=s_R^2(g)+\frac nN s_O^2(rg),
+\\
+\widehat C&=s_R(Z_0,\Delta),
+&
+\widehat D&=s_R(Z_0,g),
+&
+\widehat E&=s_R(\Delta,g).
+\end{align}
+The population-orthogonality plug-in imposes \(\widehat E=0\) and uses \((-\widehat C/\widehat A,\widehat D/\widehat B)\). The empirical joint minimizer retains \(\widehat E\) and applies Equation~\eqref{eq:joint-oracle}. The two rules differ because sample orthogonality is not exact.
+
+Algorithm~\ref{alg:honest-ate} states the exact three-way implementation.
+
+\begin{algorithm}[H]
+\caption{Three-way honest ATE estimation}
+\label{alg:honest-ate}
+\DontPrintSemicolon
+\KwIn{Independent RCT and OBS samples; a prespecified feasible box and denominator thresholds.}
+\textbf{Split:} Divide each source into nuisance-training, coefficient-tuning, and final-evaluation blocks.\;
+\textbf{Fit:} Estimate \(\widehat\mu_R\), \(\widehat\mu_O\), \(g\), and, if required, a transport model without using any tuning or evaluation observations. The exact theorem uses the true ratio \(r\); replacing it by \(\widehat r\) defines the approximate regime described below.\;
+\textbf{Tune:} On the independent tuning blocks, compute the five moments, apply the prespecified denominator thresholds, and solve the box-constrained quadratic. Use \((0,0)\) as the declared fallback when the moments are unstable.\;
+\textbf{Evaluate:} Hold every fitted object fixed and evaluate Equation~\eqref{eq:ate-estimator} on the untouched final blocks.\;
+\textbf{Infer:} Set \(\psi_R=Z_{\widehat\lambda}-\widehat\omega g\) and \(\psi_O=\widehat\omega rg\), and report
+\(\widehat V=s_R^2(\psi_R)/n+s_O^2(\psi_O)/N\). Under conditional Lindeberg conditions, bounded conditional \((2+\delta)\) moments, and a nondegenerate variance limit, use
+\(\widehat\theta_r\pm z_{1-\alpha/2}\sqrt{\widehat V}\).\;
+\KwOut{\(\widehat\theta_r\), \(\widehat V\), and the corresponding Wald interval.}
+\end{algorithm}
+
+With an estimated ratio \(\widehat r\), define
+\begin{align}
+h_n(X)
+&=\{\widehat r(X)-r(X)\}g(X).
+\end{align}
+The exact conditional drift is
+\begin{align}
+\omega b_{\mathcal F}
+&=
+\omega\mathbb E_O\{h_n(X)\}.
+\end{align}
+Honest splitting prevents evaluation leakage but does not remove this drift. A direct
+sufficient negligible-error regime is
+\begin{align}
+\sqrt n\,\omega\,\mathbb E_O\{h_n(X)\}
+&=o_p(1),
+&
+|\omega|\sqrt{\frac nN}
+\left\|h_n-\mathbb E_O(h_n)\right\|_{L^2(P_O)}
+&=o_p(1).
+\end{align}
+Evaluation-only variance is first-order adequate under these conditions and the
+preceding CLT assumptions. Otherwise the ratio learner's influence-function
+contribution, the OBS empirical-process term, and their covariances must be included.

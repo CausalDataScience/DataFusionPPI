@@ -1,0 +1,32 @@
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Completed ATE benchmarks}
+
+The completed experiments evaluate ATE estimation only. All nested benchmarks use 20 Monte Carlo repetitions per cell, an RCT-only AIPW baseline, a \(\lambda\)-only outcome-model fusion estimator, an \(\omega\)-only PPI correction estimator, and the joint estimator. The code retains two stale internal names: \texttt{haipw\_only} denotes the \(\lambda\)-only estimator and \texttt{ppi\_power\_tuned\_only} denotes the \(\omega\)-only estimator. The first label does not identify the method with the separate HAIPW literature.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\textwidth]{../materials/total_budget_nested_benchmark.png}
+\caption{Fixed-OBS-budget ATE benchmark. The composite artifact reports multiple method and regime panels side by side for \(n_R\in\{20,30\}\) and \(N_O=5000\).}
+\label{fig:fixed-budget}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.98\textwidth]{../materials/proportional_budget_nested_benchmark.png}
+\caption{Proportional-budget ATE benchmark. The composite artifact reports multiple method and regime panels side by side for \(n_R\in\{20,30,50,100\}\) and \(N_O=100n_R\).}
+\label{fig:proportional-budget}
+\end{figure}
+
+The fixed-OBS-budget benchmark contains 16 design cells: three arbitrary nonlinear SCMs and one STAR real-\(X\) construction, each under a common covariate marginal and covariate shift and \(n_R\in\{20,30\}\), with \(N_O=5000\). The joint estimator has the smallest RMSE in 11 cells, and the \(\lambda\)-only estimator is best in the remaining five. The joint estimator has lower RMSE than AIPW in all 16 cells, with mean RMSE ratio \(0.648\) and mean empirical-variance ratio \(0.439\) relative to AIPW. The \(\lambda\)-only estimator also beats AIPW in all 16 cells, with mean RMSE ratio \(0.679\). The \(\omega\)-only estimator is not best in any cell and has mean RMSE ratio \(1.005\).
+
+The proportional-budget benchmark contains 32 cells with \(n_R\in\{20,30,50,100\}\) and \(N_O=100n_R\). The joint estimator has the smallest RMSE in 18 cells, the \(\lambda\)-only estimator in 10, the \(\omega\)-only estimator in one, and AIPW in three. The joint estimator has lower RMSE than AIPW in 27 of 32 cells, with mean RMSE ratio \(0.760\) and mean empirical-variance ratio \(0.625\). The \(\lambda\)-only estimator beats AIPW in 28 cells and has mean RMSE ratio \(0.769\). The \(\omega\)-only estimator beats AIPW in 10 cells and has mean RMSE ratio \(1.020\). These counts show that joint tuning is often useful but is not uniformly best after coefficient estimation.
+
+The STAR benchmark uses only real kindergarten covariates from Project STAR. Treatment assignments, latent confounding, potential outcomes, and effect heterogeneity are generated synthetically. It is therefore a real-\(X\), semi-synthetic benchmark rather than an analysis of STAR's original intervention or outcomes. The planned WHI CT+OS analysis has not been run because participant-level access, a semantic crosswalk, and a survival or censoring extension are still required.
+
+\subsection{Planned CATE evaluation and interpretation}
+
+CATE experiments are planned. The primary design will compare the proved AIPW-pseudo-outcome F-Learner with the prospective R-loss extension using additive cubic B-splines, frozen neural bases, and linear sieves under a common covariate marginal and covariate shift. Each study will compare trial-only, \(\lambda\)-only, \(\omega\)-only, and joint tuning using held-out RCT-population CATE risk. Classifier-only, balancing-only, hybrid, and oracle transport weights will be separated. No CATE result is claimed from Figures~\ref{fig:fixed-budget} and \ref{fig:proportional-budget}.
+
+The empirical conclusion is deliberately limited. The two-channel population oracle weakly improves the ATE variance objective when the trial-only coefficient is feasible, but estimated coefficients do not inherit a universal no-harm property. The present 20-repetition studies suggest that the \(\lambda\) channel is the more stable source of gain and that joint tuning can add value in some designs. More Monte Carlo repetitions, completed CATE experiments, additional real-\(X\) supports, and an authorized real-outcome analysis are required before making a stronger empirical claim.

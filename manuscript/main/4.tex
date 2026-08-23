@@ -1,0 +1,153 @@
+\section{Prediction-Powered Fusion Learning for CATE}
+\label{sec:cate}
+
+\subsection{Prediction-powered loss, coefficient roles, and the ATE relation}
+\label{sec:cate-loss}
+
+For a fixed candidate CATE function \(t\), define the density-ratio-weighted prediction-powered squared loss
+\begin{align}
+\widehat L_{\mathrm{DR}}(t;\lambda,\omega)
+&=
+\mathbb P_{R,n}\{Z_\lambda-t(X)\}^2
+\\
+&\quad+
+\omega\left[
+\mathbb P_{O,N}\{r(X)(g(X)-t(X))^2\}
+-
+\mathbb P_{R,n}\{(g(X)-t(X))^2\}
+\right].
+\label{eq:dr-fusion-loss}
+\end{align}
+For every fixed candidate considered below, assume
+\(Z_\lambda,t\in L^2(P_R)\), and let
+\(G_t(X)=\{g(X)-t(X)\}^2\) satisfy
+\(G_t\in L^1(P_R)\) and \(rG_t\in L^1(P_O)\).
+Under exact transport and honest conditioning,
+\begin{align}
+\mathbb E\{\widehat L_{\mathrm{DR}}(t;\lambda,\omega)\}
+&=
+Q(\lambda)+\mathbb E_R\{t(X)-\tau(X)\}^2,
+\\
+Q(\lambda)
+&=
+\mathbb E_R\{Z_\lambda-\tau(X)\}^2.
+\label{eq:cate-target}
+\end{align}
+The common-marginal case sets \(r=1\). In both cases, the expected loss is flat in \(\omega\). When \(A>0\), the scalar minimizer of \(Q(\lambda)\) is the integrated-noise oracle \(\lambda^\star=-C/A\), which is the same population \(\lambda\) that appears in the orthogonal ATE oracle. When \(A=0\), \(\Delta=0\) almost surely and \(Q(\lambda)\) is flat in \(\lambda\). The ATE coefficient \(\omega^\star=D/B\) is a possible training default, but Equation~\eqref{eq:cate-target} does not identify it as a CATE-risk optimizer.
+
+The sampling variance of a fixed candidate loss identifies a distinct coefficient. Let
+\(U_{t,\lambda}=\{Z_\lambda-t(X)\}^2\).
+If the required fourth moments exist and the denominator is positive, then
+\begin{align}
+\omega_{\mathrm{LV}}^\star(t;\lambda)
+&=
+\frac{\operatorname{Cov}_R(U_{t,\lambda},G_t)}
+{\operatorname{Var}_R(G_t)+(n/N)\operatorname{Var}_O(rG_t)}.
+\label{eq:loss-variance-omega}
+\end{align}
+This oracle minimizes the variance of one fixed empirical loss. It does not minimize the final learned CATE risk. The latter coefficient must be selected by honest validation over fitted candidates. Let \(\mathcal F_{\mathrm{train}}\) collect all validation-independent candidates and nuisances, let \(\widehat t_{\lambda,\omega}\) be \(\mathcal F_{\mathrm{train}}\)-measurable, and construct \(Z_{\lambda_{\mathrm{ref}}}\) on one common untouched RCT validation block using a fixed reference coefficient and a nuisance fit contained in \(\mathcal F_{\mathrm{train}}\). Define
+\begin{align}
+\widehat R_{\mathrm{val}}(\lambda,\omega)
+&=
+\mathbb P_{R,\mathrm{val}}
+\left[\{Z_{\lambda_{\mathrm{ref}}}-\widehat t_{\lambda,\omega}(X)\}^2\right].
+\end{align}
+For every validation-independent candidate,
+\begin{align}
+\mathbb E\{\widehat R_{\mathrm{val}}(\lambda,\omega)\mid\mathcal F_{\mathrm{train}}\}
+&=
+Q(\lambda_{\mathrm{ref}})
++\mathbb E_R\left[\{\widehat t_{\lambda,\omega}(X)-\tau(X)\}^2\right].
+\end{align}
+Thus every candidate is ranked by the same RCT-population CATE risk plus the same additive noise.
+
+For \(0\leq\omega<1\), define \(\widetilde Z_{\lambda,\omega}=(Z_\lambda-\omega g)/(1-\omega)\). Completing the square gives
+\begin{align}
+\widehat L_{\mathrm{DR}}(t;\lambda,\omega)
+&=
+(1-\omega)\mathbb P_{R,n}\{t(X)-\widetilde Z_{\lambda,\omega}\}^2
+\\
+&\quad+
+\omega\mathbb P_{O,N}\{r(X)(g(X)-t(X))^2\}
++\text{a term constant in }t.
+\end{align}
+This form is a computational device for convex squared-loss learners. The original objective must be used at \(\omega=1\), outside \([0,1]\), or when a nonlinear parameterization makes convexity unclear.
+
+\subsection{Implementable F-Learner and prospective R-loss extension}
+\label{sec:cate-implementable}
+
+We use \emph{F-Learner} as a provisional working label only for CATE estimators that minimize Equation~\eqref{eq:dr-fusion-loss}, which is built from the RCT-valid AIPW pseudo-outcome \(Z_\lambda\). The label does not claim name novelty and does not denote a generic unification of doubly robust and R losses.
+
+For a linear sieve \(t_\beta(x)=b(x)^\top\beta\), with \(b(x)\in\mathbb R^p\), add the penalty \(\rho\beta^\top P\beta\), where \(\rho\geq0\) and \(P=P^\top\succeq0\) belongs to \(\mathbb R^{p\times p}\). Define
+\begin{align}
+H_R&=\mathbb P_{R,n}\{b(X)b(X)^\top\},
+&
+H_{O,r}&=\mathbb P_{O,N}\{r(X)b(X)b(X)^\top\},
+\\
+h_\lambda&=\mathbb P_{R,n}\{b(X)Z_\lambda\},
+&
+d_g&=\mathbb P_{O,N}\{r(X)b(X)g(X)\}-\mathbb P_{R,n}\{b(X)g(X)\}.
+\end{align}
+Whenever the matrix is invertible, the penalized F-Learner solution is
+\begin{align}
+\widehat\beta_{\lambda,\omega}
+&=
+\left\{(1-\omega)H_R+\omega H_{O,r}+\rho P\right\}^{-1}
+\left\{h_\lambda+\omega d_g\right\}.
+\label{eq:linear-sieve}
+\end{align}
+Because \(h_\lambda\) is affine in \(\lambda\), a fixed-\(\omega\) candidate path can be computed efficiently. A frozen neural basis replaces \(b(x)\) by a representation learned without the candidate-training or validation observations and inherits Equation~\eqref{eq:linear-sieve} conditional on that representation. End-to-end neural fitting is nonconvex, and the present linear-sieve guarantees do not cover it.
+
+A prospective R-loss extension can be implemented as an empirical candidate, but it requires a separate theorem before it belongs to the F-Learner class. Let \(m\) be a generic fixed, cross-fitted marginal-outcome regression trained independently of the observations on which the following loss is evaluated. One candidate objective is
+\begin{align}
+\widehat L_R(t;\omega)
+&=
+\mathbb P_{R,n}
+\left[
+\{Y-m(X)\}-\{A-e(X)\}t(X)
+\right]^2
+\\
+&\quad+
+\omega\left[
+\mathbb P_{O,N}\{r(X)(g(X)-t(X))^2\}
+-
+\mathbb P_{R,n}\{(g(X)-t(X))^2\}
+\right],
+\label{eq:r-fusion-loss}
+\end{align}
+Randomized treatment implies
+\begin{align}
+\mathbb E_R[(A-e(X))\{Y-m(X)\}\mid X]
+&=e(X)\{1-e(X)\}\tau(X)
+\end{align}
+for every fixed \(m\). This identity motivates the residualized objective. No \(\lambda\) channel has yet been derived for this R-loss candidate. A complete result must still derive the precise target under penalties and restricted learners, a principled role for \(\lambda\), an honest validation score, and estimated-nuisance rates. We therefore present Equation~\eqref{eq:r-fusion-loss} as a planned extension rather than a proved contribution.
+
+Under covariate shift, an exact ratio can be recovered from domain-classification odds. If \(S=1\) denotes RCT membership, \(\pi=P(S=1)\), and \(s(x)=P(S=1\mid X=x)\), then
+\begin{align}
+r(x)
+&=\frac{1-\pi}{\pi}\frac{s(x)}{1-s(x)}.
+\end{align}
+An estimated ratio \(\widehat r\) replaces exact target preservation with an explicit drift. Clipping changes the exact transported target and must be reported.
+
+A loss-targeted alternative chooses a nonnegative, out-of-sample-evaluable weight function \(w\) to balance
+\begin{align}
+\mathcal G(\mathcal T;g)
+&=\{(g-t)^2:t\in\mathcal T\}.
+\end{align}
+If \(\mathbb E_O\{w(g-t)^2\}=\mathbb E_R\{(g-t)^2\}\) for every \(t\in\mathcal T\), Equation~\eqref{eq:cate-target} remains exact with \(w\) in place of \(r\). For a linear sieve, balancing \(bg\) and \(bb^\top\) preserves the minimizer; balancing \(g^2\) is additionally required only to preserve the absolute loss value. Exact balancing on the same observations used to fit \(t\) makes the correction zero or constant in the sieve coefficient. Weight learning and candidate fitting must therefore use different honest blocks or appropriate outer folds.
+
+For approximate weights, define
+\begin{align}
+\Delta_{\mathcal T}(w)
+&=
+\sup_{t\in\mathcal T}
+\left|
+\mathbb E_O\{w(X)(g(X)-t(X))^2\}
+-
+\mathbb E_R\{(g(X)-t(X))^2\}
+\right|.
+\end{align}
+The uniform population-loss drift is bounded by \(|\omega|\Delta_{\mathcal T}(w)\), and the excess target risk of the weighted population minimizer is at most \(2|\omega|\Delta_{\mathcal T}(w)\) when both minimizers exist.
+
+\paragraph{Current scope and open theory.}
+The proved CATE statements cover the AIPW-pseudo-outcome squared loss with fixed honest nuisances and either a common covariate marginal or exact transport. The linear-sieve solution and frozen-feature extension are conditional results. Estimated-ratio rates, adaptive loss-targeted balancing, end-to-end neural optimization, the R-loss extension, and cross-fitted inference remain open theory. Honest splitting prevents direct reuse but does not by itself close these gaps.
