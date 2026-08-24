@@ -96,6 +96,49 @@ objective is minimized over a set containing \((0,0)\), its oracle value cannot
 exceed the trial-only value.  This comparison concerns the population objective,
 not coefficients estimated from a finite tuning sample.
 
+\subsection{Proof of Corollary~\ref{cor:joint-oracle-variance}}
+
+Write the conditional variance as
+\begin{align*}
+V(\beta)
+&=
+V_0+
+\frac1n
+\{2\ell^\top\beta+\beta^\top\mathbf H\beta\},
+&
+V_0
+&=
+\frac1n\operatorname{Var}_R(Z_0).
+\end{align*}
+When \(AB-E^2>0\), the matrix \(\mathbf H\) is positive definite and the unique minimizer is \(\beta^\star=-\mathbf H^{-1}\ell\). Substitution gives
+\begin{align*}
+V(\beta^\star)
+&=
+V_0-
+\frac1n\ell^\top\mathbf H^{-1}\ell.
+\end{align*}
+For \(\mathbf H=\left(\begin{smallmatrix}A&-E\\-E&B\end{smallmatrix}\right)\),
+\begin{align*}
+\mathbf H^{-1}
+&=
+\frac1{AB-E^2}
+\begin{pmatrix}B&E\\E&A\end{pmatrix},
+\\
+\ell^\top\mathbf H^{-1}\ell
+&=
+\frac{BC^2-2ECD+AD^2}{AB-E^2}.
+\end{align*}
+Positive definiteness makes this quadratic form nonnegative and makes it zero exactly when \(\ell=0\). Setting \(E=0\) yields \(C^2/A+D^2/B\).
+
+If \(\mathbf H\) is singular, boundedness below of the variance objective implies \(\ell\in\operatorname{Range}(\mathbf H)\). Evaluating at the minimum-norm solution \(-\mathbf H^+\ell\) gives
+\begin{align*}
+V_{\min}
+&=
+V_0-
+\frac1n\ell^\top\mathbf H^+\ell.
+\end{align*}
+The pseudoinverse is positive definite on \(\operatorname{Range}(\mathbf H)\), so the reduction is strictly positive exactly when \(\ell\neq0\). Finally, continuity gives attainment on every nonempty compact feasible set \(\mathcal C\). If \(0\in\mathcal C\), the constrained minimum is at most \(V(0)=V_0\), and it is strictly smaller exactly when some feasible \(\beta\) makes \(2\ell^\top\beta+\beta^\top\mathbf H\beta<0\).
+
 \subsection{Prediction-powered CATE risk identity}
 
 Fix \(t\) and condition on \(X\).  Since

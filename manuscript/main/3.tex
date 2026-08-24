@@ -38,6 +38,9 @@ The mean follows from \(\mathbb E_R(Z_\lambda)=\theta\) and \(\mathbb E_O(rg)=\m
 
 \subsection{Joint and population-orthogonal oracles}
 
+Throughout this subsection, all population moments are conditional on \(\mathcal F\), the sample sizes \(n\) and \(N\) are positive, and the displayed random variables have finite second moments.
+Recall that \(\mathcal F\) is the sigma-field generated before final evaluation by the prespecified split assignments, the fitted nuisance and ratio functions, and the coefficient choice; conditional on \(\mathcal F\), all of these objects are fixed while the final RCT and OBS observations retain their evaluation product law.
+
 Define the five conditional population moments
 \begin{align}
 A&=\operatorname{Var}_R(\Delta),
@@ -73,6 +76,8 @@ the compact variance in Equation~\eqref{eq:ate-variance} becomes
 \right\}.
 \label{eq:ate-quadratic}
 \end{align}
+The coefficient vector \(\beta=(\lambda,\omega)^\top\) collects the two fusion choices. The vector \(\ell=(C,-D)^\top\) is the linear slope of the variance objective at the RCT-only origin \(\beta=0\), while \(\mathbf H\) records its quadratic curvature.
+
 The matrix \(\mathbf H\) is positive semidefinite because
 \begin{align}
 \begin{pmatrix}u&v\end{pmatrix}
@@ -83,6 +88,7 @@ The matrix \(\mathbf H\) is positive semidefinite because
 +\frac nN v^2\operatorname{Var}_O(rg)
 \geq0.
 \end{align}
+Positive semidefiniteness means that the variance objective cannot curve downward along any direction \((u,v)\). For this two-dimensional matrix, the stronger condition \(AB-E^2>0\), together with positive semidefiniteness, makes \(\mathbf H\) positive definite and invertible. It is therefore the condition that turns a possibly flat quadratic into one with a unique unrestricted minimizer.
 
 \begin{theorem}[Joint population oracle]
 \label{thm:joint-oracle}
@@ -98,6 +104,43 @@ If \(AB-E^2>0\), the unique unrestricted minimizer of Equation~\eqref{eq:ate-qua
 If \(\mathbf H\) is singular, the minimizer set is \(-\mathbf H^+\ell+\operatorname{Null}(\mathbf H)\). For a prespecified compact feasible set, a constrained minimizer exists and is obtained by minimizing the same quadratic.
 \end{theorem}
 
+The theorem records the two-dimensional quadratic solution before using the model-implied restriction \(E=0\). Under the exact RCT-valid pseudo-outcome model, the population solution therefore specializes to the axis formulas below; retaining a nonzero interaction remains relevant for the realized empirical tuning quadratic.
+
+Here \(\mathbf H\) is singular when \(\det(\mathbf H)=AB-E^2=0\), in which case the ordinary inverse \(\mathbf H^{-1}\) does not exist. Its null space is \(\operatorname{Null}(\mathbf H)=\{v\in\mathbb R^2:\mathbf H v=0\}\), and \(\mathbf H^+\) denotes the Moore--Penrose pseudoinverse.
+
+The unrestricted singular formula is well-defined because a variance quadratic is bounded below. This boundedness forces the compatibility condition \(\ell\in\operatorname{Range}(\mathbf H)\). The term \(-\mathbf H^+\ell\) is one minimum-norm minimizer, and adding any vector in \(\operatorname{Null}(\mathbf H)\) moves along a direction in which the variance is flat. A nonempty prespecified compact feasible set guarantees that the continuous quadratic attains a constrained minimum even when this minimum is not unique.
+A prespecified compact feasible set is a nonempty, closed, and bounded subset of \(\mathbb R^2\) fixed before viewing the tuning outcomes; the implementation below uses the rectangular box \(\mathcal C=[L_\lambda,U_\lambda]\times[L_\omega,U_\omega]\).
+
+\begin{corollary}[Joint-oracle variance reduction]
+\label{cor:joint-oracle-variance}
+Let \(V_0=\operatorname{Var}_R(Z_0)/n\) be the conditional variance at \((\lambda,\omega)=(0,0)\). If \(AB-E^2>0\), the unrestricted joint oracle has
+\begin{align*}
+V_{\min}
+&=
+V_0-
+\frac1n
+\frac{BC^2-2ECD+AD^2}{AB-E^2},
+\\
+V_0-V_{\min}
+&=
+\frac1n\ell^\top\mathbf H^{-1}\ell.
+\end{align*}
+The reduction is nonnegative and is strictly positive exactly when \(\ell\neq0\), equivalently when \((C,D)\neq(0,0)\). Under population orthogonality \(E=0\) and \(A,B>0\), this specializes to
+\begin{align*}
+V_{\min}
+&=
+V_0-
+\frac1n\left(\frac{C^2}{A}+\frac{D^2}{B}\right).
+\end{align*}
+If \(\mathbf H\) is singular, bounded-below compatibility gives
+\begin{align*}
+V_{\min}
+&=
+V_0-\frac1n\ell^\top\mathbf H^+\ell,
+\end{align*}
+with a strict reduction exactly when \(\ell\neq0\). For a nonempty compact feasible set \(\mathcal C\) containing the origin, the constrained oracle is weakly no worse than \(V_0\); the reduction is strict precisely when some \(\beta\in\mathcal C\) satisfies \(2\ell^\top\beta+\beta^\top\mathbf H\beta<0\).
+\end{corollary}
+
 For \(\rho>0\), a ridge-stabilized population coefficient is
 \begin{align}
 \beta_\rho^\star
@@ -107,12 +150,14 @@ It minimizes the penalized quadratic
 \(2\ell^\top\beta+\beta^\top\mathbf H\beta+\rho\lVert\beta\rVert_2^2\).
 This is a penalized stability oracle, not the oracle for the unpenalized variance in
 Equation~\eqref{eq:ate-quadratic}.
+Here \(I_2\) is the \(2\times2\) identity matrix. Adding \(\rho I_2\) makes every curvature direction strictly positive, so \(\beta_\rho^\star\) is unique even when \(\mathbf H\) is singular. The coefficient minimizes the variance quadratic plus the penalty \(\rho\lVert\beta\rVert_2^2\); it is therefore a penalized oracle rather than another expression for the unpenalized oracle.
 
 The conditional identity \(\mathbb E_R(\Delta\mid X)=0\) gives the exact population orthogonality
 \begin{align}
 E
 &=\operatorname{Cov}_R\{\Delta,g(X)\}=0.
 \end{align}
+The identity \(\mathbb E_R(\Delta\mid X)=0\) says that changing the outcome-regression blend through \(\lambda\) changes pseudo-outcome noise but not its conditional CATE target. Since \(g(X)\) is measurable with respect to \(X\), averaging the conditional mean-zero difference against \(g(X)\) yields \(E=0\). Thus the exact population variance has no \(\lambda\omega\) interaction, which motivates separate population-axis optimization.
 It also gives \(D=\operatorname{Cov}_R\{\tau(X),g(X)\}\). When \(A,B>0\), the population oracle therefore separates:
 \begin{align}
 \lambda^\star
@@ -126,6 +171,21 @@ The population oracle weakly improves the variance objective whenever \((0,0)\) 
 
 \subsection{Estimable honest algorithm}
 
+More explicitly, let the tuning-block sizes be \(m_R,m_O\geq2\). For \(S\in\{R,O\}\) and \(a\in\{1,2\}\), define
+\begin{align*}
+\overline h_{a,S,\mathrm{tu}}
+&=
+\frac1{m_S}\sum_{k=1}^{m_S}h_a(V_{S,k}),
+\\
+s_{S,\mathrm{tu}}(h_1,h_2)
+&=
+\frac1{m_S-1}
+\sum_{k=1}^{m_S}
+\{h_1(V_{S,k})-\overline h_{1,S,\mathrm{tu}}\}
+\{h_2(V_{S,k})-\overline h_{2,S,\mathrm{tu}}\}.
+\end{align*}
+The factor \(n/N\) below refers to the final evaluation sizes whose variance is being optimized.
+
 Let \(s_R(h_1,h_2)\) and \(s_O(h_1,h_2)\) denote unbiased sample covariances on independent tuning blocks, with \(s_S^2(h)=s_S(h,h)\). Compute
 \begin{align}
 \widehat A&=s_R^2(\Delta),
@@ -138,7 +198,64 @@ Let \(s_R(h_1,h_2)\) and \(s_O(h_1,h_2)\) denote unbiased sample covariances on 
 &
 \widehat E&=s_R(\Delta,g).
 \end{align}
+Define
+\begin{align*}
+\widehat{\mathbf H}
+&=
+\begin{pmatrix}
+\widehat A&-\widehat E\\
+-\widehat E&\widehat B
+\end{pmatrix},
+&
+\widehat\ell
+&=
+\begin{pmatrix}\widehat C\\-\widehat D\end{pmatrix},
+&
+\widehat d
+&=
+\widehat A\widehat B-\widehat E^2.
+\end{align*}
+Choose positive thresholds \(t_A,t_B,t_{\det}\) before observing the tuning outcomes. The population-orthogonality axis rule is
+\begin{align*}
+\widehat\lambda_{\mathrm{axis}}
+&=
+\begin{cases}
+-\widehat C/\widehat A,&\widehat A>t_A,\\
+0,&\widehat A\leq t_A,
+\end{cases}
+&
+\widehat\omega_{\mathrm{axis}}
+&=
+\begin{cases}
+\widehat D/\widehat B,&\widehat B>t_B,\\
+0,&\widehat B\leq t_B.
+\end{cases}
+\end{align*}
+When \(\widehat A>t_A\), \(\widehat B>t_B\), and \(\widehat d>t_{\det}\), the unrestricted empirical joint rule is
+\begin{align*}
+\widehat\lambda_{\mathrm{joint}}
+&=
+\frac{\widehat E\widehat D-\widehat B\widehat C}{\widehat d},
+&
+\widehat\omega_{\mathrm{joint}}
+&=
+\frac{\widehat A\widehat D-\widehat E\widehat C}{\widehat d}.
+\end{align*}
+For a prespecified nonempty compact box \(\mathcal C=[L_\lambda,U_\lambda]\times[L_\omega,U_\omega]\) containing the origin, the boundary-correct empirical choice is
+\begin{align*}
+\widehat\beta_{\mathcal C}
+&\in
+\operatorname*{arg\,min}_{\beta\in\mathcal C}
+\left\{
+2\widehat\ell^\top\beta
++\beta^\top\widehat{\mathbf H}\beta
+\right\}.
+\end{align*}
+If the unrestricted joint rule lies outside \(\mathcal C\), this quadratic program must be solved rather than clipping its coordinates separately; rectangular coordinate-wise clipping is exact only after imposing \(\widehat E=0\). For the joint rule, if a required threshold fails or the quadratic solver is numerically unstable, the prespecified fallback is \((0,0)\); the axis rule uses its coordinate-specific threshold definitions above.
+
 The population-orthogonality plug-in imposes \(\widehat E=0\) and uses \((-\widehat C/\widehat A,\widehat D/\widehat B)\). The empirical joint minimizer retains \(\widehat E\) and applies Equation~\eqref{eq:joint-oracle}. The two rules differ because sample orthogonality is not exact.
+
+The displayed analytic ratios apply only when their corresponding denominator thresholds pass. Imposing \(\widehat E=0\) does not assert that the realized tuning covariance vanishes. It applies the proven population restriction \(E=0\) before solving the sample problem. Retaining \(\widehat E=s_R(\Delta,g)\) instead minimizes the realized empirical quadratic, whose interaction term is generally nonzero because of tuning-sample noise.
 
 Algorithm~\ref{alg:honest-ate} states the exact three-way implementation.
 
@@ -156,6 +273,31 @@ Algorithm~\ref{alg:honest-ate} states the exact three-way implementation.
 \(\widehat\theta_r\pm z_{1-\alpha/2}\sqrt{\widehat V}\).\;
 \KwOut{\(\widehat\theta_r\), \(\widehat V\), and the corresponding Wald interval.}
 \end{algorithm}
+
+For explicit evaluation notation, define
+\begin{align*}
+\psi_{R,i}
+&=
+Z_{\widehat\lambda}(V_i^R)-\widehat\omega g(X_i^R),
+&
+\psi_{O,j}
+&=
+\widehat\omega r(X_j^O)g(X_j^O),
+\end{align*}
+and let \(s_{R,\mathrm{ev}}^2\) and \(s_{O,\mathrm{ev}}^2\) be the usual sample variances with denominators \(n-1\) and \(N-1\), respectively. For \(n,N\geq2\), the fixed-selected-coefficient variance estimator and Wald interval are
+\begin{align*}
+\widehat V
+&=
+\frac{s_{R,\mathrm{ev}}^2(\psi_R)}{n}
++
+\frac{s_{O,\mathrm{ev}}^2(\psi_O)}{N},
+\\
+\widehat\theta_r
+&\mathbin{\pm}
+z_{1-\alpha/2}\sqrt{\widehat V}.
+\end{align*}
+Conditional unbiasedness of \(\widehat V\) follows from evaluation-block independence. Wald coverage additionally requires the stated conditional Lindeberg, moment, and nondegeneracy conditions; it is not a finite-sample coverage statement.
+Here \(z_{1-\alpha/2}\) is the \((1-\alpha/2)\)-quantile of the standard normal distribution; for \(\alpha=0.05\), it is approximately \(1.96\).
 
 With an estimated ratio \(\widehat r\), define
 \begin{align}
@@ -181,3 +323,83 @@ sufficient negligible-error regime is
 Evaluation-only variance is first-order adequate under these conditions and the
 preceding CLT assumptions. Otherwise the ratio learner's influence-function
 contribution, the OBS empirical-process term, and their covariances must be included.
+
+\paragraph{Estimating the density ratio.}
+All three constructions below use only a ratio-training block and are held fixed before coefficient tuning and final evaluation. Let \(\mathbb P_{R,\mathrm{rat}}\) and \(\mathbb P_{O,\mathrm{rat}}\) denote empirical averages on its RCT and OBS parts. First, pool the ratio-training covariates and let \(S=1\) indicate an RCT observation and \(S=0\) an OBS observation. With \(\pi=P(S=1)\) and \(s(x)=P(S=1\mid X=x)\), Bayes' rule gives
+\begin{align*}
+r(x)
+&=
+\frac{1-\pi}{\pi}\frac{s(x)}{1-s(x)},
+&
+\widehat r_{\mathrm{cls}}(x)
+&=
+\frac{1-\widehat\pi}{\widehat\pi}
+\frac{\widehat s(x)}{1-\widehat s(x)}.
+\end{align*}
+For an unweighted pooled classifier with ratio-training sizes \(m_R^{\mathrm{rat}}\) and \(m_O^{\mathrm{rat}}\), \(\widehat\pi=m_R^{\mathrm{rat}}/(m_R^{\mathrm{rat}}+m_O^{\mathrm{rat}})\). Class weighting or resampling requires replacing this factor by the effective training prior. The odds representation also requires overlap, \(0<s(X)<1\), on the RCT covariate support. Probability clipping stabilizes the estimate but changes it from the exact density ratio.
+
+A Riesz construction estimates the transport functional directly \citep{chernozhukov2021riesz,chernozhukov2022autodml}. Let \(\phi:\mathcal X\to\mathbb R^p\) be a fixed feature map and define
+\begin{align*}
+\widehat M_O
+&=
+\mathbb P_{O,\mathrm{rat}}\{\phi(X)\phi(X)^\top\},
+&
+\widehat b_R
+&=
+\mathbb P_{R,\mathrm{rat}}\{\phi(X)\}.
+\end{align*}
+For \(\rho>0\), the empirical Riesz quadratic and its closed-form solution are
+\begin{align*}
+\widehat\eta_\rho
+&=
+\operatorname*{arg\,min}_{\eta\in\mathbb R^p}
+\left[
+\eta^\top\widehat M_O\eta
+-2\widehat b_R^\top\eta
++\rho\lVert\eta\rVert_2^2
+\right]
+=
+(\widehat M_O+\rho I_p)^{-1}\widehat b_R,
+\\
+\widehat r_{\mathrm{Riesz}}(x)
+&=
+\phi(x)^\top\widehat\eta_\rho.
+\end{align*}
+At \(\rho=0\), a compatible singular system uses \(\widehat M_O^+\widehat b_R\). A restricted feature map estimates a projected representer, and the resulting weights need not be nonnegative.
+
+A nonnegative automatic-balancing alternative starts with an out-of-sample-evaluable family \(w_\eta:\mathcal X\to[0,\infty)\). For a fixed feature map \(\phi\), a positive semidefinite matrix \(W\), and \(\gamma>0\), define \(\lVert v\rVert_W^2=v^\top Wv\) and solve
+\begin{align*}
+\widehat\eta_{\mathrm{bal}}
+&\in
+\operatorname*{arg\,min}_{\eta:\,
+\mathbb P_{O,\mathrm{rat}}w_\eta=1}
+\left[
+\left\|
+\mathbb P_{O,\mathrm{rat}}\{w_\eta(X)\phi(X)\}
+-
+\mathbb P_{R,\mathrm{rat}}\{\phi(X)\}
+\right\|_W^2
++
+\gamma\mathbb P_{O,\mathrm{rat}}\{w_\eta(X)^2\}
+\right],
+\\
+\widehat r_{\mathrm{bal}}(x)
+&=
+w_{\widehat\eta_{\mathrm{bal}}}(x).
+\end{align*}
+Including \(g\) among the coordinates of \(\phi\) directly targets the transported moment used by the ATE correction. The dispersion penalty controls unstable weights but generally prevents exact empirical balance.
+
+These constructions do not automatically inherit the exact-r theorem. For any fixed evaluation-independent weight function \(w\), replacing \(r\) by \(w\) gives
+\begin{align*}
+\mathbb E\{\widehat\theta_w(\lambda,\omega)\mid\mathcal F\}
+&=
+\theta
++
+\omega\{P_O(wg)-P_R(g)\}
+\\
+&=
+\theta
++
+\omega P_O\{(w-r)g\}.
+\end{align*}
+Thus exact conditional unbiasedness holds for \(w=r\), or more generally for a fixed \(w\) satisfying the exact population balance condition \(P_O(wg)=P_R(g)\). Classifier, restricted Riesz, and automatic-balancing estimates are otherwise in the estimated-ratio regime governed by the drift and rate conditions above. The Auto-DML citation motivates the Riesz learning criterion; it does not by itself make the present score Neyman-orthogonal to ratio error or supply the ratio learner's first-order variance contribution.
