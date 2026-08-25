@@ -16,17 +16,28 @@ For fixed \((\lambda,\omega)\), define
 \right\}.
 \label{eq:ate-estimator}
 \end{align}
+Here \(Z_\lambda\) is the fusion score in
+Definition~\ref{def:fusion-score}, \(g\) is defined in
+Equation~\eqref{eq:obs-effect-prediction}, and \(r\) is the transport ratio in
+Assumption~\ref{ass:exact-transport}. At the coefficient origin,
+\begin{align*}
+\widehat\theta_r(0,0)
+&=\mathbb P_{R,n}Z_0
+=\widehat\theta_{\mathrm{AIPW},R},
+\end{align*}
+so the proposed family contains the RCT-only AIPW estimator from
+Definition~\ref{def:rct-only-aipw} exactly.
 The first term averages an RCT-valid pseudo-outcome. Under Assumption~\ref{ass:exact-transport}, the expression in braces is a mean-zero control variate; under Assumption~\ref{ass:common-marginal}, this is the special case \(r=1\). Thus, the RCT identifies the target, \(\lambda\) changes within-covariate score noise, and \(\omega\) uses the large OBS covariate sample to remove predictable between-covariate variation.
 
-\begin{theorem}[Exact conditional mean and variance]
+\begin{theorem}[Exact block-0 mean and variance]
 \label{thm:ate-variance}
 \label{thm:ate-exact-r}
-Under Assumptions~\ref{ass:trial}, \ref{ass:exact-transport}, and \ref{ass:honest-evaluation}, for positive \(n,N\) and square-integrable displayed scores, every fixed \((\lambda,\omega)\) satisfies
+Under Assumptions~\ref{ass:trial} and \ref{ass:exact-transport}, together with the three-block convention of Section~\ref{sec:rct-obs-setting}, hold the objects learned on blocks 1 and 2 fixed and suppose \(n,N>0\) and the displayed scores are square-integrable. Every fixed \((\lambda,\omega)\) then satisfies, over the independent block-0 samples,
 \begin{align}
-\mathbb E\{\widehat\theta_r(\lambda,\omega)\mid\mathcal F\}
+\mathbb E\{\widehat\theta_r(\lambda,\omega)\}
 &=\theta,
 \\
-\operatorname{Var}\{\widehat\theta_r(\lambda,\omega)\mid\mathcal F\}
+\operatorname{Var}\{\widehat\theta_r(\lambda,\omega)\}
 &=
 \frac1n\operatorname{Var}_R\{Z_\lambda-\omega g(X)\}
 +
@@ -35,7 +46,7 @@ Under Assumptions~\ref{ass:trial}, \ref{ass:exact-transport}, and \ref{ass:hones
 \end{align}
 Equivalently, the law of total variance gives the within-/between-covariate decomposition
 \begin{align}
-\operatorname{Var}\{\widehat\theta_r(\lambda,\omega)\mid\mathcal F\}
+\operatorname{Var}\{\widehat\theta_r(\lambda,\omega)\}
 &=
 \frac1n\mathbb E_R\{\operatorname{Var}_R(Z_\lambda\mid X)\}
 +\frac1n\operatorname{Var}_R\{\tau(X)-\omega g(X)\}
@@ -48,53 +59,71 @@ The mean follows from \(\mathbb E_R(Z_\lambda)=\theta\) and \(\mathbb E_O(rg)=\m
 
 \begin{corollary}[Common-marginal specialization]
 \label{cor:ate-common-active}
-Under Assumptions~\ref{ass:trial}, \ref{ass:common-marginal}, and \ref{ass:honest-evaluation}, set \(r=1\) in Theorem~\ref{thm:ate-variance}. Then Equation~\eqref{eq:ate-estimator} is exactly conditionally unbiased and its OBS variance term is \(\omega^2\operatorname{Var}_R\{g(X)\}/N\).
+Under Assumptions~\ref{ass:trial} and \ref{ass:common-marginal}, together with the three-block convention of Section~\ref{sec:rct-obs-setting}, set \(r=1\) in Theorem~\ref{thm:ate-variance}. Then Equation~\eqref{eq:ate-estimator} is exactly unbiased over block 0 for every fixed realization of blocks 1 and 2, and its OBS variance term is \(\omega^2\operatorname{Var}_R\{g(X)\}/N\).
 \end{corollary}
 
 \subsection{Joint and population-orthogonal oracles}
 
-Throughout this subsection, all population moments are conditional on \(\mathcal F\), the sample sizes \(n\) and \(N\) are positive, and the displayed random variables have finite second moments.
-Recall that \(\mathcal F\) is the sigma-field generated before final evaluation by the prespecified split assignments, the fitted nuisance and ratio functions, and the coefficient choice; conditional on \(\mathcal F\), all of these objects are fixed while the final RCT and OBS observations retain their evaluation product law.
+Throughout this subsection, blocks 1 and 2 and all objects learned from them are
+held fixed. Population moments are taken under the block-0 laws, the sample
+sizes \(n\) and \(N\) are positive, and the displayed random variables have
+finite second moments.
 
-Define the five conditional population moments
+\begin{definition}[ATE variance-quadratic objects]
+\label{def:ate-variance-objects}
+Define the five population moments
 \begin{align}
-A&=\operatorname{Var}_R(\Delta),
+A&\triangleq\operatorname{Var}_R(\Delta),
 &
-B&=\operatorname{Var}_R(g)+\frac nN\operatorname{Var}_O(rg),
+B&\triangleq\operatorname{Var}_R(g)+\frac nN\operatorname{Var}_O(rg),
 \\
-C&=\operatorname{Cov}_R(Z_0,\Delta),
+C&\triangleq\operatorname{Cov}_R(Z_0,\Delta),
 &
-D&=\operatorname{Cov}_R(Z_0,g),
+D&\triangleq\operatorname{Cov}_R(Z_0,g),
 &
-E&=\operatorname{Cov}_R(\Delta,g).
+E&\triangleq\operatorname{Cov}_R(\Delta,g).
 \label{eq:ate-moments}
 \end{align}
-With
+The moment \(A\) is the curvature cost of changing the outcome-regression blend
+\(\lambda\). The moment \(B\) is the curvature cost of the prediction-powered
+scale \(\omega\), including both the RCT subtraction and the scaled OBS
+addition. The moment \(C\) is the baseline-score covariance that determines the
+linear slope in the \(\lambda\) direction. The moment \(D\) is the
+baseline-prediction covariance that determines the linear slope in the
+\(\omega\) direction, with a minus sign because the RCT score contains
+\(-\omega g\). The moment \(E\) is the interaction covariance coupling the two
+coefficients through the cross-term \(-2E\lambda\omega\).
+
+Collect these moments and coefficients as
 \begin{align}
 \mathbf H_{\mathrm{ATE}}
-&=
+&\triangleq
 \begin{pmatrix}A&-E\\-E&B\end{pmatrix},
 &
 \boldsymbol\ell
-&=
+&\triangleq
 \begin{pmatrix}C\\-D\end{pmatrix},
 &
 \beta
-&=
+&\triangleq
 \begin{pmatrix}\lambda\\\omega\end{pmatrix},
 \end{align}
-the compact variance in Equation~\eqref{eq:ate-variance} becomes
+\end{definition}
+
+\begin{proposition}[ATE variance quadratic and positive-semidefinite curvature]
+\label{prop:ate-variance-quadratic}
+Under the standing conditions of this subsection, the compact variance in
+Equation~\eqref{eq:ate-variance} is
 \begin{align}
-\operatorname{Var}\{\widehat\theta_r(\beta)\mid\mathcal F\}
+\operatorname{Var}\{\widehat\theta_r(\beta)\}
 &=
 \frac1n\left\{
 \operatorname{Var}_R(Z_0)+2\boldsymbol\ell^\top\beta+\beta^\top\mathbf H_{\mathrm{ATE}}\beta
 \right\}.
 \label{eq:ate-quadratic}
 \end{align}
-The coefficient vector \(\beta=(\lambda,\omega)^\top\) collects the two fusion choices. The vector \(\boldsymbol\ell=(C,-D)^\top\) is the linear slope of the variance objective at the RCT-only origin \(\beta=0\), while \(\mathbf H_{\mathrm{ATE}}\) records its quadratic curvature.
-
-The matrix \(\mathbf H_{\mathrm{ATE}}\) is positive semidefinite because
+Moreover, \(\mathbf H_{\mathrm{ATE}}\) is positive semidefinite because, for
+every \((u,v)\in\mathbb R^2\),
 \begin{align}
 \begin{pmatrix}u&v\end{pmatrix}
 \mathbf H_{\mathrm{ATE}}
@@ -104,32 +133,120 @@ The matrix \(\mathbf H_{\mathrm{ATE}}\) is positive semidefinite because
 +\frac nN v^2\operatorname{Var}_O(rg)
 \geq0.
 \end{align}
-Positive semidefiniteness means that the variance objective cannot curve downward along any direction \((u,v)\). For this two-dimensional matrix, the stronger condition \(AB-E^2>0\), together with positive semidefiniteness, makes \(\mathbf H_{\mathrm{ATE}}\) positive definite and invertible. It is therefore the condition that turns a possibly flat quadratic into one with a unique unrestricted minimizer.
+\end{proposition}
 
-\begin{theorem}[Joint population oracle]
-\label{thm:joint-oracle}
-If \(AB-E^2>0\), the unique unrestricted minimizer of Equation~\eqref{eq:ate-quadratic} is
-\begin{align}
-\lambda_{\mathrm{joint}}^\star
-&=\frac{ED-BC}{AB-E^2},
+\begin{definition}[ATE coefficient objective]
+\label{def:ate-coefficient-objective}
+Define the coefficient-dependent part of the scaled variance by
+\begin{align*}
+\mathcal J_{\mathrm{ATE}}(\beta)
+&\triangleq
+2\boldsymbol\ell^\top\beta
++\beta^\top\mathbf H_{\mathrm{ATE}}\beta.
+\end{align*}
+\end{definition}
+
+Differentiating the full variance, rather than only its coefficient-dependent
+part, gives the explicit one-line calculation
+\begin{align*}
+\nabla_\beta\operatorname{Var}\{\widehat\theta_r(\beta)\}
+&=\frac1n\nabla_\beta\mathcal J_{\mathrm{ATE}}(\beta)
+=\frac2n\{\boldsymbol\ell+\mathbf H_{\mathrm{ATE}}\beta\},
 &
+\left.\nabla_\beta\operatorname{Var}\{\widehat\theta_r(\beta)\}
+\right|_{\beta=0}
+&=\frac2n\boldsymbol\ell.
+\end{align*}
+Thus \(\boldsymbol\ell=(C,-D)^\top\) is the full-variance slope at the
+RCT-only origin, up to the positive factor \(2/n\), while
+\(\mathbf H_{\mathrm{ATE}}\) records quadratic curvature.
+
+\begin{proposition}[Equivalent ATE oracle objectives]
+\label{prop:ate-argmin-equivalence}
+For every nonempty feasible set \(\mathcal B\subseteq\mathbb R^2\), the two
+argmin sets, possibly empty when the infimum is not attained, satisfy
+\begin{align*}
+\operatorname*{arg\,min}_{\beta\in\mathcal B}
+\operatorname{Var}\{\widehat\theta_r(\beta)\}
+&=
+\operatorname*{arg\,min}_{\beta\in\mathcal B}
+\mathcal J_{\mathrm{ATE}}(\beta).
+\end{align*}
+\end{proposition}
+
+Positive semidefiniteness means that the variance objective cannot curve
+downward along any direction \((u,v)\). For this two-dimensional matrix, the
+stronger condition \(AB-E^2>0\), together with positive semidefiniteness, makes
+\(\mathbf H_{\mathrm{ATE}}\) positive definite and invertible. It turns a
+possibly flat quadratic into one with a unique unrestricted minimizer.
+
+\begin{definition}[Joint and ridge population oracles]
+\label{def:ate-joint-ridge-oracles}
+When \(AB-E^2>0\), define the unrestricted joint oracle by
+\begin{align*}
+\beta_{\mathrm{joint}}^\star
+&\triangleq
+\operatorname*{arg\,min}_{\beta\in\mathbb R^2}
+\operatorname{Var}\{\widehat\theta_r(\beta)\}
+=
+\operatorname*{arg\,min}_{\beta\in\mathbb R^2}
+\mathcal J_{\mathrm{ATE}}(\beta).
+\end{align*}
+The equality of the two argmin sets follows from
+Proposition~\ref{prop:ate-argmin-equivalence}.
+For a prespecified \(\rho>0\), define the ridge-stabilized population oracle by
+\begin{align*}
+\beta_\rho^\star
+&\triangleq
+\operatorname*{arg\,min}_{\beta\in\mathbb R^2}
+\left\{\mathcal J_{\mathrm{ATE}}(\beta)+\rho\lVert\beta\rVert_2^2\right\}.
+\end{align*}
+Let \(I_2\) denote the \(2\times2\) identity matrix.
+\end{definition}
+
+\begin{theorem}[Joint and ridge population oracles]
+\label{thm:joint-oracle}
+If \(AB-E^2>0\), the joint oracle in
+Definition~\ref{def:ate-joint-ridge-oracles} is unique and
+\begin{align}
+\beta_{\mathrm{joint}}^\star
+&=
+\begin{pmatrix}
+\lambda_{\mathrm{joint}}^\star\\
 \omega_{\mathrm{joint}}^\star
-&=\frac{AD-EC}{AB-E^2}.
+\end{pmatrix}
+=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell
+=
+\begin{pmatrix}
+(ED-BC)/(AB-E^2)\\
+(AD-EC)/(AB-E^2)
+\end{pmatrix}.
 \label{eq:joint-oracle}
 \end{align}
-If \(\mathbf H_{\mathrm{ATE}}\) is singular, the minimizer set is \(-\mathbf H_{\mathrm{ATE}}^+\boldsymbol\ell+\operatorname{Null}(\mathbf H_{\mathrm{ATE}})\). If \(\mathbf H_{\mathrm{ATE}}\) is positive definite and the feasible set is nonempty, closed, and convex, the constrained minimizer is unique and equals the \(\mathbf H_{\mathrm{ATE}}\)-metric projection of the unrestricted minimizer. For a positive-semidefinite \(\mathbf H_{\mathrm{ATE}}\) and a prespecified compact feasible set, a constrained minimizer exists but need not be unique.
+For every \(\rho>0\), whether or not \(\mathbf H_{\mathrm{ATE}}\) is singular,
+the ridge oracle is unique and
+\begin{align}
+\beta_\rho^\star
+&=-(\mathbf H_{\mathrm{ATE}}+\rho I_2)^{-1}\boldsymbol\ell.
+\label{eq:ridge-oracle}
+\end{align}
 \end{theorem}
 
-The theorem records the two-dimensional quadratic solution before using the model-implied restriction \(E=0\). Under the exact RCT-valid pseudo-outcome model, the population solution therefore specializes to the axis formulas below; retaining a nonzero interaction remains relevant for the realized empirical tuning quadratic.
+Theorem~\ref{thm:joint-oracle} locates the joint minimum of the two-coefficient variance quadratic. Corollary~\ref{cor:joint-oracle-variance} answers the distinct comparison question: it evaluates the quadratic at that minimum and quantifies the improvement relative to the RCT-only origin \(\beta=0\). The general interaction \(E\) is retained here because its empirical analogue \(\widehat E\) need not vanish, even though the exact population model later implies \(E=0\).
 
-Here \(\mathbf H_{\mathrm{ATE}}\) is singular when \(\det(\mathbf H_{\mathrm{ATE}})=AB-E^2=0\), in which case the ordinary inverse \(\mathbf H_{\mathrm{ATE}}^{-1}\) does not exist. Its null space is \(\operatorname{Null}(\mathbf H_{\mathrm{ATE}})=\{v\in\mathbb R^2:\mathbf H_{\mathrm{ATE}}v=0\}\), and \(\mathbf H_{\mathrm{ATE}}^+\) denotes the Moore--Penrose pseudoinverse.
-
-The unrestricted singular formula is well-defined because a variance quadratic is bounded below. This boundedness forces the compatibility condition \(\boldsymbol\ell\in\operatorname{Range}(\mathbf H_{\mathrm{ATE}})\). The term \(-\mathbf H_{\mathrm{ATE}}^+\boldsymbol\ell\) is one minimum-norm minimizer, and adding any vector in \(\operatorname{Null}(\mathbf H_{\mathrm{ATE}})\) moves along a direction in which the variance is flat. A nonempty prespecified compact feasible set guarantees that the continuous quadratic attains a constrained minimum even when this minimum is not unique.
-A prespecified compact feasible set is a nonempty, closed, and bounded subset of \(\mathbb R^2\) fixed before viewing the tuning outcomes; the implementation below uses the rectangular coefficient box \(\mathcal B_\beta=[L_\lambda,U_\lambda]\times[L_\omega,U_\omega]\).
+\begin{remark}[Singular or constrained curvature]
+If \(\mathbf H_{\mathrm{ATE}}\) is singular, an unpenalized joint minimum can
+lie along a flat set rather than at a unique point. The Moore--Penrose and
+null-space characterization, as well as existence and uniqueness results under
+coefficient constraints, are recorded in Appendix~\ref{app:proofs}. The ridge
+oracle remains unique for every \(\rho>0\). In implementation we minimize the
+continuous quadratic over a prespecified compact box, which guarantees at least
+one constrained solution.
+\end{remark}
 
 \begin{corollary}[Joint-oracle variance reduction]
 \label{cor:joint-oracle-variance}
-Let \(\sigma_0^2=\operatorname{Var}_R(Z_0)\) and \(\mathcal V_0=\sigma_0^2/n\) be the conditional variance at \((\lambda,\omega)=(0,0)\). If \(AB-E^2>0\), the unrestricted joint oracle has
+Let \(\sigma_0^2=\operatorname{Var}_R(Z_0)\) and \(\mathcal V_0=\sigma_0^2/n\) be the block-0 variance at \((\lambda,\omega)=(0,0)\). If \(AB-E^2>0\), the unrestricted joint oracle has
 \begin{align*}
 V_{\min}
 &=
@@ -148,33 +265,32 @@ V_{\min}
 \mathcal V_0-
 \frac1n\left(\frac{C^2}{A}+\frac{D^2}{B}\right).
 \end{align*}
-If \(\mathbf H_{\mathrm{ATE}}\) is singular, bounded-below compatibility gives
-\begin{align*}
-V_{\min}
-&=
-\mathcal V_0-\frac1n\boldsymbol\ell^\top\mathbf H_{\mathrm{ATE}}^+\boldsymbol\ell,
-\end{align*}
-with a strict reduction exactly when \(\boldsymbol\ell\neq0\). For a nonempty compact feasible set \(\mathcal B_\beta\) containing the origin, the constrained oracle is weakly no worse than \(\mathcal V_0\); the reduction is strict precisely when some \(\beta\in\mathcal B_\beta\) satisfies \(2\boldsymbol\ell^\top\beta+\beta^\top\mathbf H_{\mathrm{ATE}}\beta<0\).
 \end{corollary}
 
-For \(\rho>0\), a ridge-stabilized population coefficient is
-\begin{align}
-\beta_\rho^\star
-&=-(\mathbf H_{\mathrm{ATE}}+\rho I_2)^{-1}\boldsymbol\ell.
-\end{align}
-It minimizes the penalized quadratic
-\(2\boldsymbol\ell^\top\beta+\beta^\top\mathbf H_{\mathrm{ATE}}\beta+\rho\lVert\beta\rVert_2^2\).
-This is a penalized stability oracle, not the oracle for the unpenalized variance in
-Equation~\eqref{eq:ate-quadratic}.
-Here \(I_2\) is the \(2\times2\) identity matrix. Adding \(\rho I_2\) makes every curvature direction strictly positive, so \(\beta_\rho^\star\) is unique even when \(\mathbf H_{\mathrm{ATE}}\) is singular. The coefficient minimizes the variance quadratic plus the penalty \(\rho\lVert\beta\rVert_2^2\); it is therefore a penalized oracle rather than another expression for the unpenalized oracle.
-
-The conditional identity \(\mathbb E_R(\Delta\mid X)=0\) gives the exact population orthogonality
+Proposition~\ref{prop:pseudo-validity-active} applied to the two fixed endpoint regressions gives
+\begin{align*}
+\mathbb E_R(Z_1\mid X)
+&=\tau(X)
+=\mathbb E_R(Z_0\mid X),
+\\
+\mathbb E_R(\Delta\mid X)
+&=\mathbb E_R(Z_1-Z_0\mid X)=0.
+\end{align*}
+Because \(g(X)\) is a function of \(X\), iterated expectation then gives
+\begin{align*}
+E
+&=\mathbb E_R\left[
+\{g(X)-\mathbb E_Rg(X)\}\mathbb E_R(\Delta\mid X)
+\right]
+=0.
+\end{align*}
+Thus the exact population orthogonality is
 \begin{align}
 E
 &=\operatorname{Cov}_R\{\Delta,g(X)\}=0.
 \label{eq:ate-population-orthogonality}
 \end{align}
-The identity \(\mathbb E_R(\Delta\mid X)=0\) says that changing the outcome-regression blend through \(\lambda\) changes pseudo-outcome noise but not its conditional CATE target. Since \(g(X)\) is measurable with respect to \(X\), averaging the conditional mean-zero difference against \(g(X)\) yields \(E=0\). Thus the exact population variance has no \(\lambda\omega\) interaction, which motivates separate population-axis optimization.
+The equal conditional means show that changing the outcome-regression blend alters pseudo-outcome noise but not its conditional CATE target. Since \(E=0\), the interaction term \(-2E\lambda\omega\) in \(\mathcal J_{\mathrm{ATE}}(\beta)\) vanishes and the exact population optimization separates by coordinate.
 It also gives \(D=\operatorname{Cov}_R\{\tau(X),g(X)\}\). When \(A,B>0\), the population oracle therefore separates:
 \begin{align}
 \lambda^\star
@@ -201,32 +317,34 @@ For a coupled constraint or a nonzero interaction, the original quadratic must b
 
 \subsection{Estimable honest algorithm}
 
-More explicitly, let the tuning-block sizes be \(m_R,m_O\geq2\). For \(S\in\{R,O\}\) and \(a\in\{1,2\}\), define
+More explicitly, let \(m_S\triangleq n_S^2\geq2\) be the size of tuning
+block \(D_S^2\). For \(S\in\{R,O\}\) and \(a\in\{1,2\}\), define
 \begin{align*}
-\overline h_{a,S,\mathrm{tu}}
+\overline h_{a,S,2}
 &=
-\frac1{m_S}\sum_{k=1}^{m_S}h_a(V_{S,k}),
+\frac1{m_S}\sum_{k=1}^{m_S}h_a(V_{S,k}^2),
 \\
-s_{S,\mathrm{tu}}(h_1,h_2)
+s_{S,2}(h_1,h_2)
 &=
 \frac1{m_S-1}
 \sum_{k=1}^{m_S}
-\{h_1(V_{S,k})-\overline h_{1,S,\mathrm{tu}}\}
-\{h_2(V_{S,k})-\overline h_{2,S,\mathrm{tu}}\}.
+\{h_1(V_{S,k}^2)-\overline h_{1,S,2}\}
+\{h_2(V_{S,k}^2)-\overline h_{2,S,2}\}.
 \end{align*}
-The factor \(n/N\) below refers to the final evaluation sizes whose variance is being optimized.
+The factor \(n/N\) below refers to the block-0 sizes whose variance is being
+optimized.
 
-Let \(s_R(h_1,h_2)\) and \(s_O(h_1,h_2)\) denote unbiased sample covariances on independent tuning blocks, with \(s_S^2(h)=s_S(h,h)\). Compute
+Using the independent tuning blocks, compute
 \begin{align}
-\widehat A&=s_R^2(\Delta),
+\widehat A&=s_{R,2}(\Delta,\Delta),
 &
-\widehat B&=s_R^2(g)+\frac nN s_O^2(rg),
+\widehat B&=s_{R,2}(g,g)+\frac nN s_{O,2}(rg,rg),
 \\
-\widehat C&=s_R(Z_0,\Delta),
+\widehat C&=s_{R,2}(Z_0,\Delta),
 &
-\widehat D&=s_R(Z_0,g),
+\widehat D&=s_{R,2}(Z_0,g),
 &
-\widehat E&=s_R(\Delta,g).
+\widehat E&=s_{R,2}(\Delta,g).
 \end{align}
 Define
 \begin{align*}
@@ -287,21 +405,20 @@ The population-orthogonality plug-in imposes \(\widehat E=0\) and uses \((-\wide
 
 Each sample covariance is unbiased for its corresponding fixed-score population moment, but the ratios defining \(\widehat\lambda\) and \(\widehat\omega\) are nonlinear and are not generally unbiased for the population oracle coefficients. The thresholds and feasible box control instability; they do not turn these selected coefficients into finite-sample oracle estimates.
 
-The displayed analytic ratios apply only when their corresponding denominator thresholds pass. Imposing \(\widehat E=0\) does not assert that the realized tuning covariance vanishes. It applies the proven population restriction \(E=0\) before solving the sample problem. Retaining \(\widehat E=s_R(\Delta,g)\) instead minimizes the realized empirical quadratic, whose interaction term is generally nonzero because of tuning-sample noise.
+The displayed analytic ratios apply only when their corresponding denominator thresholds pass. Imposing \(\widehat E=0\) does not assert that the realized tuning covariance vanishes. It applies the proven population restriction \(E=0\) before solving the sample problem. Retaining \(\widehat E=s_{R,2}(\Delta,g)\) instead minimizes the realized empirical quadratic, whose interaction term is generally nonzero because of tuning-sample noise.
 
-Algorithm~\ref{alg:honest-ate} states the exact three-way implementation.
+Algorithm~\ref{alg:honest-ate} states the exact three-block implementation.
 
 \begin{algorithm}[H]
 \caption{Three-way honest ATE estimation}
 \label{alg:honest-ate}
 \DontPrintSemicolon
-\KwIn{Independent RCT and OBS samples; a prespecified feasible box and denominator thresholds.}
-\textbf{Split:} Divide each source into nuisance-training, coefficient-tuning, and final-evaluation blocks.\;
-\textbf{Fit:} Estimate \(\widehat\mu_R\), \(\widehat\mu_O\), \(g\), and, if required, a transport model without using any tuning or evaluation observations. The exact theorem uses the true ratio \(r\); replacing it by \(\widehat r\) defines the approximate regime described below.\;
-\textbf{Tune:} On the independent tuning blocks, compute the five moments, apply the prespecified denominator thresholds, and solve the box-constrained quadratic. Use \((0,0)\) as the declared fallback when the moments are unstable.\;
-\textbf{Evaluate:} Hold every fitted object fixed and evaluate Equation~\eqref{eq:ate-estimator} on the untouched final blocks.\;
+\KwIn{Independent blocks \(D_S^0,D_S^1,D_S^2\), \(S\in\{R,O\}\); a prespecified feasible box and denominator thresholds.}
+\textbf{Fit on block 1:} Estimate \(\widehat\mu_R\), \(\widehat\mu_O\), \(g\), and, if required, a transport model using only \(D_R^1,D_O^1\). The exact theorem uses the true ratio \(r\); replacing it by \(\widehat r\) defines the approximate regime described below.\;
+\textbf{Tune on block 2:} Compute the five moments on \(D_R^2,D_O^2\), apply the prespecified denominator thresholds, and solve the box-constrained quadratic. Use \((0,0)\) as the declared fallback when the moments are unstable.\;
+\textbf{Evaluate on block 0:} Hold every fitted object fixed and evaluate Equation~\eqref{eq:ate-estimator} on \(D_R^0,D_O^0\).\;
 \textbf{Infer:} Set \(\psi_R=Z_{\widehat\lambda}-\widehat\omega g\) and \(\psi_O=\widehat\omega rg\), and report
-\(\widehat V=s_R^2(\psi_R)/n+s_O^2(\psi_O)/N\). Under conditional Lindeberg conditions, bounded conditional \((2+\delta)\) moments, and a nondegenerate variance limit, use
+\(\widehat V=s_{R,0}^2(\psi_R)/n+s_{O,0}^2(\psi_O)/N\). Under conditional Lindeberg conditions, bounded conditional \((2+\delta)\) moments, and a nondegenerate variance limit, use
 \(\widehat\theta_r\pm z_{1-\alpha/2}\sqrt{\widehat V}\).\;
 \KwOut{\(\widehat\theta_r\), \(\widehat V\), and the corresponding Wald interval.}
 \end{algorithm}
@@ -310,42 +427,55 @@ For explicit evaluation notation, define
 \begin{align*}
 \psi_{R,i}
 &=
-Z_{\widehat\lambda}(V_i^R)-\widehat\omega g(X_i^R),
+Z_{\widehat\lambda}(V_{R,i}^0)-\widehat\omega g(X_{R,i}^0),
 &
 \psi_{O,j}
 &=
-\widehat\omega r(X_j^O)g(X_j^O),
+\widehat\omega r(X_{O,j}^0)g(X_{O,j}^0),
 \end{align*}
-and let \(s_{R,\mathrm{ev}}^2\) and \(s_{O,\mathrm{ev}}^2\) be the usual sample variances with denominators \(n-1\) and \(N-1\), respectively. For \(n,N\geq2\), the fixed-selected-coefficient variance estimator and Wald interval are
+and let \(s_{R,0}^2\) and \(s_{O,0}^2\) be the usual block-0 sample
+variances with denominators \(n-1\) and \(N-1\), respectively. For
+\(n,N\geq2\), the fixed-selected-coefficient variance estimator and Wald
+interval are
 \begin{align*}
 \widehat V
 &=
-\frac{s_{R,\mathrm{ev}}^2(\psi_R)}{n}
+\frac{s_{R,0}^2(\psi_R)}{n}
 +
-\frac{s_{O,\mathrm{ev}}^2(\psi_O)}{N},
+\frac{s_{O,0}^2(\psi_O)}{N},
 \\
 \widehat\theta_r
 &\mathbin{\pm}
 z_{1-\alpha/2}\sqrt{\widehat V}.
 \end{align*}
-Conditional unbiasedness of \(\widehat V\) follows from evaluation-block independence. Wald coverage additionally requires the stated conditional Lindeberg, moment, and nondegeneracy conditions; it is not a finite-sample coverage statement.
+For every fixed realization of blocks 1 and 2, unbiasedness of \(\widehat V\)
+follows from block-0 independence. Wald coverage additionally requires the
+stated Lindeberg, moment, and nondegeneracy conditions; it is not a finite-sample
+coverage statement.
 Here \(z_{1-\alpha/2}\) is the \((1-\alpha/2)\)-quantile of the standard normal distribution; for \(\alpha=0.05\), it is approximately \(1.96\).
 
 \begin{proposition}[Exact variance estimation after honest selection]
 \label{prop:ate-honest-variance-active}
-Under Theorem~\ref{thm:ate-variance}, let \((\widehat\lambda,\widehat\omega)\) be \(\mathcal F\)-measurable and suppose \(n,N\geq2\). Conditional on \(\mathcal F\), the selected estimator is unbiased and
+Under Theorem~\ref{thm:ate-variance}, let \((\widehat\lambda,\widehat\omega)\)
+be selected using only blocks 1 and 2 and then held fixed, and suppose
+\(n,N\geq2\). For every fixed realization of blocks 1 and 2, the selected
+estimator is unbiased over block 0 and
 \begin{align*}
-\mathbb E(\widehat V\mid\mathcal F)
+\mathbb E(\widehat V)
 &=
-\operatorname{Var}\{\widehat\theta_r(\widehat\lambda,\widehat\omega)\mid\mathcal F\}.
+\operatorname{Var}\{\widehat\theta_r(\widehat\lambda,\widehat\omega)\}.
 \end{align*}
 \end{proposition}
 
-\begin{theorem}[Conditional central limit theorem and Wald inference]
+\begin{theorem}[Final-sample central limit theorem and Wald inference]
 \label{thm:ate-honest-clt-active}
-In addition to Proposition~\ref{prop:ate-honest-variance-active}, suppose \(n,N\to\infty\), \(n/N\to\kappa\in[0,\infty)\), and for some \(\delta>0\) the centered RCT and OBS final-score arrays have uniformly bounded conditional \((2+\delta)\) moments. This moment assumption supplies the required conditional Lindeberg condition. Assume also that
+In addition to Proposition~\ref{prop:ate-honest-variance-active}, suppose
+\(n,N\to\infty\), \(n/N\to\kappa\in[0,\infty)\), and for some \(\delta>0\)
+the centered RCT and OBS block-0 score arrays have uniformly bounded
+\((2+\delta)\) moments after fixing blocks 1 and 2. This moment assumption
+supplies the required block-0 Lindeberg condition. Assume also that
 \begin{align*}
-n\operatorname{Var}\{\widehat\theta_r(\widehat\lambda,\widehat\omega)\mid\mathcal F\}
+n\operatorname{Var}\{\widehat\theta_r(\widehat\lambda,\widehat\omega)\}
 &\to\sigma^2\in(0,\infty)
 \end{align*}
 in probability. Then
@@ -361,10 +491,10 @@ With an estimated ratio \(\widehat r\), define
 h_n(X)
 &=\{\widehat r(X)-r(X)\}g(X).
 \end{align}
-The exact conditional drift is
+The exact block-0 drift is
 \begin{align}
-\omega b_{\mathcal F}
-&=
+\omega b_{\widehat r}
+&\triangleq
 \omega\mathbb E_O\{h_n(X)\}.
 \end{align}
 Honest splitting prevents evaluation leakage but does not remove this drift. A direct
@@ -382,7 +512,12 @@ preceding CLT assumptions. Otherwise the ratio learner's influence-function
 contribution, the OBS empirical-process term, and their covariances must be included.
 
 \paragraph{Estimating the density ratio.}
-All three constructions below use only a ratio-training block and are held fixed before coefficient tuning and final evaluation. Let \(\mathbb P_{R,\mathrm{rat}}\) and \(\mathbb P_{O,\mathrm{rat}}\) denote empirical averages on its RCT and OBS parts. First, pool the ratio-training covariates and let \(S=1\) indicate an RCT observation and \(S=0\) an OBS observation. With \(\pi=P(S=1)\) and \(s(x)=P(S=1\mid X=x)\), Bayes' rule gives
+All three constructions below use only block 1 and are held fixed before
+coefficient tuning on block 2 and evaluation on block 0. Let
+\(\mathbb P_{R,1}\) and \(\mathbb P_{O,1}\) denote the corresponding empirical
+averages. First, pool the block-1 covariates and let \(S=1\) indicate an RCT
+observation and \(S=0\) an OBS observation. With \(\pi=P(S=1)\) and
+\(s(x)=P(S=1\mid X=x)\), Bayes' rule gives
 \begin{align*}
 r(x)
 &=
@@ -393,17 +528,21 @@ r(x)
 \frac{1-\widehat\pi}{\widehat\pi}
 \frac{\widehat s(x)}{1-\widehat s(x)}.
 \end{align*}
-For an unweighted pooled classifier with ratio-training sizes \(m_R^{\mathrm{rat}}\) and \(m_O^{\mathrm{rat}}\), \(\widehat\pi=m_R^{\mathrm{rat}}/(m_R^{\mathrm{rat}}+m_O^{\mathrm{rat}})\). Class weighting or resampling requires replacing this factor by the effective training prior. The odds representation also requires overlap, \(0<s(X)<1\), on the RCT covariate support. Probability clipping stabilizes the estimate but changes it from the exact density ratio.
+For an unweighted pooled classifier,
+\(\widehat\pi=n_R^1/(n_R^1+n_O^1)\). Class weighting or resampling requires
+replacing this factor by the effective training prior. The odds representation
+also requires overlap, \(0<s(X)<1\), on the RCT covariate support. Probability
+clipping stabilizes the estimate but changes it from the exact density ratio.
 
 A Riesz construction estimates the transport functional directly \citep{chernozhukov2021riesz,chernozhukov2022autodml}. Let \(\phi:\mathcal X\to\mathbb R^p\) be a fixed feature map and define
 \begin{align*}
 \widehat M_O
 &=
-\mathbb P_{O,\mathrm{rat}}\{\phi(X)\phi(X)^\top\},
+\mathbb P_{O,1}\{\phi(X)\phi(X)^\top\},
 &
 \widehat b_R
 &=
-\mathbb P_{R,\mathrm{rat}}\{\phi(X)\}.
+\mathbb P_{R,1}\{\phi(X)\}.
 \end{align*}
 For \(\rho>0\), the empirical Riesz quadratic and its closed-form solution are
 \begin{align*}
@@ -429,15 +568,15 @@ A nonnegative automatic-balancing alternative starts with an out-of-sample-evalu
 \widehat\eta_{\mathrm{bal}}
 &\in
 \operatorname*{arg\,min}_{\eta:\,
-\mathbb P_{O,\mathrm{rat}}w_\eta=1}
+\mathbb P_{O,1}w_\eta=1}
 \left[
 \left\|
-\mathbb P_{O,\mathrm{rat}}\{w_\eta(X)\phi(X)\}
+\mathbb P_{O,1}\{w_\eta(X)\phi(X)\}
 -
-\mathbb P_{R,\mathrm{rat}}\{\phi(X)\}
+\mathbb P_{R,1}\{\phi(X)\}
 \right\|_W^2
 +
-\gamma\mathbb P_{O,\mathrm{rat}}\{w_\eta(X)^2\}
+\gamma\mathbb P_{O,1}\{w_\eta(X)^2\}
 \right],
 \\
 \widehat r_{\mathrm{bal}}(x)
@@ -448,7 +587,7 @@ Including \(g\) among the coordinates of \(\phi\) directly targets the transport
 
 These constructions do not automatically inherit the exact-r theorem. For any fixed evaluation-independent weight function \(w\), replacing \(r\) by \(w\) gives
 \begin{align*}
-\mathbb E\{\widehat\theta_w(\lambda,\omega)\mid\mathcal F\}
+\mathbb E\{\widehat\theta_w(\lambda,\omega)\}
 &=
 \theta
 +
@@ -459,10 +598,22 @@ These constructions do not automatically inherit the exact-r theorem. For any fi
 +
 \omega P_O\{(w-r)g\}.
 \end{align*}
-Thus exact conditional unbiasedness holds for \(w=r\), or more generally for a fixed \(w\) satisfying the exact population balance condition \(P_O(wg)=P_R(g)\). Classifier, restricted Riesz, and automatic-balancing estimates are otherwise in the estimated-ratio regime governed by the drift and rate conditions above. The Auto-DML citation motivates the Riesz learning criterion; it does not by itself make the present score Neyman-orthogonal to ratio error or supply the ratio learner's first-order variance contribution.
+Thus exact block-0 unbiasedness holds for \(w=r\), or more generally for a
+fixed \(w\) satisfying the exact population balance condition
+\(P_O(wg)=P_R(g)\). Classifier, restricted Riesz, and automatic-balancing
+estimates are otherwise in the estimated-ratio regime governed by the drift and
+rate conditions above. The Auto-DML citation motivates the Riesz learning
+criterion; it does not by itself make the present score Neyman-orthogonal to
+ratio error or supply the ratio learner's first-order variance contribution.
 
 \paragraph{Nested outer cross-fitting.}
-To reuse observations without scoring any observation with a nuisance fit trained on its own outcome, prespecify paired outer folds in both sources, or randomize the folds independently and include that randomness in the conditioning field. Within each outer complement, use inner splits to fit nuisances and select \((\widehat\lambda_k,\widehat\omega_k)\); then score only the untouched paired folds. With fixed nonnegative weights \(a_k\) summing to one, define
+As an alternative to the fixed three-block construction, observations can be
+reused without scoring any observation with a nuisance fit trained on its own
+outcome. Prespecify paired outer folds in both sources, or randomize the folds
+independently and hold the realized assignments fixed. Within each outer
+complement, use inner splits to fit nuisances and select
+\((\widehat\lambda_k,\widehat\omega_k)\); then score only the untouched paired
+folds. With fixed nonnegative weights \(a_k\) summing to one, define
 \begin{align*}
 \widehat\theta_k
 &=

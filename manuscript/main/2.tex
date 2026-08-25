@@ -4,62 +4,70 @@
 \subsection{Prediction-powered inference and PPI++}
 \label{sec:ppi-background}
 
-Let \((X_i,Y_i)\), \(i=1,\ldots,n\), be labeled pairs and let \(\widetilde X_j\), \(j=1,\ldots,N\), be unlabeled covariates. Suppose a fixed predictor supplies \(f(X_i)\) and \(f(\widetilde X_j)\). For a mean target, the elementary prediction-powered decomposition is
+Let \((X_i,Y_i)\), \(i=1,\ldots,n\), be labeled pairs and let \(\widetilde X_j\), \(j=1,\ldots,N\), be unlabeled covariates. Suppose a fixed predictor supplies \(f(X_i)\) and \(f(\widetilde X_j)\). For \(\omega\in\mathbb R\), the PPI++ estimator \citep{angelopoulos2024ppipp} of the labeled-population mean is
 \begin{align}
-\widehat\mu_{\mathrm{PPI}}
-&=
+\widehat\mu_{\mathrm{PPI++}}(\omega)
+&\triangleq
+\frac1n\sum_{i=1}^nY_i
++\omega\left\{
 \frac1N\sum_{j=1}^N f(\widetilde X_j)
-+
-\frac1n\sum_{i=1}^n\{Y_i-f(X_i)\}.
+-\frac1n\sum_{i=1}^n f(X_i)
+\right\}.
 \end{align}
-When labeled and unlabeled covariates share a marginal law and the two samples are independent, the prediction term and residual correction sum to the labeled-population mean for every fixed predictor \(f\). PPI++ generalizes this idea by tuning the strength of the prediction contribution. In our construction, \(\omega\) is the PPI-style scale on a mean-zero prediction control variate. By contrast, \(\lambda\) blends trial and observational outcome regressions inside an RCT-valid score; it is not the scale on the external prediction mean.
+When labeled and unlabeled covariates share a marginal law and the two samples are independent, the expression in braces has mean zero for every fixed predictor \(f\). PPI++ selects \(\omega\) to control how strongly this mean-zero prediction difference enters the estimator. Our construction retains this control-variate role and introduces a separate outcome-regression blending coefficient only after defining the RCT-valid score.
 
 \subsection{RCT--OBS problem setting and notation}
 \label{sec:rct-obs-setting}
 
-We observe independent samples
+For each source \(S\in\{R,O\}\), we observe three mutually independent
+sample blocks
 \begin{align}
-D_R
-&=\{V_i^R=(X_i^R,A_i^R,Y_i^R):i=1,\ldots,n\}\sim P_R^{\otimes n},
+D_S^0
+&\triangleq
+\{V_{S,i}^0=(X_{S,i}^0,A_{S,i}^0,Y_{S,i}^0):i=1,\ldots,n_S^0\}
+\sim P_S^{\otimes n_S^0},
 \\
-D_O
-&=\{V_j^O=(X_j^O,A_j^O,Y_j^O):j=1,\ldots,N\}\sim P_O^{\otimes N},
+D_S^1
+&\triangleq
+\{V_{S,i}^1=(X_{S,i}^1,A_{S,i}^1,Y_{S,i}^1):i=1,\ldots,n_S^1\}
+\sim P_S^{\otimes n_S^1},
+\\
+D_S^2
+&\triangleq
+\{V_{S,i}^2=(X_{S,i}^2,A_{S,i}^2,Y_{S,i}^2):i=1,\ldots,n_S^2\}
+\sim P_S^{\otimes n_S^2}.
+\label{eq:three-block-samples}
 \end{align}
-where \(X\) is a covariate vector, \(A\in\{0,1\}\) is treatment, and \(Y\) is the observed outcome. For a function \(h\), write \(\mathbb P_{R,n}h=n^{-1}\sum_i h(V_i^R)\) and \(\mathbb P_{O,N}h=N^{-1}\sum_j h(V_j^O)\).
-
-For the exact adaptive results, these displayed samples are the final-evaluation blocks. Separate RCT and OBS blocks \(D_R^{\mathrm{tr}},D_O^{\mathrm{tr}}\) train nuisance and ratio functions, and separate blocks \(D_R^{\mathrm{tu}},D_O^{\mathrm{tu}}\) select coefficients. Define the pre-evaluation sigma-field
-\begin{align}
-\mathcal F
-&=
-\sigma\!\left(
-D_R^{\mathrm{tr}},D_O^{\mathrm{tr}},
-D_R^{\mathrm{tu}},D_O^{\mathrm{tu}},
-\text{prespecified split randomness}
-\right).
-\label{eq:pre-evaluation-field}
-\end{align}
-The split assignments are fixed in advance or independently randomized, with their randomness included in \(\mathcal F\). Conditional on \(\mathcal F\), every fitted nuisance, ratio, basis, and selected coefficient is fixed and
-\begin{align}
-\mathcal L(D_R,D_O\mid\mathcal F)
-&=
-P_R^{\otimes n}\otimes P_O^{\otimes N}.
-\label{eq:evaluation-product-law}
-\end{align}
-For fixed-coefficient statements the tuning blocks may be empty.
+where \(X\) takes values in the covariate space \(\mathcal X\),
+\(A\in\{0,1\}\) is treatment, and \(Y\) is the observed outcome.
+All six blocks are mutually independent. Block \(D_S^0\) is reserved for final
+estimation, block \(D_S^1\) is used for nuisance and density-ratio fitting, and
+block \(D_S^2\) is used for coefficient tuning or honest validation. Set
+\(n\triangleq n_R^0\) and \(N\triangleq n_O^0\), and define
+\(\mathbb P_{R,n}h\triangleq n^{-1}\sum_i h(V_{R,i}^0)\) and
+\(\mathbb P_{O,N}h\triangleq N^{-1}\sum_j h(V_{O,j}^0)\). Throughout the
+exact results, \(D_R^1,D_O^1,D_R^2,D_O^2\), the split assignments, and every
+learned object are held fixed before \(D_R^0,D_O^0\) are evaluated. Unless
+stated otherwise, expectations and variances are therefore over block 0 with
+the block-1 and block-2 objects fixed. Every displayed moment is finite;
+square-integrability and stronger moment conditions are stated locally when
+variance estimation or Wald inference requires them.
 
 Let \(Y(1)\) and \(Y(0)\) denote potential outcomes. The RCT-population conditional and average treatment effects are
 \begin{align}
 \tau(x)
-&=\mathbb E_R\{Y(1)-Y(0)\mid X=x\},
+&\triangleq\mathbb E_R\{Y(1)-Y(0)\mid X=x\},
 &
 \theta
-&=\mathbb E_R\{\tau(X)\}.
+&\triangleq\mathbb E_R\{\tau(X)\}.
 \end{align}
 
 \begin{assumption}[Trial identification]
 \label{ass:trial}
-Consistency holds, \(\{Y(0),Y(1)\}\perp A\mid X\) under \(P_R\), and the known trial propensity \(e(x)=P_R(A=1\mid X=x)\) satisfies \(\epsilon<e(X)<1-\epsilon\) almost surely for a constant \(\epsilon>0\).
+Consistency holds, \(\{Y(0),Y(1)\}\perp A\mid X\) under \(P_R\), and the known trial propensity \(e(x)\triangleq P_R(A=1\mid X=x)\) satisfies \(\epsilon<e(X)<1-\epsilon\) almost surely for a constant \(\epsilon>0\).
 \end{assumption}
+
+We study both the common-covariate regime \(P_R^X=P_O^X\), formalized in Assumption~\ref{ass:common-marginal}, and the more general covariate-shift regime \(P_R^X\neq P_O^X\), formalized in Assumption~\ref{ass:exact-transport}.
 
 \begin{assumption}[Common covariate marginal]
 \label{ass:common-marginal}
@@ -72,7 +80,7 @@ The trial and observational covariates have the same marginal law, \(P_R^X=P_O^X
 Under covariate shift, \(P_R^X\ll P_O^X\) and the exact density ratio
 \begin{align}
 r(x)
-&=\frac{dP_R^X}{dP_O^X}(x),
+&\triangleq\frac{dP_R^X}{dP_O^X}(x),
 &
 \mathbb E_O\{r(X)h(X)\}
 &=\mathbb E_R\{h(X)\}
@@ -80,46 +88,99 @@ r(x)
 is available for every required integrable function \(h\). The common-marginal model is the special case \(r=1\).
 \end{assumption}
 
-\begin{assumption}[Honest evaluation and moments]
-\label{ass:honest-evaluation}
-Every fitted object used in an exact identity is \(\mathcal F\)-measurable, the final observations satisfy Equation~\eqref{eq:evaluation-product-law}, and every displayed conditional moment is finite almost surely. Square-integrability and stronger moment conditions are stated locally when variance estimation or Wald inference requires them.
-\end{assumption}
+Assumptions~\ref{ass:common-marginal} and \ref{ass:exact-transport} describe alternative covariate regimes, not cumulative restrictions. Under Assumption~\ref{ass:common-marginal}, no transport weighting is needed and we set \(r\triangleq1\). When the covariate marginals differ, Assumption~\ref{ass:exact-transport} is needed to convert OBS covariate expectations into expectations under the RCT population. Neither regime assumes that the OBS treatment contrast is causal.
 
-The exact-r results use Assumption~\ref{ass:exact-transport}; their common-marginal corollaries use Assumption~\ref{ass:common-marginal} and set \(r=1\). Neither version assumes that the OBS treatment contrast is causal.
-
-Let \(\widehat\mu_R=(\widehat\mu_{R,0},\widehat\mu_{R,1})\) and \(\widehat\mu_O=(\widehat\mu_{O,0},\widehat\mu_{O,1})\) be outcome regressions fitted on the two sources. Define
+For \(S\in\{R,O\}\) and \(a\in\{0,1\}\), define the population outcome-regression target \(\mu_{S,a}:\mathcal X\to\mathbb R\) by
+\begin{align*}
+\mu_{S,a}(x)
+&\triangleq
+\mathbb E_S[Y\mid X=x,A=a].
+\end{align*}
+For each \(S\in\{R,O\}\) and \(a\in\{0,1\}\), let
+\(\widehat\mu_{S,a}:\mathcal X\to\mathbb R\) denote a
+fixed pre-evaluation predictor of the corresponding
+population regression \(\mu_{S,a}\).  The RCT predictor is trained only on
+\(D_R^1\), and the OBS predictor is trained only on
+\(D_O^1\). No correctness assumption is imposed on either fitted
+predictor. Define
+\begin{align*}
+\widehat\mu_R
+&\triangleq
+(\widehat\mu_{R,0},\widehat\mu_{R,1}),
+&
+\widehat\mu_O
+&\triangleq
+(\widehat\mu_{O,0},\widehat\mu_{O,1}).
+\end{align*}
+Then define the observational treatment-effect prediction
 \begin{align}
 g(x)
-&=\widehat\mu_{O,1}(x)-\widehat\mu_{O,0}(x),
-\\
+&\triangleq\widehat\mu_{O,1}(x)-\widehat\mu_{O,0}(x),
+\label{eq:obs-effect-prediction}
+\end{align}
+
+\begin{definition}[RCT-valid AIPW score]
+\label{def:rct-aipw-score}
+Let \(q\triangleq(q_0,q_1)\) be a fixed pair of measurable functions from
+\(\mathcal X\) to \(\mathbb R\). Define
+\begin{align}
 \varphi(V;q)
-&=q_1(X)-q_0(X)
+&\triangleq q_1(X)-q_0(X)
 +\frac{A}{e(X)}\{Y-q_1(X)\}
 -\frac{1-A}{1-e(X)}\{Y-q_0(X)\}.
+\label{eq:aipw-score}
 \end{align}
+\end{definition}
 \begin{proposition}[RCT-validity for an arbitrary outcome regression]
 \label{prop:pseudo-validity-active}
 \label{prop:pseudo-validity}
-Under Assumptions~\ref{ass:trial} and \ref{ass:honest-evaluation}, every fixed \(q\) with finite first moments satisfies
+Under Assumption~\ref{ass:trial} and the three-block convention above, every fixed \(q\) with finite first moments satisfies
 \begin{align}
 \mathbb E_R\{\varphi(V;q)\mid X\}
 &=\tau(X).
 \label{eq:pseudo-valid}
 \end{align}
 \end{proposition}
-For \(\lambda\in\mathbb R\), set
+\begin{definition}[Fusion score]
+\label{def:fusion-score}
+For \(\lambda\in\mathbb R\), define
 \begin{align}
 \widehat\mu_\lambda
-&=(1-\lambda)\widehat\mu_R+\lambda\widehat\mu_O,
+&\triangleq(1-\lambda)\widehat\mu_R+\lambda\widehat\mu_O,
 &
 Z_\lambda
-&=\varphi(V;\widehat\mu_\lambda)
+&\triangleq\varphi(V;\widehat\mu_\lambda)
 =Z_0+\lambda\Delta,
 &
 \Delta
-&=Z_1-Z_0.
+&\triangleq Z_1-Z_0.
 \end{align}
-Equation~\eqref{eq:pseudo-valid} implies \(\mathbb E_R(Z_\lambda\mid X)=\tau(X)\) and \(\mathbb E_R(\Delta\mid X)=0\). The observational contrast \(g\) is used only as a prediction and need not equal \(\tau\).
+\end{definition}
+Equation~\eqref{eq:pseudo-valid} implies
+\(\mathbb E_R(Z_\lambda\mid X)=\tau(X)\) and
+\(\mathbb E_R(\Delta\mid X)=0\). The observational contrast \(g\)
+is used only as a prediction and need not equal \(\tau\).
+
+\begin{definition}[RCT-only AIPW estimator]
+\label{def:rct-only-aipw}
+Let \(\mu_R\triangleq(\mu_{R,0},\mu_{R,1})\). Setting \(q=\mu_R\) in
+Definition~\ref{def:rct-aipw-score} gives the oracle RCT AIPW score. Its
+block-1 fitted counterpart is \(Z_0=\varphi(V;\widehat\mu_R)\). Define the
+RCT-only AIPW estimator on block 0 by
+\begin{align*}
+\widehat\theta_{\mathrm{AIPW},R}
+&\triangleq
+\mathbb P_{R,n}\varphi(V;\widehat\mu_R)
+=\mathbb P_{R,n}Z_0.
+\end{align*}
+\end{definition}
+
+\begin{corollary}[RCT-only AIPW recovery]
+\label{cor:rct-only-aipw}
+Under Assumption~\ref{ass:trial} and the three-block convention, holding blocks
+1 and 2 fixed, \(\widehat\theta_{\mathrm{AIPW},R}\) is unbiased for \(\theta\)
+over the independent RCT block \(D_R^0\).
+\end{corollary}
 
 \subsection{Existing data-fusion estimators}
 \label{sec:existing-fusion}

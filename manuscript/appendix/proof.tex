@@ -1,10 +1,15 @@
 \section{Proof Details}
 \label{app:proofs}
 
+Unless stated otherwise, all proofs fix blocks \(D_R^1,D_O^1,D_R^2,D_O^2\)
+and every nuisance, ratio, candidate function, and coefficient learned from
+them. The remaining expectations are over the independent RCT and OBS block-0
+observations.
+
 \subsection{Conditional validity of the trial pseudo-outcome}
 
-Fix \(q=(q_0,q_1)\) and condition on \(X\).  Under trial randomization and
-consistency,
+Fix \(q=(q_0,q_1)\) after block 1 and condition on \(X\). Under trial
+randomization, consistency, and independence of block 0,
 \begin{align}
 \mathbb E_R\left[\frac{A}{e(X)}\{Y-q_1(X)\}\mid X\right]
 &=\mathbb E_R\{Y(1)-q_1(X)\mid X\},
@@ -21,8 +26,16 @@ two fitted regressions and yields
 &
 \mathbb E_R(\Delta\mid X)&=0.
 \end{align}
-These statements are conditional on the pre-evaluation sigma-field so that the
-fitted functions are fixed.
+
+\subsection{Proof of Corollary~\ref{cor:rct-only-aipw}}
+
+Apply Equation~\eqref{eq:pseudo-valid} with the block-1 fitted pair
+\(q=\widehat\mu_R\), average over the independent block \(D_R^0\), and use
+iterated expectation. This gives
+\begin{align*}
+\mathbb E\{\widehat\theta_{\mathrm{AIPW},R}\}
+&=\mathbb E_R\{\tau(X)\}=\theta.
+\end{align*}
 
 \subsection{Proof of Theorem~\ref{thm:ate-variance}}
 
@@ -30,7 +43,7 @@ Using \(\mathbb E_R(Z_\lambda)=\theta\) and exact transport,
 \begin{align}
 \mathbb E_O\{r(X)g(X)\}=\mathbb E_R\{g(X)\},
 \end{align}
-the conditional mean of Equation~\eqref{eq:ate-estimator} is \(\theta\).  Rewrite
+the block-0 mean of Equation~\eqref{eq:ate-estimator} is \(\theta\). Rewrite
 the centered estimator as
 \begin{align}
 \widehat\theta_r(\lambda,\omega)-\theta
@@ -38,12 +51,13 @@ the centered estimator as
 (\mathbb P_{R,n}-P_R)\{Z_\lambda-\omega g\}
 +(\mathbb P_{O,N}-P_O)\{\omega rg\}.
 \end{align}
-The two summands are independent conditional on \(\mathcal F\).  The variance of
+The two summands are independent because \(D_R^0\) and \(D_O^0\) are
+independent. The variance of
 an empirical mean of \(m\) independent observations is the population variance
 divided by \(m\), which proves Equation~\eqref{eq:ate-variance}.  Unbiased sample
 variances on the two independent evaluation blocks therefore give the displayed
-fixed-selected-coefficient variance estimator in Section~\ref{sec:ate}.  Coverage
-of its Wald interval additionally uses the stated conditional Lindeberg and
+fixed-selected-coefficient variance estimator in Section~\ref{sec:ate}. Coverage
+of its Wald interval additionally uses the stated block-0 Lindeberg and
 moment assumptions; variance unbiasedness alone is not a central limit theorem.
 
 Because \(g(X)\) is fixed given \(X\),
@@ -56,7 +70,7 @@ Because \(g(X)\) is fixed given \(X\),
 \end{align*}
 Applying the law of total variance proves Equation~\eqref{eq:ate-within-between}.
 
-\subsection{Proof of Theorem~\ref{thm:joint-oracle}}
+\subsection{Proof of Proposition~\ref{prop:ate-variance-quadratic}}
 
 Expand the first variance in Equation~\eqref{eq:ate-variance} using
 \(Z_\lambda=Z_0+\lambda\Delta\).  After collecting terms and multiplying by
@@ -64,19 +78,54 @@ Expand the first variance in Equation~\eqref{eq:ate-variance} using
 \begin{align}
 2C\lambda-2D\omega+A\lambda^2-2E\lambda\omega+B\omega^2,
 \end{align}
-which is \(2\boldsymbol\ell^\top\beta+\beta^\top\mathbf H_{\mathrm{ATE}}\beta\).  The representation
+which is \(\mathcal J_{\mathrm{ATE}}(\beta)\). This proves
+Equation~\eqref{eq:ate-quadratic}. The representation
 \begin{align}
 \begin{pmatrix}u&v\end{pmatrix}\mathbf H_{\mathrm{ATE}}\begin{pmatrix}u\\v\end{pmatrix}
 &=\operatorname{Var}_R(u\Delta-vg)
 +\frac nN v^2\operatorname{Var}_O(rg)
 \end{align}
-proves positive semidefiniteness.  If \(AB-E^2>0\), the first-order condition
-\(\mathbf H_{\mathrm{ATE}}\beta=-\boldsymbol\ell\) has the unique solution
-\begin{align}
-\lambda^\star&=\frac{ED-BC}{AB-E^2},
-&
-\omega^\star&=\frac{AD-EC}{AB-E^2}.
-\end{align}
+proves positive semidefiniteness.
+
+\subsection{Proof of Proposition~\ref{prop:ate-argmin-equivalence}}
+
+Equation~\eqref{eq:ate-quadratic} is the positive affine transformation
+\begin{align*}
+\operatorname{Var}\{\widehat\theta_r(\beta)\}
+&=\frac1n\operatorname{Var}_R(Z_0)
++\frac1n\mathcal J_{\mathrm{ATE}}(\beta),
+\end{align*}
+where \(n>0\). Adding a constant and multiplying by a positive scalar preserve
+the complete argmin set over every feasible set.
+
+\subsection{Proof of Theorem~\ref{thm:joint-oracle}}
+
+If \(AB-E^2>0\), \(\mathbf H_{\mathrm{ATE}}\) is positive definite. The
+first-order condition for \(\mathcal J_{\mathrm{ATE}}\) is
+\(\mathbf H_{\mathrm{ATE}}\beta=-\boldsymbol\ell\), which has the unique
+solution
+\begin{align*}
+\beta_{\mathrm{joint}}^\star
+&=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell
+=
+\begin{pmatrix}
+(ED-BC)/(AB-E^2)\\
+(AD-EC)/(AB-E^2)
+\end{pmatrix}.
+\end{align*}
+For \(\rho>0\), the ridge objective has gradient
+\begin{align*}
+\nabla_\beta
+\left\{\mathcal J_{\mathrm{ATE}}(\beta)+\rho\lVert\beta\rVert_2^2\right\}
+&=2\boldsymbol\ell
++2(\mathbf H_{\mathrm{ATE}}+\rho I_2)\beta.
+\end{align*}
+Positive semidefiniteness of \(\mathbf H_{\mathrm{ATE}}\) makes
+\(\mathbf H_{\mathrm{ATE}}+\rho I_2\) positive definite. Setting the gradient
+to zero proves Equation~\eqref{eq:ridge-oracle} and uniqueness.
+
+\subsection{Singular and constrained extensions}
+
 When \(\mathbf H_{\mathrm{ATE}}\) is singular, nonnegativity of the variance quadratic implies
 \(\boldsymbol\ell\in\operatorname{Range}(\mathbf H_{\mathrm{ATE}})\); otherwise a null-space direction
 would make the expression arbitrarily negative.  The complete minimizer set is
@@ -85,23 +134,25 @@ quadratic proves attainment on every prespecified compact feasible set.
 
 For completeness, suppose \(\mathbf H_{\mathrm{ATE}}\) is positive definite and write
 \begin{align*}
-q(\beta)
+\mathcal J_{\mathrm{ATE}}(\beta)
 &=2\boldsymbol\ell^\top\beta
 +\beta^\top\mathbf H_{\mathrm{ATE}}\beta,
 &
-\beta^\star
+\beta_{\mathrm{joint}}^\star
 &=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell.
 \end{align*}
 Completing the square gives
 \begin{align*}
-q(\beta)-q(\beta^\star)
-&=(\beta-\beta^\star)^\top
-\mathbf H_{\mathrm{ATE}}(\beta-\beta^\star).
+\mathcal J_{\mathrm{ATE}}(\beta)
+-\mathcal J_{\mathrm{ATE}}(\beta_{\mathrm{joint}}^\star)
+&=(\beta-\beta_{\mathrm{joint}}^\star)^\top
+\mathbf H_{\mathrm{ATE}}(\beta-\beta_{\mathrm{joint}}^\star).
 \end{align*}
 The norm induced by a positive-definite matrix is equivalent to the Euclidean
 norm.  Hence this distance is coercive and strictly convex.  On every nonempty
 closed convex feasible set, it therefore attains a unique minimum, namely the
-\(\mathbf H_{\mathrm{ATE}}\)-metric projection of \(\beta^\star\).
+\(\mathbf H_{\mathrm{ATE}}\)-metric projection of
+\(\beta_{\mathrm{joint}}^\star\).
 
 Finally, because \(g\) is \(X\)-measurable,
 \begin{align}
@@ -125,7 +176,7 @@ then \(g\) is constant \(P_R\)-almost surely and \(rg\) is constant
 \(\mathbb P_{O,N}(rg)-\mathbb P_{R,n}(g)=0\) for every evaluation sample.
 Finally, when \(E=0\) and \(A,B>0\), completing the two scalar squares gives
 \begin{align*}
-q(\lambda,\omega)
+\mathcal J_{\mathrm{ATE}}(\beta)
 &=
 A\left(\lambda+\frac CA\right)^2
 +B\left(\omega-\frac DB\right)^2
@@ -141,7 +192,7 @@ not coefficients estimated from a finite tuning sample.
 
 \subsection{Proof of Corollary~\ref{cor:joint-oracle-variance}}
 
-Write the conditional variance as
+Write the block-0 variance as
 \begin{align*}
 V(\beta)
 &=
@@ -153,9 +204,9 @@ V(\beta)
 &=
 \frac1n\operatorname{Var}_R(Z_0).
 \end{align*}
-When \(AB-E^2>0\), the matrix \(\mathbf H_{\mathrm{ATE}}\) is positive definite and the unique minimizer is \(\beta^\star=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell\). Substitution gives
+When \(AB-E^2>0\), the matrix \(\mathbf H_{\mathrm{ATE}}\) is positive definite and the unique minimizer is \(\beta_{\mathrm{joint}}^\star=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell\). Substitution gives
 \begin{align*}
-V(\beta^\star)
+V(\beta_{\mathrm{joint}}^\star)
 &=
 \mathcal V_0-
 \frac1n\boldsymbol\ell^\top\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell.
@@ -173,6 +224,7 @@ For \(\mathbf H_{\mathrm{ATE}}=\left(\begin{smallmatrix}A&-E\\-E&B\end{smallmatr
 \end{align*}
 Positive definiteness makes this quadratic form nonnegative and makes it zero exactly when \(\boldsymbol\ell=0\). Setting \(E=0\) yields \(C^2/A+D^2/B\).
 
+\paragraph{Singular variance reduction and compact constraints.}
 If \(\mathbf H_{\mathrm{ATE}}\) is singular, boundedness below of the variance objective implies \(\boldsymbol\ell\in\operatorname{Range}(\mathbf H_{\mathrm{ATE}})\). Evaluating at the minimum-norm solution \(-\mathbf H_{\mathrm{ATE}}^+\boldsymbol\ell\) gives
 \begin{align*}
 V_{\min}
@@ -184,8 +236,8 @@ The pseudoinverse is positive definite on \(\operatorname{Range}(\mathbf H_{\mat
 
 \subsection{Prediction-powered CATE risk identity}
 
-Fix \(t\) and condition on \(X\).  Since
-\(\mathbb E_R(Z_\lambda-\tau(X)\mid X)=0\),
+Fix \(t,\lambda,\omega,g,r\) after blocks 1 and 2, and then condition on \(X\).
+Since \(\mathbb E_R(Z_\lambda-\tau(X)\mid X)=0\),
 \begin{align}
 \mathbb E_R\{Z_\lambda-t(X)\}^2
 &=
@@ -195,7 +247,7 @@ Fix \(t\) and condition on \(X\).  Since
 Exact transport also gives
 \begin{align}
 \mathbb E_O\{r(X)(g(X)-t(X))^2\}
-&=\mathbb E_R\{(g(X)-t(X))^2\}.
+&=\mathbb E_R\{g(X)-t(X)\}^2.
 \end{align}
 The correction in Equation~\eqref{eq:dr-fusion-loss} therefore has mean zero,
 which proves Equation~\eqref{eq:cate-target}.  In particular, population expected
@@ -208,9 +260,10 @@ so when \(A>0\) its minimizer is \(-C/A\), the same integrated-noise oracle as
 in the population-orthogonal ATE problem.  If \(A=0\), then \(\Delta=0\) almost
 surely by conditional mean zero, and \(Q\) is flat in \(\lambda\).
 
-For a fixed \(t\) and \(\lambda\), the empirical loss is the sum of independent
-empirical means of \(U_{t,\lambda}-\omega G_t\) under the trial and
-\(\omega rG_t\) under the observational law.  Expanding its variance as a
+After fixing \(t\), \(\lambda\), \(g\), and \(r\) using blocks 1 and 2, the
+block-0 empirical loss is the sum of independent empirical means of
+\(U_{t,\lambda}-\omega G_t\) over \(D_R^0\) and \(\omega rG_t\) over
+\(D_O^0\). Expanding its block-0 variance, with sample-size ratio \(n/N\), as a
 quadratic in \(\omega\) and differentiating gives
 Equation~\eqref{eq:loss-variance-omega}.  Because \(t\) is fixed in this
 calculation, the formula does not identify the coefficient minimizing the risk
@@ -258,11 +311,14 @@ Averaging and adding the transported OBS term proves the proposition. For a line
 
 The two inequalities in Proposition~\ref{prop:cate-candidate-dominance} follow directly from the prespecified inclusion \(\mathfrak C_R\subseteq\mathfrak C\). Strict inclusion alone does not imply a strict risk inequality.
 
-For Proposition~\ref{prop:cate-selector-inequality}, condition on \(\mathcal F_{\mathrm{train}}\). Expanding the shared-reference score gives
+For Proposition~\ref{prop:cate-selector-inequality}, fix the candidates fitted
+on block 1 and the fitting portion of block 2, then take expectation over the
+disjoint validation portion of block 2. Expanding the
+shared-reference score gives
 \begin{align*}
-\mathbb E\{\widehat{\mathcal R}^{\mathrm{ref}}_c\mid\mathcal F_{\mathrm{train}}\}
+\mathbb E_2\{\widehat{\mathcal R}^{\mathrm{ref}}_c\}
 &=Q(\lambda_{\mathrm{ref}})
-+\mathcal R_{\mathcal D_{\mathrm{tr}}}(c)
++\mathcal R_{12}(c)
 +\delta_{r,c}+\delta_{\mathrm{nuis},c}.
 \end{align*}
 Compare the empirical score of \(\widehat c\) with that of an arbitrary \(c\in\mathfrak C\). Two validation deviations contribute at most \(2\varepsilon_{\mathrm{val}}\), and the difference between two ratio and nuisance drifts contributes at most \(2\Delta_r+2\Delta_{\mathrm{nuis}}\). Taking the infimum gives the stated oracle inequality.
@@ -320,33 +376,45 @@ The baseline between-\(X\) variance is \(0.01\), whereas the oracle component is
 \end{align*}
 The reduction \(0.009\) concerns only between-\(X\) variation; total variance also contains the within-\(X\) pseudo-outcome noise from Equation~\eqref{eq:ate-within-between}.
 
-\subsection{Honest variance estimation and conditional Wald inference}
+\subsection{Honest variance estimation and block-0 Wald inference}
 
-For Proposition~\ref{prop:ate-honest-variance-active}, condition on \(\mathcal F\). The selected coefficients and fitted scores are fixed. Ordinary unbiased sample-variance identities give
+For Proposition~\ref{prop:ate-honest-variance-active}, fix the coefficients and
+scores selected on blocks 1 and 2. Ordinary unbiased block-0 variance identities
+give
 \begin{align*}
-\mathbb E\{s_{R,\mathrm{ev}}^2(\psi_R)\mid\mathcal F\}
+\mathbb E\{s_{R,0}^2(\psi_R)\}
 &=\operatorname{Var}_R(\psi_R),
 &
-\mathbb E\{s_{O,\mathrm{ev}}^2(\psi_O)\mid\mathcal F\}
+\mathbb E\{s_{O,0}^2(\psi_O)\}
 &=\operatorname{Var}_O(\psi_O).
 \end{align*}
-Dividing by \(n\) and \(N\), then adding, proves conditional unbiasedness of \(\widehat V\) by independence of the two final blocks.
+Dividing by \(n\) and \(N\), then adding, proves block-0 unbiasedness of
+\(\widehat V\) by independence of \(D_R^0\) and \(D_O^0\).
 
-For Theorem~\ref{thm:ate-honest-clt-active}, center the two final-score arrays at their conditional means. Their weighted sum is \(\widehat\theta_r-\theta\). The conditional Lindeberg condition and nondegenerate variance limit give the two-sample triangular-array central limit theorem. Under a uniform conditional \((2+\delta)\)-moment bound, the RCT Lyapunov remainder is of order \(n^{-\delta/2}\), and the OBS remainder also vanishes when \(n/N\to\kappa<\infty\). The same moment control gives ratio consistency of the combined sample-variance estimator. Slutsky's theorem yields the studentized limit and Wald coverage.
+For Theorem~\ref{thm:ate-honest-clt-active}, center the two block-0 score arrays
+at their population means after fixing blocks 1 and 2. Their weighted sum is
+\(\widehat\theta_r-\theta\). The stated Lindeberg condition and nondegenerate
+variance limit give the two-sample triangular-array central limit theorem. Under
+a uniform \((2+\delta)\)-moment bound, the RCT Lyapunov remainder is of order
+\(n^{-\delta/2}\), and the OBS remainder also vanishes when
+\(n/N\to\kappa<\infty\). The same moment control gives ratio consistency of the
+combined sample-variance estimator. Slutsky's theorem yields the studentized
+limit and Wald coverage.
 
 \subsection{Estimated density ratios and outer-fold honesty}
 
-For an independently trained \(\widehat r\), subtract and add \(P_O(rg)=P_R(g)\) to obtain the exact conditional drift
+For \(\widehat r\) trained on block 1 and then held fixed, subtract and add
+\(P_O(rg)=P_R(g)\) to obtain the exact block-0 drift
 \begin{align*}
-\mathbb E\{\widehat\theta_{\widehat r}(\lambda,\omega)\mid\mathcal F\}-\theta
+\mathbb E\{\widehat\theta_{\widehat r}(\lambda,\omega)\}-\theta
 &=\omega P_O[\{\widehat r(X)-r(X)\}g(X)].
 \end{align*}
-With \(h_n=(\widehat r-r)g\), the conditional second moment of the OBS evaluation perturbation is
+With \(h_n=(\widehat r-r)g\), the block-0 second moment of the OBS evaluation
+perturbation is
 \begin{align*}
 \mathbb E
 \left[
 \left\{\sqrt n\,\omega(\mathbb P_{O,N}-P_O)h_n\right\}^2
-\middle|\mathcal F
 \right]
 &=\omega^2\frac nN
 \|h_n-P_Oh_n\|_{L_2(P_O)}^2.
@@ -364,7 +432,8 @@ The second sum need not vanish because outer training complements overlap.
 
 \subsection{Counterexamples to adaptive reuse}
 
-The fixed-coefficient theorem cannot be extended by selecting a coefficient on the same final outcomes without a separate analysis.
+The fixed-coefficient theorem cannot be extended by selecting a coefficient on
+the same block-0 outcomes without a separate analysis.
 
 \paragraph{Reuse through \(\lambda\).}
 Let \(X\) be degenerate, \(\theta=0\), \(Z_0=0\), and let the \(\Delta_i\) be i.i.d. Rademacher variables. Every fixed \(\lambda\) satisfies \(\mathbb E\{\lambda\mathbb P_{R,n}\Delta\}=0\). If the same outcomes select \(\widehat\lambda=\operatorname{sign}(\mathbb P_{R,n}\Delta)\), then
