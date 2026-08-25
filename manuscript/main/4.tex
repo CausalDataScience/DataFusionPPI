@@ -4,11 +4,12 @@
 \subsection{Prediction-powered loss, coefficient roles, and the ATE relation}
 \label{sec:cate-loss}
 
-Throughout this subsection, nuisances and ratios are fit on block 1. Candidate
-fitting and honest validation use prespecified disjoint portions of block 2.
-Every selected object is then held fixed before final evaluation on the untouched
-block 0. Population expectations and moments use the three-block convention
-from Section~\ref{sec:rct-obs-setting}.
+Throughout this subsection, nuisances and ratios are fit on
+\(D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}\). Candidate fitting and honest
+validation use prespecified disjoint portions of
+\(D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}\). Every selected object is fixed
+before final evaluation on \(D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}\), as
+required by Assumption~\ref{ass:honest-separation}.
 
 For a fixed candidate CATE function \(t\), define the density-ratio-weighted prediction-powered squared loss
 \begin{align}
@@ -32,7 +33,8 @@ For every fixed candidate considered below, assume
 \begin{proposition}[Exact target of the prediction-powered CATE loss]
 \label{prop:cate-target-active}
 \label{prop:cate-target}
-Under Assumptions~\ref{ass:trial} and \ref{ass:exact-transport}, together with the three-block convention of Section~\ref{sec:rct-obs-setting},
+Under Assumptions~\ref{ass:trial}, \ref{ass:exact-transport}, and
+\ref{ass:honest-separation},
 \begin{align}
 \mathbb E\{\widehat L_{\mathrm{DR}}(t;\lambda,\omega)\}
 &=
@@ -64,7 +66,9 @@ Write \(\lambda_{\mathrm{ATE}}^\star:=\lambda^\star\) and \(\omega_{\mathrm{ATE}
 
 \begin{proposition}[Fixed measurable and pointwise noise coefficients]
 \label{prop:cate-pointwise-lambda-active}
-Under Assumption~\ref{ass:trial} and the three-block convention of Section~\ref{sec:rct-obs-setting}, let \(\lambda(\cdot)\) be a fixed measurable function such that \(Z_0+\lambda(X)\Delta\) is integrable. Then
+Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation}, let
+\(\lambda(\cdot)\) be a fixed measurable function such that
+\(Z_0+\lambda(X)\Delta\) is integrable. Then
 \begin{align*}
 \mathbb E_R\{Z_0+\lambda(X)\Delta\mid X\}
 &=\tau(X).
@@ -85,7 +89,12 @@ The sampling variance of a fixed candidate loss identifies a distinct coefficien
 \(U_{t,\lambda}=\{Z_\lambda-t(X)\}^2\).
 \begin{proposition}[Fixed-loss variance oracle]
 \label{prop:cate-loss-variance-active}
-Under the three-block convention of Section~\ref{sec:rct-obs-setting}, fix \(t\), \(\lambda\), \(g\), and \(r\) using blocks 1 and 2, and evaluate the displayed loss on the independent block-0 RCT and OBS samples. Suppose \(U_{t,\lambda}\in L^2(P_R)\), \(G_t\in L^2(P_R)\), and \(rG_t\in L^2(P_O)\). If the denominator below is positive, the unrestricted variance-minimizing coefficient is
+Under Assumption~\ref{ass:honest-separation}, fix \(t\), \(\lambda\), \(g\),
+and \(r\) using the nuisance and tuning samples, and evaluate the displayed
+loss on the independent evaluation samples. Suppose
+\(U_{t,\lambda}\in L^2(P_R)\), \(G_t\in L^2(P_R)\), and
+\(rG_t\in L^2(P_O)\). If the denominator below is positive, the unrestricted
+variance-minimizing coefficient is
 \begin{align}
 \omega_{\mathrm{LV}}^\star(t;\lambda)
 &=
@@ -104,9 +113,9 @@ c
 &=
 (\lambda_c,\omega_c,p_c,\rho_c)\in\mathfrak C
 \end{align}
-specifies the two fusion coefficients, the sieve dimension, and the penalty level. All other components of the learning rule, including the allocation of blocks 1 and 2, nuisance algorithms, basis construction, and optimization convention, are also prespecified. For realized blocks 1 and 2, let \(\widehat t_c\) denote the resulting fixed fitted function and define its sample-specific target risk and its algorithm-induced expected risk by
+specifies the two fusion coefficients, the sieve dimension, and the penalty level. All other components of the learning rule, including the role-sample allocation, nuisance algorithms, basis construction, and optimization convention, are also prespecified. For realized nuisance and candidate-fitting samples, let \(\widehat t_c\) denote the resulting fixed fitted function and define its sample-specific target risk and its algorithm-induced expected risk by
 \begin{align}
-\mathcal R_{12}(c)
+\mathcal R_{\mathrm{fit}}(c)
 &=
 \mathbb E_R
 \left[
@@ -116,18 +125,19 @@ specifies the two fusion coefficients, the sieve dimension, and the penalty leve
 \\
 \mathfrak R(c)
 &=
-\mathbb E_{12}
-\{\mathcal R_{12}(c)\}.
+\mathbb E_{\mathrm{fit}}
+\{\mathcal R_{\mathrm{fit}}(c)\}.
 \label{eq:algorithm-cate-risk}
 \end{align}
-Here \(\mathbb E_{12}\) averages over the joint law of blocks 1 and 2 and all
-prespecified algorithmic randomness used before block 0.
+Here \(\mathbb E_{\mathrm{fit}}\) averages over the nuisance and
+candidate-fitting samples and all prespecified algorithmic randomness used
+before validation and final evaluation.
 When the minimum is attained, define the sample-specific final learner-risk oracle
 \begin{align*}
-c_{\mathrm{risk}}^\star(12)
+c_{\mathrm{risk}}^\star(\mathrm{fit})
 &\in
 \operatorname*{arg\,min}_{c\in\mathfrak C}
-\mathcal R_{12}(c).
+\mathcal R_{\mathrm{fit}}(c).
 \end{align*}
 This oracle chooses among fitted learning algorithms. It is distinct from both \(\lambda_Q^\star\) and \(\omega_{\mathrm{LV}}^\star(t;\lambda)\).
 
@@ -144,13 +154,13 @@ contain the identical RCT-only learners over the prespecified sieve and penalty 
 
 \begin{proposition}[Candidate-class oracle dominance]
 \label{prop:cate-candidate-dominance}
-For every realized pair of blocks 1 and 2 for which the displayed infima are finite,
+For every realized nuisance and candidate-fitting sample for which the displayed infima are finite,
 \begin{align}
 \inf_{c\in\mathfrak C}
-\mathcal R_{12}(c)
+\mathcal R_{\mathrm{fit}}(c)
 &\leq
 \inf_{c\in\mathfrak C_R}
-\mathcal R_{12}(c).
+\mathcal R_{\mathrm{fit}}(c).
 \label{eq:sample-oracle-dominance}
 \end{align}
 Likewise,
@@ -166,12 +176,14 @@ If the infima are attained, they define the sample-specific and expected-trainin
 Proposition~\ref{prop:cate-candidate-dominance} is an infeasible oracle statement because its risks use the unknown \(\tau\). It does not say that a data-adaptive selector dominates the RCT-only learner on every finite sample.
 
 \paragraph{Common-reference honest validation.}
-Hold the block-1 and block-2-fitting candidates fixed and construct one shared
-RCT-valid pseudo-outcome \(Z_{\lambda_{\mathrm{ref}}}\) on the untouched RCT
-validation portion of \(D_R^2\) using a fixed reference coefficient. Let
-\(\mathbb E_2\) denote expectation only over the disjoint RCT and OBS validation
-portions of block 2, and let \(\mathbb P_{R,2}\) and \(\mathbb P_{O,2}\) denote
-their empirical averages. For candidate \(c\), set
+Hold the nuisance-sample and candidate-fitting objects fixed and construct one
+shared RCT-valid pseudo-outcome \(Z_{\lambda_{\mathrm{ref}}}\) on the untouched
+RCT validation portion of \(D_R^{\mathrm{tune}}\) using a fixed reference
+coefficient. Let \(\mathbb E_{\mathrm{val}}\) denote expectation only over the
+prespecified RCT and OBS validation portions of the tuning samples, and let
+\(\mathbb P_{R,\mathrm{val}}^{\mathrm{tune}}\) and
+\(\mathbb P_{O,\mathrm{val}}^{\mathrm{tune}}\) denote their empirical averages.
+For candidate \(c\), set
 \begin{align}
 G_c(X)
 &=
@@ -181,26 +193,28 @@ Let \(r^\dagger=1\) under the common covariate marginal, \(r^\dagger=r\) under e
 \begin{align}
 \widehat{\mathcal R}^{\mathrm{ref}}_c
 &=
-\mathbb P_{R,2}
+\mathbb P_{R,\mathrm{val}}^{\mathrm{tune}}
 \left[
 \{Z_{\lambda_{\mathrm{ref}}}-\widehat t_c(X)\}^2
 \right]
 \nonumber\\
 &\quad+
-\mathbb P_{O,2}
+\mathbb P_{O,\mathrm{val}}^{\mathrm{tune}}
 \{r^\dagger(X)G_c(X)\}
 -
-\mathbb P_{R,2}G_c(X).
+\mathbb P_{R,\mathrm{val}}^{\mathrm{tune}}G_c(X).
 \label{eq:common-reference-validation}
 \end{align}
-All candidates must use the same reference pseudo-outcome, \(g\), ratio rule, and block-2 validation observations. Under the common marginal or exact \(r\), known RCT propensity, and the three-block convention,
+All candidates must use the same reference pseudo-outcome, \(g\), ratio rule,
+and validation observations. Under the common marginal or exact \(r\), known
+RCT propensity, and Assumption~\ref{ass:honest-separation},
 \begin{align}
-\mathbb E_2
+\mathbb E_{\mathrm{val}}
 \{\widehat{\mathcal R}^{\mathrm{ref}}_c\}
 &=
 Q(\lambda_{\mathrm{ref}})
 +
-\mathcal R_{12}(c).
+\mathcal R_{\mathrm{fit}}(c).
 \label{eq:common-reference-identity}
 \end{align}
 Thus candidate comparisons remove the same additive reference noise. The OBS correction is not required for validity of this identity, but it can reduce the sampling variability of validation when the prediction is useful.
@@ -257,16 +271,16 @@ and define the validation fluctuation
 \left|
 \widehat{\mathcal R}^{\mathrm{ref}}_c
 -
-\mathbb E_2
+\mathbb E_{\mathrm{val}}
 \{\widehat{\mathcal R}^{\mathrm{ref}}_c\}
 \right|.
 \end{align}
 Then
 \begin{align}
-\mathcal R_{12}(\widehat c)
+\mathcal R_{\mathrm{fit}}(\widehat c)
 &\leq
 \inf_{c\in\mathfrak C}
-\mathcal R_{12}(c)
+\mathcal R_{\mathrm{fit}}(c)
 +2\varepsilon_{\mathrm{val}}
 +2\Delta_r
 +2\Delta_{\mathrm{nuis}}
@@ -275,7 +289,7 @@ Then
 and therefore the same upper bound holds with the infimum over \(\mathfrak C\) replaced by the larger infimum over \(\mathfrak C_R\).
 \end{proposition}
 
-If \(\varepsilon_{\mathrm{val}}+\Delta_r+\Delta_{\mathrm{nuis}}=o_p(1)\), Proposition~\ref{prop:cate-selector-inequality} gives asymptotic weak noninferiority relative to the identical optimally tuned RCT-only class. Passing from this fixed-block statement to expected-training risk additionally requires uniform integrability. Strict asymptotic improvement requires a positive oracle gap that dominates the validation and drift remainders. No part of this argument gives universal finite-sample or realized-sample dominance.
+If \(\varepsilon_{\mathrm{val}}+\Delta_r+\Delta_{\mathrm{nuis}}=o_p(1)\), Proposition~\ref{prop:cate-selector-inequality} gives asymptotic weak noninferiority relative to the identical optimally tuned RCT-only class. Passing from this fixed-candidate statement to expected-training risk additionally requires uniform integrability. Strict asymptotic improvement requires a positive oracle gap that dominates the validation and drift remainders. No part of this argument gives universal finite-sample or realized-sample dominance.
 
 \paragraph{Why \(\lambda_Q^\star\) need not optimize sieve risk.}
 Consider an unpenalized linear sieve fitted on RCT pseudo-outcomes with \(\omega=0\), basis \(b_p\), population Gram matrix \(G_p=\mathbb E_R\{b_p(X)b_p(X)^\top\}\), projection \(t_p\) of \(\tau\), and leverage \(h_p(X)=b_p(X)^\top G_p^{-1}b_p(X)\). Under the usual fixed-sieve least-squares expansion, the \(\lambda\)-dependent part of the leading integrated estimation variance is
@@ -319,17 +333,17 @@ For \(0\leq\omega<1\), the two \(t\)-dependent terms form a nonnegative mixture 
 \subsection{Implementable F-Learner and prospective R-loss extension}
 \label{sec:cate-implementable}
 
-We use \emph{F-Learner} as a provisional working label only for CATE estimators that minimize Equation~\eqref{eq:dr-fusion-loss}, which is built from the RCT-valid AIPW pseudo-outcome \(Z_\lambda\). The label does not claim name novelty and does not denote a generic unification of doubly robust and R losses.
+We use \emph{F-Learner} as a provisional working label only for CATE estimators that minimize Equation~\eqref{eq:dr-fusion-loss}, which is built from the RCT-valid AIPW pseudo-outcome \(Z_\lambda\). The label does not claim name novelty and does not denote a generic unification of doubly robust and R losses. Let \(\mathbb P_R^{\mathrm{fit}}\) and \(\mathbb P_O^{\mathrm{fit}}\) denote empirical averages over the prespecified candidate-fitting portions of \(D_R^{\mathrm{tune}}\) and \(D_O^{\mathrm{tune}}\), respectively.
 
 For a linear sieve \(t_\beta(x)=b(x)^\top\beta\), with \(b(x)\in\mathbb R^p\), add the penalty \(\rho\beta^\top P\beta\), where \(\rho\geq0\) and \(P=P^\top\succeq0\) belongs to \(\mathbb R^{p\times p}\). Define
 \begin{align}
-G_R&=\mathbb P_{R,n}\{b(X)b(X)^\top\},
+G_R&=\mathbb P_R^{\mathrm{fit}}\{b(X)b(X)^\top\},
 &
-G_{O,r}&=\mathbb P_{O,N}\{r(X)b(X)b(X)^\top\},
+G_{O,r}&=\mathbb P_O^{\mathrm{fit}}\{r(X)b(X)b(X)^\top\},
 \\
-h_\lambda&=\mathbb P_{R,n}\{b(X)Z_\lambda\},
+h_\lambda&=\mathbb P_R^{\mathrm{fit}}\{b(X)Z_\lambda\},
 &
-d_g&=\mathbb P_{O,N}\{r(X)b(X)g(X)\}-\mathbb P_{R,n}\{b(X)g(X)\}.
+d_g&=\mathbb P_O^{\mathrm{fit}}\{r(X)b(X)g(X)\}-\mathbb P_R^{\mathrm{fit}}\{b(X)g(X)\}.
 \end{align}
 Whenever the matrix is invertible, the penalized F-Learner solution is
 \begin{align}
@@ -342,7 +356,7 @@ Whenever the matrix is invertible, the penalized F-Learner solution is
 Because \(h_\lambda\) is affine in \(\lambda\), a fixed-\(\omega\) candidate path can be computed efficiently. A frozen neural basis replaces \(b(x)\) by a representation learned without the candidate-training or validation observations and inherits Equation~\eqref{eq:linear-sieve} conditional on that representation. End-to-end neural fitting is nonconvex, and the present linear-sieve guarantees do not cover it.
 
 \paragraph{Out-of-fold nuisance and candidate construction.}
-As an alternative within the block-1 and block-2 fitting stages, partition the
+As an alternative within the nuisance and tuning stages, partition the
 RCT and OBS indices into prespecified folds. For each held-out fold \(k\), fit
 \(\widehat\mu_R^{(-k)}\) and \(\widehat\mu_O^{(-k)}\) without that fold, use the same
 \begin{align*}
@@ -353,9 +367,10 @@ on held-out RCT and OBS covariates, and construct \(Z_{0,i}^{(-k)}\), \(Z_{1,i}^
 
 For each \(c\in\mathfrak C\), candidate fitting, basis construction, penalty
 selection, and tuning-dependent preprocessing must exclude the validation
-portion of block 2 and all of block 0. The
-common-reference validation score then ranks candidates already fitted on
-block 1 and the fitting portion of block 2. Reusing block-2 validation outcomes
+portion of \(D_S^{\mathrm{tune}}\) and all of \(D_S^{\mathrm{eval}}\). The
+common-reference validation score then ranks candidates already fitted using
+the nuisance samples and the fitting portion of the tuning samples. Reusing
+validation outcomes
 to fit a candidate or its preprocessing
 violates the held-out product law and lies outside
 Proposition~\ref{prop:cate-selector-inequality}.
@@ -396,7 +411,7 @@ A loss-targeted alternative chooses a nonnegative, out-of-sample-evaluable weigh
 \mathcal G(\mathcal T;g)
 &=\{(g-t)^2:t\in\mathcal T\}.
 \end{align}
-If \(\mathbb E_O\{w(g-t)^2\}=\mathbb E_R\{(g-t)^2\}\) for every \(t\in\mathcal T\), Equation~\eqref{eq:cate-target} remains exact with \(w\) in place of \(r\). For a linear sieve, balancing \(bg\) and \(bb^\top\) preserves the minimizer; balancing \(g^2\) is additionally required only to preserve the absolute loss value. Exact balancing on the same observations used to fit \(t\) makes the correction zero or constant in the sieve coefficient. Weight learning and candidate fitting must therefore use different honest blocks or appropriate outer folds.
+If \(\mathbb E_O\{w(g-t)^2\}=\mathbb E_R\{(g-t)^2\}\) for every \(t\in\mathcal T\), Equation~\eqref{eq:cate-target} remains exact with \(w\) in place of \(r\). For a linear sieve, balancing \(bg\) and \(bb^\top\) preserves the minimizer; balancing \(g^2\) is additionally required only to preserve the absolute loss value. Exact balancing on the same observations used to fit \(t\) makes the correction zero or constant in the sieve coefficient. Weight learning and candidate fitting must therefore use independent samples or appropriate outer folds.
 
 For approximate weights, define
 \begin{align}

@@ -19,39 +19,26 @@ When labeled and unlabeled covariates share a marginal law and the two samples a
 \subsection{RCT--OBS problem setting and notation}
 \label{sec:rct-obs-setting}
 
-For each source \(S\in\{R,O\}\), we observe three mutually independent
-sample blocks
+Let \(\mathcal K\triangleq\{\mathrm{eval},\mathrm{nuis},\mathrm{tune}\}\). For
+each source \(S\in\{R,O\}\) and role \(k\in\mathcal K\), observe
 \begin{align}
-D_S^0
+D_S^k
 &\triangleq
-\{V_{S,i}^0=(X_{S,i}^0,A_{S,i}^0,Y_{S,i}^0):i=1,\ldots,n_S^0\}
-\sim P_S^{\otimes n_S^0},
-\\
-D_S^1
-&\triangleq
-\{V_{S,i}^1=(X_{S,i}^1,A_{S,i}^1,Y_{S,i}^1):i=1,\ldots,n_S^1\}
-\sim P_S^{\otimes n_S^1},
-\\
-D_S^2
-&\triangleq
-\{V_{S,i}^2=(X_{S,i}^2,A_{S,i}^2,Y_{S,i}^2):i=1,\ldots,n_S^2\}
-\sim P_S^{\otimes n_S^2}.
-\label{eq:three-block-samples}
+\{V_{S,i}^k=(X_{S,i}^k,A_{S,i}^k,Y_{S,i}^k):i=1,\ldots,n_S^k\}
+\sim P_S^{\otimes n_S^k}.
+\label{eq:role-indexed-samples}
 \end{align}
-where \(X\) takes values in the covariate space \(\mathcal X\),
-\(A\in\{0,1\}\) is treatment, and \(Y\) is the observed outcome.
-All six blocks are mutually independent. Block \(D_S^0\) is reserved for final
-estimation, block \(D_S^1\) is used for nuisance and density-ratio fitting, and
-block \(D_S^2\) is used for coefficient tuning or honest validation. Set
-\(n\triangleq n_R^0\) and \(N\triangleq n_O^0\), and define
-\(\mathbb P_{R,n}h\triangleq n^{-1}\sum_i h(V_{R,i}^0)\) and
-\(\mathbb P_{O,N}h\triangleq N^{-1}\sum_j h(V_{O,j}^0)\). Throughout the
-exact results, \(D_R^1,D_O^1,D_R^2,D_O^2\), the split assignments, and every
-learned object are held fixed before \(D_R^0,D_O^0\) are evaluated. Unless
-stated otherwise, expectations and variances are therefore over block 0 with
-the block-1 and block-2 objects fixed. Every displayed moment is finite;
-square-integrability and stronger moment conditions are stated locally when
-variance estimation or Wald inference requires them.
+Here \(X\) takes values in the covariate space \(\mathcal X\),
+\(A\in\{0,1\}\) is treatment, and \(Y\) is the observed outcome. The roles
+\(\mathrm{eval}\), \(\mathrm{nuis}\), and \(\mathrm{tune}\) denote final
+evaluation, nuisance and density-ratio fitting, and coefficient or candidate
+tuning, respectively. Set \(n\triangleq n_R^{\mathrm{eval}}\) and
+\(N\triangleq n_O^{\mathrm{eval}}\), and define
+\(\mathbb P_{R,n}h\triangleq n^{-1}\sum_i h(V_{R,i}^{\mathrm{eval}})\) and
+\(\mathbb P_{O,N}h\triangleq N^{-1}\sum_j h(V_{O,j}^{\mathrm{eval}})\).
+Every displayed moment is finite; square-integrability and stronger moment
+conditions are stated locally when variance estimation or Wald inference
+requires them.
 
 Let \(Y(1)\) and \(Y(0)\) denote potential outcomes. The RCT-population conditional and average treatment effects are
 \begin{align}
@@ -69,6 +56,8 @@ Consistency holds, \(\{Y(0),Y(1)\}\perp A\mid X\) under \(P_R\), and the known t
 
 We study both the common-covariate regime \(P_R^X=P_O^X\), formalized in Assumption~\ref{ass:common-marginal}, and the more general covariate-shift regime \(P_R^X\neq P_O^X\), formalized in Assumption~\ref{ass:exact-transport}.
 
+\enlargethispage{\baselineskip}
+\Needspace{5\baselineskip}
 \begin{assumption}[Common covariate marginal]
 \label{ass:common-marginal}
 \label{ass:covariate}
@@ -90,6 +79,25 @@ is available for every required integrable function \(h\). The common-marginal m
 
 Assumptions~\ref{ass:common-marginal} and \ref{ass:exact-transport} describe alternative covariate regimes, not cumulative restrictions. Under Assumption~\ref{ass:common-marginal}, no transport weighting is needed and we set \(r\triangleq1\). When the covariate marginals differ, Assumption~\ref{ass:exact-transport} is needed to convert OBS covariate expectations into expectations under the RCT population. Neither regime assumes that the OBS treatment contrast is causal.
 
+\begin{assumption}[Honest sample separation]
+\label{ass:honest-separation}
+The six datasets in Equation~\eqref{eq:role-indexed-samples} are mutually
+independent. Nuisance and density-ratio estimators use only
+\(D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}\). Coefficients and candidate rules
+use only \(D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}\) after the nuisance objects
+are fixed. If candidate fitting and validation both use tuning data, their
+assignments are prespecified and disjoint. Final point estimation, variance
+estimation, and Wald inference use only
+\(D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}\), after every learned object and
+split assignment has been fixed.
+\end{assumption}
+
+Throughout, every \(P_R\)- or \(P_O\)-expectation, covariance, variance, and
+exact variance result that involves a learned object is conditional on the
+realized nuisance and tuning datasets, split assignments, and pre-evaluation
+algorithmic randomness. These objects are held fixed, and only the evaluation
+observations remain random. We suppress this conditioning in the notation.
+
 For \(S\in\{R,O\}\) and \(a\in\{0,1\}\), define the population outcome-regression target \(\mu_{S,a}:\mathcal X\to\mathbb R\) by
 \begin{align*}
 \mu_{S,a}(x)
@@ -100,8 +108,8 @@ For each \(S\in\{R,O\}\) and \(a\in\{0,1\}\), let
 \(\widehat\mu_{S,a}:\mathcal X\to\mathbb R\) denote a
 fixed pre-evaluation predictor of the corresponding
 population regression \(\mu_{S,a}\).  The RCT predictor is trained only on
-\(D_R^1\), and the OBS predictor is trained only on
-\(D_O^1\). No correctness assumption is imposed on either fitted
+\(D_R^{\mathrm{nuis}}\), and the OBS predictor is trained only on
+\(D_O^{\mathrm{nuis}}\). No correctness assumption is imposed on either fitted
 predictor. Define
 \begin{align*}
 \widehat\mu_R
@@ -134,7 +142,8 @@ Let \(q\triangleq(q_0,q_1)\) be a fixed pair of measurable functions from
 \begin{proposition}[RCT-validity for an arbitrary outcome regression]
 \label{prop:pseudo-validity-active}
 \label{prop:pseudo-validity}
-Under Assumption~\ref{ass:trial} and the three-block convention above, every fixed \(q\) with finite first moments satisfies
+Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation}, every fixed
+\(q\) with finite first moments satisfies
 \begin{align}
 \mathbb E_R\{\varphi(V;q)\mid X\}
 &=\tau(X).
@@ -165,8 +174,8 @@ is used only as a prediction and need not equal \(\tau\).
 \label{def:rct-only-aipw}
 Let \(\mu_R\triangleq(\mu_{R,0},\mu_{R,1})\). Setting \(q=\mu_R\) in
 Definition~\ref{def:rct-aipw-score} gives the oracle RCT AIPW score. Its
-block-1 fitted counterpart is \(Z_0=\varphi(V;\widehat\mu_R)\). Define the
-RCT-only AIPW estimator on block 0 by
+nuisance-sample fitted counterpart is \(Z_0=\varphi(V;\widehat\mu_R)\). Define
+the RCT-only AIPW estimator on the evaluation sample by
 \begin{align*}
 \widehat\theta_{\mathrm{AIPW},R}
 &\triangleq
@@ -177,9 +186,9 @@ RCT-only AIPW estimator on block 0 by
 
 \begin{corollary}[RCT-only AIPW recovery]
 \label{cor:rct-only-aipw}
-Under Assumption~\ref{ass:trial} and the three-block convention, holding blocks
-1 and 2 fixed, \(\widehat\theta_{\mathrm{AIPW},R}\) is unbiased for \(\theta\)
-over the independent RCT block \(D_R^0\).
+Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation},
+\(\widehat\theta_{\mathrm{AIPW},R}\) is unbiased for \(\theta\) over
+\(D_R^{\mathrm{eval}}\).
 \end{corollary}
 
 \subsection{Existing data-fusion estimators}

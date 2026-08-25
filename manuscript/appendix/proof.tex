@@ -1,15 +1,14 @@
 \section{Proof Details}
 \label{app:proofs}
 
-Unless stated otherwise, all proofs fix blocks \(D_R^1,D_O^1,D_R^2,D_O^2\)
-and every nuisance, ratio, candidate function, and coefficient learned from
-them. The remaining expectations are over the independent RCT and OBS block-0
-observations.
+Unless stated otherwise, all proofs use Assumption~\ref{ass:honest-separation}:
+every nuisance, ratio, candidate function, and coefficient is fixed before the
+independent RCT and OBS evaluation observations are used.
 
 \subsection{Conditional validity of the trial pseudo-outcome}
 
-Fix \(q=(q_0,q_1)\) after block 1 and condition on \(X\). Under trial
-randomization, consistency, and independence of block 0,
+Fix \(q=(q_0,q_1)\) without using the evaluation samples and condition on
+\(X\). Under trial randomization, consistency, and honest sample separation,
 \begin{align}
 \mathbb E_R\left[\frac{A}{e(X)}\{Y-q_1(X)\}\mid X\right]
 &=\mathbb E_R\{Y(1)-q_1(X)\mid X\},
@@ -29,8 +28,8 @@ two fitted regressions and yields
 
 \subsection{Proof of Corollary~\ref{cor:rct-only-aipw}}
 
-Apply Equation~\eqref{eq:pseudo-valid} with the block-1 fitted pair
-\(q=\widehat\mu_R\), average over the independent block \(D_R^0\), and use
+Apply Equation~\eqref{eq:pseudo-valid} with the nuisance-sample fitted pair
+\(q=\widehat\mu_R\), average over \(D_R^{\mathrm{eval}}\), and use
 iterated expectation. This gives
 \begin{align*}
 \mathbb E\{\widehat\theta_{\mathrm{AIPW},R}\}
@@ -43,7 +42,7 @@ Using \(\mathbb E_R(Z_\lambda)=\theta\) and exact transport,
 \begin{align}
 \mathbb E_O\{r(X)g(X)\}=\mathbb E_R\{g(X)\},
 \end{align}
-the block-0 mean of Equation~\eqref{eq:ate-estimator} is \(\theta\). Rewrite
+the evaluation-sample mean of Equation~\eqref{eq:ate-estimator} is \(\theta\). Rewrite
 the centered estimator as
 \begin{align}
 \widehat\theta_r(\lambda,\omega)-\theta
@@ -51,13 +50,14 @@ the centered estimator as
 (\mathbb P_{R,n}-P_R)\{Z_\lambda-\omega g\}
 +(\mathbb P_{O,N}-P_O)\{\omega rg\}.
 \end{align}
-The two summands are independent because \(D_R^0\) and \(D_O^0\) are
+The two summands are independent because \(D_R^{\mathrm{eval}}\) and
+\(D_O^{\mathrm{eval}}\) are
 independent. The variance of
 an empirical mean of \(m\) independent observations is the population variance
 divided by \(m\), which proves Equation~\eqref{eq:ate-variance}.  Unbiased sample
 variances on the two independent evaluation blocks therefore give the displayed
 fixed-selected-coefficient variance estimator in Section~\ref{sec:ate}. Coverage
-of its Wald interval additionally uses the stated block-0 Lindeberg and
+of its Wald interval additionally uses the stated evaluation-sample Lindeberg and
 moment assumptions; variance unbiasedness alone is not a central limit theorem.
 
 Because \(g(X)\) is fixed given \(X\),
@@ -86,6 +86,23 @@ Equation~\eqref{eq:ate-quadratic}. The representation
 +\frac nN v^2\operatorname{Var}_O(rg)
 \end{align}
 proves positive semidefiniteness.
+
+\subsection{Proof of Proposition~\ref{prop:ate-population-orthogonality}}
+
+Equation~\eqref{eq:pseudo-valid} applied to \(Z_0\) and \(Z_1\) gives
+\(\mathbb E_R(Z_a\mid X)=\tau(X)\) for \(a\in\{0,1\}\). Subtracting the two
+identities gives \(\mathbb E_R(\Delta\mid X)=0\). Because \(g\) is a fixed
+function of \(X\), iterated expectation yields
+\begin{align*}
+\operatorname{Cov}_R(\Delta,g)
+&=
+\mathbb E_R\left[
+\{g(X)-\mathbb E_Rg(X)\}\mathbb E_R(\Delta\mid X)
+\right]
+=0.
+\end{align*}
+The same argument with \(Z_0\) gives
+\(\operatorname{Cov}_R(Z_0,g)=\operatorname{Cov}_R\{\tau(X),g(X)\}\).
 
 \subsection{Proof of Proposition~\ref{prop:ate-argmin-equivalence}}
 
@@ -192,7 +209,7 @@ not coefficients estimated from a finite tuning sample.
 
 \subsection{Proof of Corollary~\ref{cor:joint-oracle-variance}}
 
-Write the block-0 variance as
+Write the evaluation-sample variance as
 \begin{align*}
 V(\beta)
 &=
@@ -236,7 +253,8 @@ The pseudoinverse is positive definite on \(\operatorname{Range}(\mathbf H_{\mat
 
 \subsection{Prediction-powered CATE risk identity}
 
-Fix \(t,\lambda,\omega,g,r\) after blocks 1 and 2, and then condition on \(X\).
+Fix \(t,\lambda,\omega,g,r\) before using the evaluation samples, and then
+condition on \(X\).
 Since \(\mathbb E_R(Z_\lambda-\tau(X)\mid X)=0\),
 \begin{align}
 \mathbb E_R\{Z_\lambda-t(X)\}^2
@@ -260,18 +278,21 @@ so when \(A>0\) its minimizer is \(-C/A\), the same integrated-noise oracle as
 in the population-orthogonal ATE problem.  If \(A=0\), then \(\Delta=0\) almost
 surely by conditional mean zero, and \(Q\) is flat in \(\lambda\).
 
-After fixing \(t\), \(\lambda\), \(g\), and \(r\) using blocks 1 and 2, the
-block-0 empirical loss is the sum of independent empirical means of
-\(U_{t,\lambda}-\omega G_t\) over \(D_R^0\) and \(\omega rG_t\) over
-\(D_O^0\). Expanding its block-0 variance, with sample-size ratio \(n/N\), as a
+After fixing \(t\), \(\lambda\), \(g\), and \(r\) using the nuisance and tuning
+samples, the empirical loss is the sum of independent empirical means of
+\(U_{t,\lambda}-\omega G_t\) over \(D_R^{\mathrm{eval}}\) and \(\omega rG_t\)
+over \(D_O^{\mathrm{eval}}\). Expanding its variance, with sample-size ratio
+\(n/N\), as a
 quadratic in \(\omega\) and differentiating gives
 Equation~\eqref{eq:loss-variance-omega}.  Because \(t\) is fixed in this
 calculation, the formula does not identify the coefficient minimizing the risk
 of a learner chosen after seeing the same loss.
 
-For the linear sieve, expand Equation~\eqref{eq:dr-fusion-loss} in \(\beta\), add
-\(\rho\beta^\top P\beta\), and set the gradient to zero.  The resulting normal
-equation is
+For the linear sieve, evaluate the empirical objective on the prespecified
+candidate-fitting portions of the tuning samples, using
+\(\mathbb P_R^{\mathrm{fit}}\) and \(\mathbb P_O^{\mathrm{fit}}\). Expand the
+result in \(\beta\), add \(\rho\beta^\top P\beta\), and set the gradient to
+zero. The resulting normal equation is
 \begin{align}
 \{(1-\omega)G_R+\omega G_{O,r}+\rho P\}\beta
 &=h_\lambda+\omega d_g,
@@ -312,13 +333,13 @@ Averaging and adding the transported OBS term proves the proposition. For a line
 The two inequalities in Proposition~\ref{prop:cate-candidate-dominance} follow directly from the prespecified inclusion \(\mathfrak C_R\subseteq\mathfrak C\). Strict inclusion alone does not imply a strict risk inequality.
 
 For Proposition~\ref{prop:cate-selector-inequality}, fix the candidates fitted
-on block 1 and the fitting portion of block 2, then take expectation over the
-disjoint validation portion of block 2. Expanding the
+using the nuisance samples and the fitting portion of the tuning samples, then
+take expectation over the disjoint validation portion. Expanding the
 shared-reference score gives
 \begin{align*}
-\mathbb E_2\{\widehat{\mathcal R}^{\mathrm{ref}}_c\}
+\mathbb E_{\mathrm{val}}\{\widehat{\mathcal R}^{\mathrm{ref}}_c\}
 &=Q(\lambda_{\mathrm{ref}})
-+\mathcal R_{12}(c)
++\mathcal R_{\mathrm{fit}}(c)
 +\delta_{r,c}+\delta_{\mathrm{nuis},c}.
 \end{align*}
 Compare the empirical score of \(\widehat c\) with that of an arbitrary \(c\in\mathfrak C\). Two validation deviations contribute at most \(2\varepsilon_{\mathrm{val}}\), and the difference between two ratio and nuisance drifts contributes at most \(2\Delta_r+2\Delta_{\mathrm{nuis}}\). Taking the infimum gives the stated oracle inequality.
@@ -376,23 +397,24 @@ The baseline between-\(X\) variance is \(0.01\), whereas the oracle component is
 \end{align*}
 The reduction \(0.009\) concerns only between-\(X\) variation; total variance also contains the within-\(X\) pseudo-outcome noise from Equation~\eqref{eq:ate-within-between}.
 
-\subsection{Honest variance estimation and block-0 Wald inference}
+\subsection{Honest variance estimation and evaluation-sample Wald inference}
 
 For Proposition~\ref{prop:ate-honest-variance-active}, fix the coefficients and
-scores selected on blocks 1 and 2. Ordinary unbiased block-0 variance identities
+scores before using the evaluation observations. Ordinary unbiased sample-variance identities
 give
 \begin{align*}
-\mathbb E\{s_{R,0}^2(\psi_R)\}
+\mathbb E\{\widehat{\operatorname{Var}}_{R,\mathrm{eval}}(\psi_R)\}
 &=\operatorname{Var}_R(\psi_R),
 &
-\mathbb E\{s_{O,0}^2(\psi_O)\}
+\mathbb E\{\widehat{\operatorname{Var}}_{O,\mathrm{eval}}(\psi_O)\}
 &=\operatorname{Var}_O(\psi_O).
 \end{align*}
-Dividing by \(n\) and \(N\), then adding, proves block-0 unbiasedness of
-\(\widehat V\) by independence of \(D_R^0\) and \(D_O^0\).
+Dividing by \(n\) and \(N\), then adding, proves unbiasedness of
+\(\widehat V\) by independence of \(D_R^{\mathrm{eval}}\) and
+\(D_O^{\mathrm{eval}}\).
 
-For Theorem~\ref{thm:ate-honest-clt-active}, center the two block-0 score arrays
-at their population means after fixing blocks 1 and 2. Their weighted sum is
+For Theorem~\ref{thm:ate-honest-clt-active}, center the two evaluation-score
+arrays at their population means after fixing the learned objects. Their weighted sum is
 \(\widehat\theta_r-\theta\). The stated Lindeberg condition and nondegenerate
 variance limit give the two-sample triangular-array central limit theorem. Under
 a uniform \((2+\delta)\)-moment bound, the RCT Lyapunov remainder is of order
@@ -403,13 +425,13 @@ limit and Wald coverage.
 
 \subsection{Estimated density ratios and outer-fold honesty}
 
-For \(\widehat r\) trained on block 1 and then held fixed, subtract and add
-\(P_O(rg)=P_R(g)\) to obtain the exact block-0 drift
+For \(\widehat r\) trained on the nuisance samples and then held fixed, subtract
+and add \(P_O(rg)=P_R(g)\) to obtain the exact evaluation-sample drift
 \begin{align*}
 \mathbb E\{\widehat\theta_{\widehat r}(\lambda,\omega)\}-\theta
 &=\omega P_O[\{\widehat r(X)-r(X)\}g(X)].
 \end{align*}
-With \(h_n=(\widehat r-r)g\), the block-0 second moment of the OBS evaluation
+With \(h_n=(\widehat r-r)g\), the second moment of the OBS evaluation
 perturbation is
 \begin{align*}
 \mathbb E
@@ -433,7 +455,7 @@ The second sum need not vanish because outer training complements overlap.
 \subsection{Counterexamples to adaptive reuse}
 
 The fixed-coefficient theorem cannot be extended by selecting a coefficient on
-the same block-0 outcomes without a separate analysis.
+the same evaluation outcomes without a separate analysis.
 
 \paragraph{Reuse through \(\lambda\).}
 Let \(X\) be degenerate, \(\theta=0\), \(Z_0=0\), and let the \(\Delta_i\) be i.i.d. Rademacher variables. Every fixed \(\lambda\) satisfies \(\mathbb E\{\lambda\mathbb P_{R,n}\Delta\}=0\). If the same outcomes select \(\widehat\lambda=\operatorname{sign}(\mathbb P_{R,n}\Delta)\), then
