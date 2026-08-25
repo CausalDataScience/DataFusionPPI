@@ -22,7 +22,11 @@ For every fixed candidate considered below, assume
 \(Z_\lambda,t\in L^2(P_R)\), and let
 \(G_t(X)=\{g(X)-t(X)\}^2\) satisfy
 \(G_t\in L^1(P_R)\) and \(rG_t\in L^1(P_O)\).
-Under exact transport and honest conditioning,
+
+\begin{proposition}[Exact target of the prediction-powered CATE loss]
+\label{prop:cate-target-active}
+\label{prop:cate-target}
+Under Assumptions~\ref{ass:trial}, \ref{ass:exact-transport}, and \ref{ass:honest-evaluation},
 \begin{align}
 \mathbb E\{\widehat L_{\mathrm{DR}}(t;\lambda,\omega)\}
 &=
@@ -33,7 +37,15 @@ Q(\lambda)
 \mathbb E_R\{Z_\lambda-\tau(X)\}^2.
 \label{eq:cate-target}
 \end{align}
-The common-marginal case sets \(r=1\). In both cases, the expected loss is flat in \(\omega\). When \(A>0\), define the integrated pseudo-outcome-noise oracle
+The common-marginal case sets \(r=1\). In both cases, the expected loss is flat in \(\omega\).
+\end{proposition}
+
+Because \(Z_\lambda=Z_0+\lambda\Delta\) and \(\mathbb E_R(\Delta\mid X)=0\),
+\begin{align*}
+Q(\lambda)
+&=Q(0)+2C\lambda+A\lambda^2.
+\end{align*}
+When \(A>0\), define the integrated pseudo-outcome-noise oracle
 \begin{align}
 \lambda_Q^\star
 &=
@@ -43,9 +55,30 @@ The common-marginal case sets \(r=1\). In both cases, the expected loss is flat 
 \end{align}
 Write \(\lambda_{\mathrm{ATE}}^\star:=\lambda^\star\) and \(\omega_{\mathrm{ATE}}^\star:=\omega^\star\) for the two coordinates of the population-orthogonal ATE variance oracle in Equation~\eqref{eq:axis-oracle}. Then \(\lambda_Q^\star=\lambda_{\mathrm{ATE}}^\star\). When \(A=0\), \(\Delta=0\) almost surely and \(Q(\lambda)\) is flat in \(\lambda\). The ATE variance coefficient \(\omega_{\mathrm{ATE}}^\star=D/B\) is a possible training default, but Equation~\eqref{eq:cate-target} does not identify it as a CATE-risk optimizer.
 
+\begin{proposition}[Fixed measurable and pointwise noise coefficients]
+\label{prop:cate-pointwise-lambda-active}
+Under Assumptions~\ref{ass:trial} and \ref{ass:honest-evaluation}, let \(\lambda(\cdot)\) be a fixed measurable function such that \(Z_0+\lambda(X)\Delta\) is integrable. Then
+\begin{align*}
+\mathbb E_R\{Z_0+\lambda(X)\Delta\mid X\}
+&=\tau(X).
+\end{align*}
+For the pointwise statement, choose measurable versions of the displayed conditional covariance and variance and assume they are finite. For \(P_R^X\)-almost every \(x\) on which \(\operatorname{Var}_R(\Delta\mid X=x)>0\), the conditional-noise minimizer is
+\begin{align*}
+\lambda_Q^\star(x)
+&=-
+\frac{\operatorname{Cov}_R(Z_0,\Delta\mid X=x)}
+{\operatorname{Var}_R(\Delta\mid X=x)}.
+\end{align*}
+On the zero-denominator set the conditional criterion is flat, and any finite measurable value may be assigned. The ratio must be measurable on the positive-denominator set, and the resulting pseudo-outcome must remain integrable.
+\end{proposition}
+
+The global scalar \(\lambda_Q^\star\), the pointwise function \(\lambda_Q^\star(x)\), and the coefficient chosen by a restricted or penalized learner are different oracle objects.
+
 The sampling variance of a fixed candidate loss identifies a distinct coefficient. Let
 \(U_{t,\lambda}=\{Z_\lambda-t(X)\}^2\).
-If the required fourth moments exist and the denominator is positive, then
+\begin{proposition}[Fixed-loss variance oracle]
+\label{prop:cate-loss-variance-active}
+Under Assumption~\ref{ass:honest-evaluation}, fix \(\mathcal F\)-measurable \(t\) and \(\lambda\); the established conditioning convention also makes \(g\) and \(r\) \(\mathcal F\)-measurable. Suppose \(U_{t,\lambda}\in L^2(P_R)\), \(G_t\in L^2(P_R)\), and \(rG_t\in L^2(P_O)\). If the denominator below is positive, the unrestricted variance-minimizing coefficient is
 \begin{align}
 \omega_{\mathrm{LV}}^\star(t;\lambda)
 &=
@@ -53,14 +86,16 @@ If the required fourth moments exist and the denominator is positive, then
 {\operatorname{Var}_R(G_t)+(n/N)\operatorname{Var}_O(rG_t)}.
 \label{eq:loss-variance-omega}
 \end{align}
-This oracle minimizes the variance of one fixed empirical loss. It does not minimize the final learned CATE risk.
+Under the common covariate marginal this denominator is \((1+n/N)\operatorname{Var}_R(G_t)\). If the denominator is zero, the empirical correction is constant and its variance criterion is flat in \(\omega\).
+\end{proposition}
+This oracle minimizes the variance of one fixed empirical loss. It does not minimize the final learned CATE risk. The square-integrability conditions are fourth-moment-type requirements on the underlying residuals.
 
 \paragraph{Final learner-risk oracle.}
-Let \(\mathcal C\) be a prespecified finite candidate class. An index
+Let \(\mathfrak C\) be a prespecified finite candidate class. An index
 \begin{align}
 c
 &=
-(\lambda_c,\omega_c,p_c,\rho_c)\in\mathcal C
+(\lambda_c,\omega_c,p_c,\rho_c)\in\mathfrak C
 \end{align}
 specifies the two fusion coefficients, the sieve dimension, and the penalty level. All other components of the learning rule, including the data splits, nuisance algorithms, basis construction, and optimization convention, are also prespecified. Let \(\mathcal D_{\mathrm{tr}}\) collect all pre-validation randomness, including the candidate-training samples, nuisance and ratio training samples, basis fits, and independently randomized split assignments, and set \(\mathcal F_{\mathrm{train}}=\sigma(\mathcal D_{\mathrm{tr}})\). Let \(\widehat t_c^{\mathcal D_{\mathrm{tr}}}\) denote the resulting fitted function and define its sample-specific target risk and its algorithm-induced expected risk by
 \begin{align}
@@ -79,15 +114,22 @@ specifies the two fusion coefficients, the sieve dimension, and the penalty leve
 \{\mathcal R_{\mathcal D_{\mathrm{tr}}}(c)\}.
 \label{eq:algorithm-cate-risk}
 \end{align}
-The final CATE-risk oracle minimizes one of these risks over fitted learning algorithms. It is distinct from both \(\lambda_Q^\star\) and \(\omega_{\mathrm{LV}}^\star(t;\lambda)\).
+When the minimum is attained, define the sample-specific final learner-risk oracle
+\begin{align*}
+c_{\mathrm{risk}}^\star(\mathcal D_{\mathrm{tr}})
+&\in
+\operatorname*{arg\,min}_{c\in\mathfrak C}
+\mathcal R_{\mathcal D_{\mathrm{tr}}}(c).
+\end{align*}
+This oracle chooses among fitted learning algorithms. It is distinct from both \(\lambda_Q^\star\) and \(\omega_{\mathrm{LV}}^\star(t;\lambda)\).
 
 To make the fallback comparison exact, let
 \begin{align}
-\mathcal C_R
+\mathfrak C_R
 &=
 \{(0,0,p,\rho):(p,\rho)\in\mathcal H_R\}
 \subseteq
-\mathcal C
+\mathfrak C
 \label{eq:rct-candidate-class}
 \end{align}
 contain the identical RCT-only learners over the prespecified sieve and penalty grid \(\mathcal H_R\). Identical means that the RCT observations, folds, RCT nuisance fits, basis, penalty scaling, and optimization code agree with the corresponding fusion candidates; only the two OBS fusion channels are set to zero.
@@ -96,26 +138,22 @@ contain the identical RCT-only learners over the prespecified sieve and penalty 
 \label{prop:cate-candidate-dominance}
 For every realized candidate-training sample for which the displayed infima are finite,
 \begin{align}
-\inf_{c\in\mathcal C}
+\inf_{c\in\mathfrak C}
 \mathcal R_{\mathcal D_{\mathrm{tr}}}(c)
 &\leq
-\inf_{c\in\mathcal C_R}
+\inf_{c\in\mathfrak C_R}
 \mathcal R_{\mathcal D_{\mathrm{tr}}}(c).
 \label{eq:sample-oracle-dominance}
 \end{align}
 Likewise,
 \begin{align}
-\inf_{c\in\mathcal C}\mathfrak R(c)
+\inf_{c\in\mathfrak C}\mathfrak R(c)
 &\leq
-\inf_{c\in\mathcal C_R}\mathfrak R(c).
+\inf_{c\in\mathfrak C_R}\mathfrak R(c).
 \label{eq:expected-oracle-dominance}
 \end{align}
 If the infima are attained, they define the sample-specific and expected-training final CATE-risk oracles. Either inequality is strict only when at least one fusion candidate has risk strictly below the optimally tuned RCT-only class under the corresponding comparison.
 \end{proposition}
-
-\begin{proof}
-Both inequalities follow from the set inclusion \(\mathcal C_R\subseteq\mathcal C\). Strict inclusion of candidate sets alone does not imply a strict risk inequality.
-\end{proof}
 
 Proposition~\ref{prop:cate-candidate-dominance} is an infeasible oracle statement because its risks use the unknown \(\tau\). It does not say that a data-adaptive selector dominates the RCT-only learner on every finite sample.
 
@@ -181,11 +219,11 @@ and their uniform magnitudes
 \begin{align}
 \Delta_r
 &=
-\sup_{c\in\mathcal C}|\delta_{r,c}|,
+\sup_{c\in\mathfrak C}|\delta_{r,c}|,
 &
 \Delta_{\mathrm{nuis}}
 &=
-\sup_{c\in\mathcal C}|\delta_{\mathrm{nuis},c}|.
+\sup_{c\in\mathfrak C}|\delta_{\mathrm{nuis},c}|.
 \label{eq:validation-drift-bounds}
 \end{align}
 Known trial propensity and an honest reference nuisance give \(b_{\mathrm{ref}}=0\) for every outcome-regression fit. Exact transport gives \(\Delta_r=0\). Estimated ratios or estimated propensities must instead be controlled through the displayed drifts or a stronger problem-specific expansion. Adaptive reuse of validation observations violates the held-out product law and measurability used here; it is outside Proposition~\ref{prop:cate-selector-inequality} unless a separate selective-inference or stability theorem is supplied.
@@ -196,14 +234,14 @@ Let
 \begin{align}
 \widehat c
 &\in
-\operatorname*{arg\,min}_{c\in\mathcal C}
+\operatorname*{arg\,min}_{c\in\mathfrak C}
 \widehat{\mathcal R}^{\mathrm{ref}}_c
 \end{align}
 and define the conditional validation fluctuation
 \begin{align}
 \varepsilon_{\mathrm{val}}
 &=
-\sup_{c\in\mathcal C}
+\sup_{c\in\mathfrak C}
 \left|
 \widehat{\mathcal R}^{\mathrm{ref}}_c
 -
@@ -216,35 +254,42 @@ Then
 \begin{align}
 \mathcal R_{\mathcal D_{\mathrm{tr}}}(\widehat c)
 &\leq
-\inf_{c\in\mathcal C}
+\inf_{c\in\mathfrak C}
 \mathcal R_{\mathcal D_{\mathrm{tr}}}(c)
 +2\varepsilon_{\mathrm{val}}
 +2\Delta_r
 +2\Delta_{\mathrm{nuis}}
 \label{eq:cate-selector-inequality}
 \end{align}
-and therefore the same upper bound holds with the infimum over \(\mathcal C\) replaced by the larger infimum over \(\mathcal C_R\).
+and therefore the same upper bound holds with the infimum over \(\mathfrak C\) replaced by the larger infimum over \(\mathfrak C_R\).
 \end{proposition}
-
-\begin{proof}
-Conditionally on \(\mathcal F_{\mathrm{train}}\), expand the expectation of Equation~\eqref{eq:common-reference-validation}. The squared pseudo-outcome term equals the target risk plus \(Q(\lambda_{\mathrm{ref}})\) and \(\delta_{\mathrm{nuis},c}\); the transported correction contributes \(\delta_{r,c}\). Compare the empirical score of \(\widehat c\) with that of any \(c\in\mathcal C\), bound the two empirical deviations by \(\varepsilon_{\mathrm{val}}\), and bound the two drift differences by \(2\Delta_r+2\Delta_{\mathrm{nuis}}\). Taking the infimum proves the result.
-\end{proof}
 
 If \(\varepsilon_{\mathrm{val}}+\Delta_r+\Delta_{\mathrm{nuis}}=o_p(1)\), Proposition~\ref{prop:cate-selector-inequality} gives asymptotic weak noninferiority relative to the identical optimally tuned RCT-only class. Passing from this conditional statement to expected-training risk additionally requires uniform integrability. Strict asymptotic improvement requires a positive oracle gap that dominates the validation and drift remainders. No part of this argument gives universal finite-sample or realized-sample dominance.
 
 \paragraph{Why \(\lambda_Q^\star\) need not optimize sieve risk.}
-Consider an unpenalized linear sieve fitted on RCT pseudo-outcomes with \(\omega=0\), basis \(b_p\), population Gram matrix \(H_p=\mathbb E_R\{b_p(X)b_p(X)^\top\}\), projection \(t_p\) of \(\tau\), and leverage \(\ell_p(X)=b_p(X)^\top H_p^{-1}b_p(X)\). Under the usual fixed-sieve least-squares expansion, the \(\lambda\)-dependent part of the leading integrated estimation variance is
+Consider an unpenalized linear sieve fitted on RCT pseudo-outcomes with \(\omega=0\), basis \(b_p\), population Gram matrix \(G_p=\mathbb E_R\{b_p(X)b_p(X)^\top\}\), projection \(t_p\) of \(\tau\), and leverage \(h_p(X)=b_p(X)^\top G_p^{-1}b_p(X)\). Under the usual fixed-sieve least-squares expansion, the \(\lambda\)-dependent part of the leading integrated estimation variance is
 \begin{align}
 \frac1n
 \mathbb E_R
 \left[
-\ell_p(X)\operatorname{Var}_R(Z_\lambda\mid X)
+h_p(X)\operatorname{Var}_R(Z_\lambda\mid X)
 \right].
 \label{eq:leverage-weighted-noise}
 \end{align}
-The oracle \(\lambda_Q^\star\) minimizes the same expression without \(\ell_p(X)\). The two coefficients coincide when the leverage is constant, or under another condition that makes the two weighted quadratics share a minimizer, but they need not coincide in general. Penalties, \(\omega\), and data-adaptive basis selection create further differences between the integrated-noise oracle and the final learner-risk oracle.
+The oracle \(\lambda_Q^\star\) minimizes the same expression without \(h_p(X)\). The two coefficients coincide when the leverage is constant, or under another condition that makes the two weighted quadratics share a minimizer, but they need not coincide in general. Penalties, \(\omega\), and data-adaptive basis selection create further differences between the integrated-noise oracle and the final learner-risk oracle.
 
-For \(0\leq\omega<1\), define \(\widetilde Z_{\lambda,\omega}=(Z_\lambda-\omega g)/(1-\omega)\). Completing the square gives
+For \(\omega\neq1\), define \(\widetilde Z_{\lambda,\omega}=(Z_\lambda-\omega g)/(1-\omega)\).
+\begin{proposition}[Exact square completion]
+\label{prop:cate-square-completion-active}
+For every \(\omega\neq1\),
+\begin{align*}
+\{Z_\lambda-t(X)\}^2
+-\omega\{g(X)-t(X)\}^2
+&=
+(1-\omega)\{t(X)-\widetilde Z_{\lambda,\omega}\}^2
+-\frac{\omega}{1-\omega}\{Z_\lambda-g(X)\}^2.
+\end{align*}
+Consequently,
 \begin{align}
 \widehat L_{\mathrm{DR}}(t;\lambda,\omega)
 &=
@@ -252,9 +297,13 @@ For \(0\leq\omega<1\), define \(\widetilde Z_{\lambda,\omega}=(Z_\lambda-\omega 
 \\
 &\quad+
 \omega\mathbb P_{O,N}\{r(X)(g(X)-t(X))^2\}
-+\text{a term constant in }t.
++\left[-\frac{\omega}{1-\omega}
+\mathbb P_{R,n}\{Z_\lambda-g(X)\}^2\right].
+\label{eq:completed-loss}
 \end{align}
-This form is a computational device for convex squared-loss learners. The original objective must be used at \(\omega=1\), outside \([0,1]\), or when a nonlinear parameterization makes convexity unclear.
+The bracketed term is constant in \(t\).
+\end{proposition}
+For \(0\leq\omega<1\), the two \(t\)-dependent terms form a nonnegative mixture of squared losses. At \(\omega=1\), the transformed outcome is undefined and the original objective must be used. For \(0\leq\omega\leq1\), the original empirical quadratic is positive semidefinite in unrestricted fitted values and in the coefficients of a linear sieve because its Hessian is a nonnegative weighted sum of Gram matrices. Outside this interval, or for nonlinear parameterizations, convexity is not guaranteed. Under a penalty or parameter constraint, rescaling the completed loss changes the relative penalty scale, so the original quadratic and its stated penalty must define the estimator.
 
 \subsection{Implementable F-Learner and prospective R-loss extension}
 \label{sec:cate-implementable}
@@ -263,9 +312,9 @@ We use \emph{F-Learner} as a provisional working label only for CATE estimators 
 
 For a linear sieve \(t_\beta(x)=b(x)^\top\beta\), with \(b(x)\in\mathbb R^p\), add the penalty \(\rho\beta^\top P\beta\), where \(\rho\geq0\) and \(P=P^\top\succeq0\) belongs to \(\mathbb R^{p\times p}\). Define
 \begin{align}
-H_R&=\mathbb P_{R,n}\{b(X)b(X)^\top\},
+G_R&=\mathbb P_{R,n}\{b(X)b(X)^\top\},
 &
-H_{O,r}&=\mathbb P_{O,N}\{r(X)b(X)b(X)^\top\},
+G_{O,r}&=\mathbb P_{O,N}\{r(X)b(X)b(X)^\top\},
 \\
 h_\lambda&=\mathbb P_{R,n}\{b(X)Z_\lambda\},
 &
@@ -275,11 +324,21 @@ Whenever the matrix is invertible, the penalized F-Learner solution is
 \begin{align}
 \widehat\beta_{\lambda,\omega}
 &=
-\left\{(1-\omega)H_R+\omega H_{O,r}+\rho P\right\}^{-1}
+\left\{(1-\omega)G_R+\omega G_{O,r}+\rho P\right\}^{-1}
 \left\{h_\lambda+\omega d_g\right\}.
 \label{eq:linear-sieve}
 \end{align}
 Because \(h_\lambda\) is affine in \(\lambda\), a fixed-\(\omega\) candidate path can be computed efficiently. A frozen neural basis replaces \(b(x)\) by a representation learned without the candidate-training or validation observations and inherits Equation~\eqref{eq:linear-sieve} conditional on that representation. End-to-end neural fitting is nonconvex, and the present linear-sieve guarantees do not cover it.
+
+\paragraph{Out-of-fold nuisance and candidate construction.}
+Partition the RCT and OBS indices into prespecified folds. For each held-out fold \(k\), fit \(\widehat\mu_R^{(-k)}\) and \(\widehat\mu_O^{(-k)}\) without that fold, use the same
+\begin{align*}
+g^{(-k)}(x)
+&=\widehat\mu_{O,1}^{(-k)}(x)-\widehat\mu_{O,0}^{(-k)}(x)
+\end{align*}
+on held-out RCT and OBS covariates, and construct \(Z_{0,i}^{(-k)}\), \(Z_{1,i}^{(-k)}\), and \(Z_{\lambda,i}^{(-k)}=Z_{0,i}^{(-k)}+\lambda\{Z_{1,i}^{(-k)}-Z_{0,i}^{(-k)}\}\) only on the held-out RCT fold. This prevents an observation's own outcome from entering its nuisance prediction, but estimates from different folds remain dependent.
+
+For each \(c\in\mathfrak C\), candidate fitting, basis construction, penalty selection, and tuning-dependent preprocessing must exclude the shared validation observations. The common-reference validation score then ranks already-fitted candidates. Reusing validation outcomes to fit a candidate or its preprocessing violates the held-out product law and lies outside Proposition~\ref{prop:cate-selector-inequality}.
 
 A prospective R-loss extension can be implemented as an empirical candidate, but it requires a separate theorem before it belongs to the F-Learner class. Let \(m\) be a generic fixed, cross-fitted marginal-outcome regression trained independently of the observations on which the following loss is evaluated. One candidate objective is
 \begin{align}
@@ -334,3 +393,5 @@ The uniform population-loss drift is bounded by \(|\omega|\Delta_{\mathcal T}(w)
 
 \paragraph{Current scope and open theory.}
 The proved CATE statements cover the AIPW-pseudo-outcome squared loss with fixed honest nuisances and either a common covariate marginal or exact transport. The linear-sieve solution and frozen-feature extension are conditional results. Estimated-ratio rates, adaptive loss-targeted balancing, end-to-end neural optimization, the R-loss extension, and cross-fitted inference remain open theory. Honest splitting prevents direct reuse but does not by itself close these gaps.
+
+A reproducible analysis should report the candidate class \(\mathfrak C\), RCT-only subclass \(\mathfrak C_R\), folds, basis dimension, penalty and scaling, ratio method and overlap diagnostics, denominator fallbacks, selected candidate, and validation score of the identical RCT-only comparator. Values of \(\omega\) outside \([0,1]\) require an explicit curvature check of the original empirical objective.
