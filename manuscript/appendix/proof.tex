@@ -78,7 +78,7 @@ Expand the first variance in Equation~\eqref{eq:ate-variance} using
 \begin{align}
 2C\lambda-2D\omega+A\lambda^2-2E\lambda\omega+B\omega^2,
 \end{align}
-which is \(\mathcal J_{\mathrm{ATE}}(\beta)\). This proves
+which is \(\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta)\). This proves
 Equation~\eqref{eq:ate-quadratic}. The representation
 \begin{align}
 \begin{pmatrix}u&v\end{pmatrix}\mathbf H_{\mathrm{ATE}}\begin{pmatrix}u\\v\end{pmatrix}
@@ -87,30 +87,13 @@ Equation~\eqref{eq:ate-quadratic}. The representation
 \end{align}
 proves positive semidefiniteness.
 
-\subsection{Proof of Proposition~\ref{prop:ate-population-orthogonality}}
-
-Equation~\eqref{eq:pseudo-valid} applied to \(Z_0\) and \(Z_1\) gives
-\(\mathbb E_R(Z_a\mid X)=\tau(X)\) for \(a\in\{0,1\}\). Subtracting the two
-identities gives \(\mathbb E_R(\Delta\mid X)=0\). Because \(g\) is a fixed
-function of \(X\), iterated expectation yields
-\begin{align*}
-\operatorname{Cov}_R(\Delta,g)
-&=
-\mathbb E_R\left[
-\{g(X)-\mathbb E_Rg(X)\}\mathbb E_R(\Delta\mid X)
-\right]
-=0.
-\end{align*}
-The same argument with \(Z_0\) gives
-\(\operatorname{Cov}_R(Z_0,g)=\operatorname{Cov}_R\{\tau(X),g(X)\}\).
-
 \subsection{Proof of Proposition~\ref{prop:ate-argmin-equivalence}}
 
 Equation~\eqref{eq:ate-quadratic} is the positive affine transformation
 \begin{align*}
-\operatorname{Var}\{\widehat\theta_r(\beta)\}
+\operatorname{Var}\{\widehat\theta_r(\boldsymbol\beta)\}
 &=\frac1n\operatorname{Var}_R(Z_0)
-+\frac1n\mathcal J_{\mathrm{ATE}}(\beta),
++\frac1n\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta),
 \end{align*}
 where \(n>0\). Adding a constant and multiplying by a positive scalar preserve
 the complete argmin set over every feasible set.
@@ -119,10 +102,11 @@ the complete argmin set over every feasible set.
 
 If \(AB-E^2>0\), \(\mathbf H_{\mathrm{ATE}}\) is positive definite. The
 first-order condition for \(\mathcal J_{\mathrm{ATE}}\) is
-\(\mathbf H_{\mathrm{ATE}}\beta=-\boldsymbol\ell\), which has the unique
+\(\mathbf H_{\mathrm{ATE}}\boldsymbol\beta=-\boldsymbol\ell\), which has the
+unique
 solution
 \begin{align*}
-\beta_{\mathrm{joint}}^\star
+\boldsymbol\beta_{\mathrm{joint}}^\star
 &=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell
 =
 \begin{pmatrix}
@@ -132,10 +116,11 @@ solution
 \end{align*}
 For \(\rho>0\), the ridge objective has gradient
 \begin{align*}
-\nabla_\beta
-\left\{\mathcal J_{\mathrm{ATE}}(\beta)+\rho\lVert\beta\rVert_2^2\right\}
+\nabla_{\boldsymbol\beta}
+\left\{\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta)
++\rho\lVert\boldsymbol\beta\rVert_2^2\right\}
 &=2\boldsymbol\ell
-+2(\mathbf H_{\mathrm{ATE}}+\rho I_2)\beta.
++2(\mathbf H_{\mathrm{ATE}}+\rho I_2)\boldsymbol\beta.
 \end{align*}
 Positive semidefiniteness of \(\mathbf H_{\mathrm{ATE}}\) makes
 \(\mathbf H_{\mathrm{ATE}}+\rho I_2\) positive definite. Setting the gradient
@@ -151,35 +136,27 @@ quadratic proves attainment on every prespecified compact feasible set.
 
 For completeness, suppose \(\mathbf H_{\mathrm{ATE}}\) is positive definite and write
 \begin{align*}
-\mathcal J_{\mathrm{ATE}}(\beta)
-&=2\boldsymbol\ell^\top\beta
-+\beta^\top\mathbf H_{\mathrm{ATE}}\beta,
+\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta)
+&=2\boldsymbol\ell^\top\boldsymbol\beta
++\boldsymbol\beta^\top\mathbf H_{\mathrm{ATE}}\boldsymbol\beta,
 &
-\beta_{\mathrm{joint}}^\star
+\boldsymbol\beta_{\mathrm{joint}}^\star
 &=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell.
 \end{align*}
 Completing the square gives
 \begin{align*}
-\mathcal J_{\mathrm{ATE}}(\beta)
--\mathcal J_{\mathrm{ATE}}(\beta_{\mathrm{joint}}^\star)
-&=(\beta-\beta_{\mathrm{joint}}^\star)^\top
-\mathbf H_{\mathrm{ATE}}(\beta-\beta_{\mathrm{joint}}^\star).
+\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta)
+-\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta_{\mathrm{joint}}^\star)
+&=(\boldsymbol\beta-\boldsymbol\beta_{\mathrm{joint}}^\star)^\top
+\mathbf H_{\mathrm{ATE}}
+(\boldsymbol\beta-\boldsymbol\beta_{\mathrm{joint}}^\star).
 \end{align*}
 The norm induced by a positive-definite matrix is equivalent to the Euclidean
 norm.  Hence this distance is coercive and strictly convex.  On every nonempty
 closed convex feasible set, it therefore attains a unique minimum, namely the
 \(\mathbf H_{\mathrm{ATE}}\)-metric projection of
-\(\beta_{\mathrm{joint}}^\star\).
+\(\boldsymbol\beta_{\mathrm{joint}}^\star\).
 
-Finally, because \(g\) is \(X\)-measurable,
-\begin{align}
-E
-&=\mathbb E_R[\{g(X)-P_Rg\}\mathbb E_R(\Delta\mid X)]=0,
-\\
-D
-&=\operatorname{Cov}_R\{\mathbb E_R(Z_0\mid X),g(X)\}
-=\operatorname{Cov}_R\{\tau(X),g(X)\}.
-\end{align}
 If \(A=\operatorname{Var}_R(\Delta)=0\), then \(\Delta\) is constant almost
 surely, and \(\mathbb E_R(\Delta\mid X)=0\) forces that constant to be zero.
 If
@@ -191,39 +168,27 @@ then \(g\) is constant \(P_R\)-almost surely and \(rg\) is constant
 \(P_O\)-almost surely.  Exact transport gives
 \(P_O(rg)=P_R(g)\), so the two constants agree and
 \(\mathbb P_{O,N}(rg)-\mathbb P_{R,n}(g)=0\) for every evaluation sample.
-Finally, when \(E=0\) and \(A,B>0\), completing the two scalar squares gives
-\begin{align*}
-\mathcal J_{\mathrm{ATE}}(\beta)
-&=
-A\left(\lambda+\frac CA\right)^2
-+B\left(\omega-\frac DB\right)^2
--\frac{C^2}{A}-\frac{D^2}{B}.
-\end{align*}
-Therefore minimization over a rectangular feasible set is exactly coordinatewise
-clipping of \(-C/A\) and \(D/B\).  This argument does not apply to coupled
-constraints or to a nonzero interaction \(E\).
-Substitution yields Equation~\eqref{eq:axis-oracle}.  Since the population
-objective is minimized over a set containing \((0,0)\), its oracle value cannot
-exceed the trial-only value.  This comparison concerns the population objective,
-not coefficients estimated from a finite tuning sample.
-
 \subsection{Proof of Corollary~\ref{cor:joint-oracle-variance}}
 
 Write the evaluation-sample variance as
 \begin{align*}
-V(\beta)
+V(\boldsymbol\beta)
 &=
 \mathcal V_0+
 \frac1n
-\{2\boldsymbol\ell^\top\beta+\beta^\top\mathbf H_{\mathrm{ATE}}\beta\},
+\{2\boldsymbol\ell^\top\boldsymbol\beta
++\boldsymbol\beta^\top\mathbf H_{\mathrm{ATE}}\boldsymbol\beta\},
 &
 \mathcal V_0
 &=
 \frac1n\operatorname{Var}_R(Z_0).
 \end{align*}
-When \(AB-E^2>0\), the matrix \(\mathbf H_{\mathrm{ATE}}\) is positive definite and the unique minimizer is \(\beta_{\mathrm{joint}}^\star=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell\). Substitution gives
+When \(AB-E^2>0\), the matrix \(\mathbf H_{\mathrm{ATE}}\) is positive
+definite and the unique minimizer is
+\(\boldsymbol\beta_{\mathrm{joint}}^\star
+=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell\). Substitution gives
 \begin{align*}
-V(\beta_{\mathrm{joint}}^\star)
+V(\boldsymbol\beta_{\mathrm{joint}}^\star)
 &=
 \mathcal V_0-
 \frac1n\boldsymbol\ell^\top\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell.
@@ -239,7 +204,8 @@ For \(\mathbf H_{\mathrm{ATE}}=\left(\begin{smallmatrix}A&-E\\-E&B\end{smallmatr
 &=
 \frac{BC^2-2ECD+AD^2}{AB-E^2}.
 \end{align*}
-Positive definiteness makes this quadratic form nonnegative and makes it zero exactly when \(\boldsymbol\ell=0\). Setting \(E=0\) yields \(C^2/A+D^2/B\).
+Positive definiteness makes this quadratic form nonnegative and makes it zero
+exactly when \(\boldsymbol\ell=0\).
 
 \paragraph{Singular variance reduction and compact constraints.}
 If \(\mathbf H_{\mathrm{ATE}}\) is singular, boundedness below of the variance objective implies \(\boldsymbol\ell\in\operatorname{Range}(\mathbf H_{\mathrm{ATE}})\). Evaluating at the minimum-norm solution \(-\mathbf H_{\mathrm{ATE}}^+\boldsymbol\ell\) gives
@@ -249,7 +215,56 @@ V_{\min}
 \mathcal V_0-
 \frac1n\boldsymbol\ell^\top\mathbf H_{\mathrm{ATE}}^+\boldsymbol\ell.
 \end{align*}
-The pseudoinverse is positive definite on \(\operatorname{Range}(\mathbf H_{\mathrm{ATE}})\), so the reduction is strictly positive exactly when \(\boldsymbol\ell\neq0\). Finally, continuity gives attainment on every nonempty compact feasible set \(\mathcal B_\beta\). If \(0\in\mathcal B_\beta\), the constrained minimum is at most \(V(0)=\mathcal V_0\), and it is strictly smaller exactly when some feasible \(\beta\) makes \(2\boldsymbol\ell^\top\beta+\beta^\top\mathbf H_{\mathrm{ATE}}\beta<0\).
+The pseudoinverse is positive definite on
+\(\operatorname{Range}(\mathbf H_{\mathrm{ATE}})\), so the reduction is
+strictly positive exactly when \(\boldsymbol\ell\neq0\). Finally, continuity
+gives attainment on every nonempty compact feasible set \(\Theta\). If
+\(0\in\Theta\), the constrained minimum is at most
+\(V(0)=\mathcal V_0\), and it is strictly smaller exactly when some feasible
+\(\boldsymbol\beta\) makes
+\(2\boldsymbol\ell^\top\boldsymbol\beta
++\boldsymbol\beta^\top\mathbf H_{\mathrm{ATE}}\boldsymbol\beta<0\).
+
+\subsection{Proof of Corollary~\ref{cor:ate-separable-oracle}}
+
+Equation~\eqref{eq:pseudo-valid} gives
+\(\mathbb E_R(Z_a\mid X)=\tau(X)\) for \(a\in\{0,1\}\). Subtracting the two
+equalities yields \(\mathbb E_R(\Delta\mid X)=0\). Since \(g\) is a fixed
+function of \(X\), iterated expectation gives
+\begin{align}
+E
+&=
+\mathbb E_R\left[
+\{g(X)-\mathbb E_Rg(X)\}\mathbb E_R(\Delta\mid X)
+\right]
+=0,
+\\
+D
+&=
+\operatorname{Cov}_R\{\mathbb E_R(Z_0\mid X),g(X)\}
+=
+\operatorname{Cov}_R\{\tau(X),g(X)\}.
+\label{eq:ate-population-orthogonality}
+\end{align}
+Substituting \(E=0\) into the coefficient objective and completing the two
+scalar squares gives
+\begin{align*}
+\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta)
+&=
+A\left(\lambda+\frac CA\right)^2
++B\left(\omega-\frac DB\right)^2
+-\frac{C^2}{A}-\frac{D^2}{B}.
+\end{align*}
+The two minimizers are therefore \(-C/A\) and \(D/B\), proving
+Equation~\eqref{eq:axis-oracle}. Substitution into the variance in
+Equation~\eqref{eq:ate-quadratic} gives
+\begin{align*}
+V_{\min}^{\mathrm{sep}}
+&=
+\mathcal V_0-
+\frac1n\left(\frac{C^2}{A}+\frac{D^2}{B}\right),
+\end{align*}
+which proves Equation~\eqref{eq:ate-separable-minimum}.
 
 \subsection{Prediction-powered CATE risk identity}
 
@@ -275,7 +290,7 @@ Q(\lambda)
 &=Q(0)+2C\lambda+A\lambda^2,
 \end{align}
 so when \(A>0\) its minimizer is \(-C/A\), the same integrated-noise oracle as
-in the population-orthogonal ATE problem.  If \(A=0\), then \(\Delta=0\) almost
+in the separable ATE problem.  If \(A=0\), then \(\Delta=0\) almost
 surely by conditional mean zero, and \(Q\) is flat in \(\lambda\).
 
 After fixing \(t\), \(\lambda\), \(g\), and \(r\) using the nuisance and tuning
@@ -397,7 +412,8 @@ The baseline between-\(X\) variance is \(0.01\), whereas the oracle component is
 \end{align*}
 The reduction \(0.009\) concerns only between-\(X\) variation; total variance also contains the within-\(X\) pseudo-outcome noise from Equation~\eqref{eq:ate-within-between}.
 
-\subsection{Honest variance estimation and evaluation-sample Wald inference}
+\subsection{Honest variance estimation and evaluation-sample inference}
+\label{app:ate-evaluation-regularity}
 
 For Proposition~\ref{prop:ate-honest-variance-active}, fix the coefficients and
 scores before using the evaluation observations. Ordinary unbiased sample-variance identities
@@ -413,35 +429,235 @@ Dividing by \(n\) and \(N\), then adding, proves unbiasedness of
 \(\widehat V\) by independence of \(D_R^{\mathrm{eval}}\) and
 \(D_O^{\mathrm{eval}}\).
 
-For Theorem~\ref{thm:ate-honest-clt-active}, center the two evaluation-score
-arrays at their population means after fixing the learned objects. Their weighted sum is
-\(\widehat\theta_r-\theta\). The stated Lindeberg condition and nondegenerate
-variance limit give the two-sample triangular-array central limit theorem. Under
-a uniform \((2+\delta)\)-moment bound, the RCT Lyapunov remainder is of order
-\(n^{-\delta/2}\), and the OBS remainder also vanishes when
-\(n/N\to\kappa<\infty\). The same moment control gives ratio consistency of the
-combined sample-variance estimator. Slutsky's theorem yields the studentized
-limit and Wald coverage.
+For Theorem~\ref{thm:ate-honest-clt-active}, impose the following evaluation
+regularity conditions after fixing the learned objects:
+\begin{enumerate}
+\item[(R1)] the RCT and OBS evaluation observations are conditionally
+independent and retain their respective product laws;
+\item[(R2)] \(n,N\to\infty\), \(n/N\to\kappa\in[0,\infty)\), and for some
+\(\delta>0\) the centered RCT and OBS evaluation-score arrays have uniformly
+bounded conditional \((2+\delta)\) moments;
+\item[(R3)]
+\(n\operatorname{Var}\{\widehat\theta_r(\widehat\lambda,
+\widehat\omega)\}\to\sigma^2\in(0,\infty)\) in probability, and the combined
+sample-variance estimator is ratio-consistent for this variance.
+\end{enumerate}
+Center the two evaluation-score arrays at their population means. Their
+weighted sum is \(\widehat\theta_r-\theta\). Condition (R2) supplies the
+two-sample triangular-array central limit theorem: the RCT Lyapunov remainder
+is of order \(n^{-\delta/2}\), and the OBS remainder also vanishes when
+\(n/N\to\kappa<\infty\). Condition (R3) and Slutsky's theorem yield the
+studentized limit and asymptotic coverage of the normal-approximation interval.
 
-\subsection{Estimated density ratios and outer-fold honesty}
+\subsection{Proof of Theorem~\ref{thm:ate-three-way-comparison}}
+\label{app:ate-three-way-comparison}
 
-For \(\widehat r\) trained on the nuisance samples and then held fixed, subtract
-and add \(P_O(rg)=P_R(g)\) to obtain the exact evaluation-sample drift
+Under either exact \(r=r_0\) transport or its common-marginal special case,
+Equation~\eqref{eq:pseudo-valid} gives
+\(\mathbb E_R(\Delta\mid X)=0\). Hence
+\(E=\operatorname{Cov}_R(\Delta,g)=0\), as shown in
+Equation~\eqref{eq:ate-population-orthogonality}. Multiplying
+Equation~\eqref{eq:ate-quadratic} by \(n\) therefore gives
 \begin{align*}
-\mathbb E\{\widehat\theta_{\widehat r}(\lambda,\omega)\}-\theta
-&=\omega P_O[\{\widehat r(X)-r(X)\}g(X)].
+\widetilde{\mathcal V}(\lambda,\omega)
+&=
+\sigma_0^2+2C\lambda-2D\omega+A\lambda^2+B\omega^2.
 \end{align*}
-With \(h_n=(\widehat r-r)g\), the second moment of the OBS evaluation
-perturbation is
+At \((\lambda,\omega)=(0,0)\), this equals \(\sigma_0^2\). Holding
+\(\lambda=0\) and completing the square in \(\omega\) gives the unique
+PPI++-only oracle \(D/B\) and variance \(\sigma_0^2-D^2/B\). Completing the
+two separate squares gives the joint oracle \((-C/A,D/B)\) and variance
+\(\sigma_0^2-C^2/A-D^2/B\). The two variance gaps are \(D^2/B\) and
+\(C^2/A\). Because \(A,B>0\), they are nonnegative and vanish exactly when
+\(D=0\) and \(C=0\), respectively.
+
+\subsection{Density-ratio characterizations and estimated-ratio inheritance}
+\label{app:estimated-ratio-inheritance}
+
+\paragraph{Classifier odds.}
+Let \(p_R\) and \(p_O\) be densities with respect to a common dominating
+measure. In the pooled nuisance population,
+\begin{align*}
+s_0(x)
+&=
+\frac{\pi p_R(x)}{\pi p_R(x)+(1-\pi)p_O(x)}.
+\end{align*}
+Solving for \(p_R(x)/p_O(x)\) gives
+\begin{align*}
+r_0(x)
+&=
+\frac{1-\pi}{\pi}\frac{s_0(x)}{1-s_0(x)},
+\end{align*}
+which proves Equation~\eqref{eq:ratio-classifier-bayes} in
+Definition~\ref{def:classifier-density-ratio}. The same algebra with a fitted
+domain probability and the effective training prior yields
+\(\widehat r_{\mathrm{CLS}}\).
+
+\paragraph{Proof of Proposition~\ref{prop:ratio-characterizations}.}
+The defining property of the Radon--Nikodym derivative gives
+\begin{align*}
+\mathbb E_O\{r_0(X)h(X)\}
+&=
+\mathbb E_R\{h(X)\}
+\end{align*}
+for every integrable \(h\). If a nonnegative normalized function
+\(\widetilde r\) gives
+the same equality for every bounded measurable \(h\), then
+\(\int_A \widetilde r\,dP_O=P_R(A)=\int_A r_0\,dP_O\) for every measurable
+set \(A\). Uniqueness of the Radon--Nikodym derivative gives
+\(\widetilde r=r_0\)
+\(P_O^X\)-almost surely.
+
+If \(r_0\in L_2(P_O^X)\), then for every \(a\in L_2(P_O^X)\),
+\begin{align*}
+\mathcal R(a)
+&=
+\mathbb E_O\{a(X)^2\}-2\mathbb E_R\{a(X)\}
+\\
+&=
+\mathbb E_O\{(a(X)-r_0(X))^2\}
+-\mathbb E_O\{r_0(X)^2\}.
+\end{align*}
+The squared term is uniquely minimized at \(a=r_0\) in
+\(L_2(P_O^X)\). Restricting the balance equations to the coordinates of
+\(\phi\) tests equality only against functions in their linear span, which
+proves the finite-feature qualification.
+
+\paragraph{Proof of Lemma~\ref{lem:linear-riesz-ratio}.}
+For \(a_\gamma=\phi^\top\gamma\), the gradient of the objective in
+Equation~\eqref{eq:ratio-riesz-empirical} is twice
+\begin{align*}
+\left[
+\mathbb P_O^{\mathrm{nuis}}\{\phi(X)\phi(X)^\top\}+\rho I_p
+\right]\gamma
+-\mathbb P_R^{\mathrm{nuis}}\{\phi(X)\}.
+\end{align*}
+The stated invertibility condition makes its unique zero
+Equation~\eqref{eq:ratio-riesz-linear}.
+
+For Equation~\eqref{eq:ratio-targeted-population}, transport identity
+\eqref{eq:ratio-transport-characterization} gives
+\begin{align*}
+\mathbb E_O(g^2a^2)-2\mathbb E_R(g^2a)
+&=
+\mathbb E_O\{g^2(a-r_0)^2\}-\mathbb E_O(g^2r_0^2),
+\end{align*}
+which proves the claimed weighted excess-risk identity.
+
+\paragraph{Proof of Proposition~\ref{prop:automatic-ratio-balance}.}
+The log of a positive weighted exponential sum is convex in \(\xi\). At an
+interior minimizer, differentiating the objective in
+Definition~\ref{def:classifier-calibrated-balance} gives
+\begin{align*}
+0
+&=
+\frac{
+\mathbb P_O^{\mathrm{nuis}}
+\{\widehat r_{\mathrm{base}}(X)e^{\widehat\xi^\top\phi(X)}\phi(X)\}
+}{
+\mathbb P_O^{\mathrm{nuis}}
+\{\widehat r_{\mathrm{base}}(X)e^{\widehat\xi^\top\phi(X)}\}
+}
+-\mathbb P_R^{\mathrm{nuis}}\{\phi(X)\}
+\\
+&=
+\mathbb P_O^{\mathrm{nuis}}
+\{\widehat r_{\mathrm{BAL}}(X)\phi(X)\}
+-\mathbb P_R^{\mathrm{nuis}}\{\phi(X)\}.
+\end{align*}
+The denominator normalizes the OBS weights to one, and positivity follows from
+the positive base ratio and exponential tilt. A finite interior optimizer can
+exist only when the target feature mean lies in the relative interior of the
+convex hull of the weighted OBS feature vectors. Boundary or infeasible cases require a separate
+approximate-balance rule and are not covered by the exact first-order
+condition.
+
+\paragraph{Proof of Lemma~\ref{lem:ratio-error-coefficients}.}
+On the tuning OBS sample, \(\widehat r g=r_0g+\delta_{\widehat r}\). The
+sample-variance identity
+\(\widehat{\operatorname{Var}}(U+V)=
+\widehat{\operatorname{Var}}(U)+2\widehat{\operatorname{Cov}}(U,V)+
+\widehat{\operatorname{Var}}(V)\) proves
+Equation~\eqref{eq:ratio-B-error}. When the axis thresholds are inactive,
+\begin{align*}
+\widehat\omega_{\widehat r}-\widehat\omega_{r_0}
+&=
+\frac{\widehat D}{\widehat B_{\widehat r}}
+-\frac{\widehat D}{\widehat B_{r_0}},
+\end{align*}
+which is Equation~\eqref{eq:ratio-omega-error} after taking a common
+denominator.
+
+\paragraph{Proof of Proposition~\ref{prop:estimated-ratio-decomposition}.}
+Condition on the nuisance and tuning samples. At the same selected
+coefficients, the only direct difference between
+\(\widehat\theta_{\widehat r}\) and \(\widehat\theta_{r_0}\) in
+Equation~\eqref{eq:ate-estimator} is
+\(\widehat\omega\mathbb P_{O,N}\delta_{\widehat r}\). This proves
+Equation~\eqref{eq:estimated-ratio-exact-decomposition}. Adding and subtracting
+\(P_O\delta_{\widehat r}\) proves
+Equation~\eqref{eq:estimated-ratio-mean-fluctuation}.
+
+\paragraph{Proof of Corollary~\ref{cor:estimated-ratio-mean-preservation}.}
+Taking the conditional expectation of
+Equation~\eqref{eq:estimated-ratio-mean-fluctuation} removes its centered
+empirical term. The remaining added mean is
+\(\widehat\omega P_O\delta_{\widehat r}\), and
+transport identity \eqref{eq:ratio-transport-characterization} gives
+\begin{align*}
+P_O\delta_{\widehat r}
+&=
+\mathbb E_O(\widehat r g)-\mathbb E_R(g),
+\end{align*}
+which proves Equation~\eqref{eq:estimated-ratio-mean-preservation}.
+
+\paragraph{Proof of Corollary~\ref{cor:estimated-ratio-inheritance}.}
+Equation~\eqref{eq:estimated-ratio-mean-rate} makes the scaled population
+drift in Equation~\eqref{eq:estimated-ratio-mean-fluctuation} negligible. For
+the centered OBS evaluation perturbation,
 \begin{align*}
 \mathbb E
 \left[
-\left\{\sqrt n\,\omega(\mathbb P_{O,N}-P_O)h_n\right\}^2
+\left\{
+\sqrt n\,\widehat\omega
+(\mathbb P_{O,N}-P_O)\delta_{\widehat r}
+\right\}^2
 \right]
-&=\omega^2\frac nN
-\|h_n-P_Oh_n\|_{L_2(P_O)}^2.
+&=
+\widehat\omega^2\frac nN
+\left\|
+\delta_{\widehat r}-P_O\delta_{\widehat r}
+\right\|_{L_2(P_O)}^2,
 \end{align*}
-This proves the two negligible-drift requirements in Section~\ref{sec:ate}; a nonnegligible ratio-training influence function or empirical remainder must instead enter the limiting influence function and its covariance.
+so Equation~\eqref{eq:estimated-ratio-fluctuation-rate} makes this perturbation
+\(o_p(1)\). Tuning-moment consistency and asymptotically inactive thresholds
+make the selected
+coefficients converge to their exact-ratio limits. Slutsky's theorem then
+transfers the normal limit. More explicitly, for the deterministic limit
+\((\lambda^\circ,\omega^\circ)\),
+\begin{align*}
+&\widehat\theta_{r_0}(\widehat\lambda,\widehat\omega)
+-\widehat\theta_{r_0}(\lambda^\circ,\omega^\circ)
+\\
+&\qquad=
+(\widehat\lambda-\lambda^\circ)\mathbb P_{R,n}\Delta
++(\widehat\omega-\omega^\circ)
+\left\{\mathbb P_{O,N}(r_0g)-\mathbb P_{R,n}g\right\}.
+\end{align*}
+Coefficient consistency makes both coefficient differences \(o_p(1)\).
+The RCT score satisfies \(\mathbb P_{R,n}\Delta=O_p(n^{-1/2})\), and exact
+transport gives
+\(\mathbb P_{O,N}(r_0g)-\mathbb P_{R,n}g
+=O_p(N^{-1/2}+n^{-1/2})\). Because \(n/N\) is bounded, the entire display is
+\(o_p(n^{-1/2})\). If each deterministic limit is the corresponding
+exact-ratio population-oracle pair in
+Theorem~\ref{thm:ate-three-way-comparison}, this replacement argument transfers
+its first-order variance ordering.
+If either ratio-error condition fails, the ratio learner's influence term,
+the OBS empirical-process term, and their covariances must enter the limiting
+variance. None of these arguments compares realized finite-sample variances.
+
+\subsection{Outer-fold honesty}
 
 For Proposition~\ref{prop:ate-outer-unbiased-active}, condition on the prespecified or independently randomized split assignments and on one outer complement. Every fitted object is fixed, and the held-out paired folds retain the required RCT and OBS laws. The exact centering argument applies within that fold. Iterated expectation proves aggregate unbiasedness. It does not make different fold statistics independent: in general,
 \begin{align*}

@@ -288,7 +288,7 @@ This construction prevents an observation's own outcome from being used to gener
 
 \subsection{Nested candidate fitting}
 
-Let \(\mathcal G\) be a prespecified finite set of candidate tuning pairs. For each \((\lambda,\omega)\in\mathcal G\), train a candidate CATE learner \(t_{\lambda,\omega}\) using only the candidate-training portion of the data. If \(\omega\in[0,1)\) and the learner is linear in its fitted values or sieve coefficients, the completed representation \eqref{eq:completed-loss} may be used. For \(\omega=1\), for \(\omega\notin[0,1]\), or for a constrained or penalized learner, optimize and record the original quadratic \eqref{eq:cate-loss}.
+Let \(\mathcal G\) be a prespecified finite set of candidate tuning pairs. For each \((\lambda,\omega)\in\mathcal G\), train a candidate CATE learner \(t_{\lambda,\omega}\) using only the candidate-training portion of the data. If \(\omega\in[0,1)\) and the learner is linear in its fitted values or sieve coefficients, the completed representation \eqref{eq:completed-loss} may be used. For \(\omega=1\), for \(\omega\notin[0,1]\), or for a constrained or penalized learner, optimize and record the original quadratic \eqref{eq:dr-fusion-loss}.
 
 Tuning requires an outer validation split that is not used to fit the candidate, its nuisance functions, or its tuning-dependent preprocessing. Reusing the same outcomes to construct a candidate and rank that candidate invalidates the held-out risk identity.
 

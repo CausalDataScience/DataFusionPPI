@@ -29,15 +29,16 @@ D_S^k
 \label{eq:role-indexed-samples}
 \end{align}
 Here \(X\) takes values in the covariate space \(\mathcal X\),
-\(A\in\{0,1\}\) is treatment, and \(Y\) is the observed outcome. The roles
-\(\mathrm{eval}\), \(\mathrm{nuis}\), and \(\mathrm{tune}\) denote final
+\(A\in\{0,1\}\) is treatment, and \(Y\) is the observed outcome. For each
+\(S\in\{R,O\}\), the datasets \(D_S^{\mathrm{eval}}\),
+\(D_S^{\mathrm{nuis}}\), and \(D_S^{\mathrm{tune}}\) are used for final
 evaluation, nuisance and density-ratio fitting, and coefficient or candidate
 tuning, respectively. Set \(n\triangleq n_R^{\mathrm{eval}}\) and
 \(N\triangleq n_O^{\mathrm{eval}}\), and define
 \(\mathbb P_{R,n}h\triangleq n^{-1}\sum_i h(V_{R,i}^{\mathrm{eval}})\) and
 \(\mathbb P_{O,N}h\triangleq N^{-1}\sum_j h(V_{O,j}^{\mathrm{eval}})\).
 Every displayed moment is finite; square-integrability and stronger moment
-conditions are stated locally when variance estimation or Wald inference
+conditions are stated locally when variance estimation or normal-approximation inference
 requires them.
 
 Let \(Y(1)\) and \(Y(0)\) denote potential outcomes. The RCT-population conditional and average treatment effects are
@@ -56,38 +57,52 @@ Consistency holds, \(\{Y(0),Y(1)\}\perp A\mid X\) under \(P_R\), and the known t
 
 We study both the common-covariate regime \(P_R^X=P_O^X\), formalized in Assumption~\ref{ass:common-marginal}, and the more general covariate-shift regime \(P_R^X\neq P_O^X\), formalized in Assumption~\ref{ass:exact-transport}.
 
+\begin{definition}[Target-to-source density ratio]
+\label{def:true-density-ratio}
+Whenever \(P_R^X\ll P_O^X\), define the target-to-source density ratio by
+\begin{align*}
+r_0(x)
+&\triangleq
+\frac{dP_R^X}{dP_O^X}(x).
+\end{align*}
+It is the Radon--Nikodym derivative that transports an OBS covariate expectation
+to the RCT covariate population.
+\end{definition}
+
 \enlargethispage{\baselineskip}
 \Needspace{5\baselineskip}
 \begin{assumption}[Common covariate marginal]
 \label{ass:common-marginal}
 \label{ass:covariate}
 The trial and observational covariates have the same marginal law, \(P_R^X=P_O^X\). This assumption does not equate the treatment or outcome mechanisms across sources, and the observational treatment contrast may remain confounded.
+In this regime, Definition~\ref{def:true-density-ratio} gives
+\(r_0(x)=1\) for \(P_O^X\)-almost every \(x\).
 \end{assumption}
 
-\begin{assumption}[Exact covariate transport]
+\begin{assumption}[Covariate shift and support overlap]
 \label{ass:exact-transport}
-Under covariate shift, \(P_R^X\ll P_O^X\) and the exact density ratio
-\begin{align}
-r(x)
-&\triangleq\frac{dP_R^X}{dP_O^X}(x),
-&
-\mathbb E_O\{r(X)h(X)\}
-&=\mathbb E_R\{h(X)\}
-\end{align}
-is available for every required integrable function \(h\). The common-marginal model is the special case \(r=1\).
+Under covariate shift, \(P_R^X\ll P_O^X\), so the RCT covariate population has
+no support outside the OBS covariate population. Definition~\ref{def:true-density-ratio}
+therefore defines \(r_0\). This assumption establishes existence of the ratio;
+it does not assert that \(r_0\) is known or exactly estimated.
 \end{assumption}
 
 Assumptions~\ref{ass:common-marginal} and \ref{ass:exact-transport} describe alternative covariate regimes, not cumulative restrictions. Under Assumption~\ref{ass:common-marginal}, no transport weighting is needed and we set \(r\triangleq1\). When the covariate marginals differ, Assumption~\ref{ass:exact-transport} is needed to convert OBS covariate expectations into expectations under the RCT population. Neither regime assumes that the OBS treatment contrast is causal.
+Exact-oracle results below use \(r\triangleq r_0\). Feasible results may replace
+\(r_0\) by an evaluation-independent estimate \(\widehat r\) under the
+conditions in Section~\ref{sec:ratio-estimation}.
 
 \begin{assumption}[Honest sample separation]
 \label{ass:honest-separation}
-The six datasets in Equation~\eqref{eq:role-indexed-samples} are mutually
-independent. Nuisance and density-ratio estimators use only
+The nuisance samples \(D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}\), the tuning
+samples \(D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}\), and the evaluation samples
+\(D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}\) are mutually independent. Nuisance
+and density-ratio estimators use only
 \(D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}\). Coefficients and candidate rules
 use only \(D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}\) after the nuisance objects
 are fixed. If candidate fitting and validation both use tuning data, their
 assignments are prespecified and disjoint. Final point estimation, variance
-estimation, and Wald inference use only
+estimation, and normal-approximation inference use only
 \(D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}\), after every learned object and
 split assignment has been fixed.
 \end{assumption}
@@ -156,11 +171,11 @@ For \(\lambda\in\mathbb R\), define
 \begin{align}
 \widehat\mu_\lambda
 &\triangleq(1-\lambda)\widehat\mu_R+\lambda\widehat\mu_O,
-&
+\notag\\
 Z_\lambda
 &\triangleq\varphi(V;\widehat\mu_\lambda)
 =Z_0+\lambda\Delta,
-&
+\notag\\
 \Delta
 &\triangleq Z_1-Z_0.
 \end{align}
