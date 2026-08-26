@@ -680,19 +680,17 @@ The following equally available route learns the Riesz representer directly.
 \begin{definition}[Empirical Riesz ratio learner]
 \label{def:empirical-riesz-ratio}
 For a prespecified function class \(\mathcal A\), penalty
-\(\operatorname{Pen}\), and \(\rho\geq0\), let \(\operatorname{Sel}\) be a
-prespecified deterministic rule that selects one element from every nonempty
-minimizer set. Whenever the displayed argmin set is nonempty, define
+\(\operatorname{Pen}\), and \(\rho\geq0\), use a prespecified deterministic
+rule to break ties among minimizers. Whenever the displayed argmin set is
+nonempty, choose
 \begin{align}
 \widehat r_{\mathrm{RZ}}
-&\triangleq
-\operatorname{Sel}\left(
+&\in
 \operatorname*{arg\,min}_{a\in\mathcal A}
 \left[
 \mathbb P_O^{\mathrm{nuis}}(a^2)-2\mathbb P_R^{\mathrm{nuis}}(a)
 +\rho\operatorname{Pen}(a)
-\right]
-\right).
+\right].
 \label{eq:ratio-riesz-empirical}
 \end{align}
 Existence can be ensured, for example, by a compact or coercive class, bounded
@@ -764,20 +762,17 @@ optional common calibration step, not a third way of averaging the two routes.
 Let \(\widehat r_{\mathrm{base}}>0\) be a positive ratio obtained from either
 the classifier or Riesz route, without averaging the two. Let
 \(\phi:\mathcal X\to\mathbb R^p\) be a prespecified feature map with no
-intercept coordinate. Use the prespecified deterministic selector
-\(\operatorname{Sel}\) to resolve any tie. Whenever the displayed argmin set
-is nonempty, define
+intercept coordinate. Use a prespecified deterministic rule to break ties
+among minimizers. Whenever the displayed argmin set is nonempty, choose
 \begin{align}
 \widehat\xi
-&\triangleq
-\operatorname{Sel}\left(
+&\in
 \operatorname*{arg\,min}_{\xi\in\mathbb R^p}
 \left[
 \log\mathbb P_O^{\mathrm{nuis}}
 \left\{\widehat r_{\mathrm{base}}(X)e^{\xi^\top\phi(X)}\right\}
 -\xi^\top\mathbb P_R^{\mathrm{nuis}}\{\phi(X)\}
-\right]
-\right),
+\right],
 \label{eq:ratio-calibration-objective}
 \\
 \widehat r_{\mathrm{BAL}}(x)
