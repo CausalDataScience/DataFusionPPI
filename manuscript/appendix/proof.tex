@@ -266,11 +266,11 @@ V_{\min}^{\mathrm{sep}}
 \end{align*}
 which proves Equation~\eqref{eq:ate-separable-minimum}.
 
-\subsection{Prediction-powered CATE risk identity}
+\subsection{Prediction-powered CATE losses and finite-sample theory}
 
-Fix \(t,\lambda,\omega,g,r\) before using the evaluation samples, and then
-condition on \(X\).
-Since \(\mathbb E_R(Z_\lambda-\tau(X)\mid X)=0\),
+Fix \(t,\lambda,\omega,g,r_0\) before using the fitting sample. Conditional
+on \(X\), pseudo-outcome validity gives
+\(\mathbb E_R(Z_\lambda-\tau(X)\mid X)=0\), and hence
 \begin{align}
 \mathbb E_R\{Z_\lambda-t(X)\}^2
 &=
@@ -279,120 +279,95 @@ Since \(\mathbb E_R(Z_\lambda-\tau(X)\mid X)=0\),
 \end{align}
 Exact transport also gives
 \begin{align}
-\mathbb E_O\{r(X)(g(X)-t(X))^2\}
+\mathbb E_O\{r_0(X)(g(X)-t(X))^2\}
 &=\mathbb E_R\{g(X)-t(X)\}^2.
 \end{align}
 The correction in Equation~\eqref{eq:dr-fusion-loss} therefore has mean zero,
-which proves Equation~\eqref{eq:cate-target}.  In particular, population expected
-loss is flat in \(\omega\).  The part depending on \(\lambda\) is
-\begin{align}
-Q(\lambda)
-&=Q(0)+2C\lambda+A\lambda^2,
-\end{align}
-so when \(A>0\) its minimizer is \(-C/A\), the same integrated-noise oracle as
-in the separable ATE problem.  If \(A=0\), then \(\Delta=0\) almost
-surely by conditional mean zero, and \(Q\) is flat in \(\lambda\).
+which proves Proposition~\ref{prop:cate-target}.
 
-After fixing \(t\), \(\lambda\), \(g\), and \(r\) using the nuisance and tuning
-samples, the empirical loss is the sum of independent empirical means of
-\(U_{t,\lambda}-\omega G_t\) over \(D_R^{\mathrm{eval}}\) and \(\omega rG_t\)
-over \(D_O^{\mathrm{eval}}\). Expanding its variance, with sample-size ratio
-\(n/N\), as a
-quadratic in \(\omega\) and differentiating gives
-Equation~\eqref{eq:loss-variance-omega}.  Because \(t\) is fixed in this
-calculation, the formula does not identify the coefficient minimizing the risk
-of a learner chosen after seeing the same loss.
+For Proposition~\ref{prop:drf-score-orthogonality}, let
+\(q_\varepsilon=q+\varepsilon h\). Direct differentiation gives
+\begin{align*}
+\dot Z_q[h]
+&=-\{A-e_0(X)\}\left\{\frac{h_1(X)}{e_0(X)}
++\frac{h_0(X)}{1-e_0(X)}\right\}.
+\end{align*}
+Its conditional mean is zero, so
+\(\mathbb E_R\{v(X)\dot Z_q[h]\}=0\).  Differentiating the numerical loss
+instead gives \(2\mathbb E_R[(Z(q)-t)\dot Z_q[h]]\), which need not vanish.
+Differentiating the transported term in \(r\) proves
+Equation~\eqref{eq:drf-ratio-derivative}.
 
-For the linear sieve, evaluate the empirical objective on the prespecified
-candidate-fitting portions of the tuning samples, using
-\(\mathbb P_R^{\mathrm{fit}}\) and \(\mathbb P_O^{\mathrm{fit}}\). Expand the
-result in \(\beta\), add \(\rho\beta^\top P\beta\), and set the gradient to
-zero. The resulting normal equation is
+For the normalized RF identity, expand conditionally on \(X\). Randomization
+implies
+\begin{align*}
+\mathbb E_R[(A-e_0)\{Y-m(X)\}\mid X]
+&=e_0(X)\{1-e_0(X)\}\tau(X),\\
+\mathbb E_R[\{A-e_0(X)\}^2\mid X]
+&=e_0(X)\{1-e_0(X)\}.
+\end{align*}
+It follows that
+\begin{align*}
+\mathbb E_R\ell_R^{\mathrm{norm}}(t;m)
+&=C_R(m)+\mathbb E_R(t-\tau)^2.
+\end{align*}
+Because \(\mathbb E_R(\kappa\mid X)=1\) and exact transport holds, the RF
+correction has mean zero. This proves Theorem~\ref{thm:rf-target}.
+For Proposition~\ref{prop:rf-score-orthogonality}, differentiation with
+respect to \(m\) gives a multiple of
+\(\mathbb E_R(A-e_0\mid X)=0\).  At
+\((t,m,e)=(\tau,m_0,e_0)\), replacing \(e_0\) by
+\(e_0+\varepsilon k\) makes the conditional numerator equal
+\(-\varepsilon^2k(X)^2\tau(X)\), proving only local first-order propensity
+orthogonality.
+
+For each linear sieve, expand its empirical objective and set the penalized
+gradient to zero.  The DRF normal equation is
 \begin{align}
 \{(1-\omega)G_R+\omega G_{O,r}+\rho P\}\beta
 &=h_\lambda+\omega d_g,
 \end{align}
 which proves Equation~\eqref{eq:linear-sieve} whenever the matrix is invertible.
-
-\subsection{Pointwise noise coefficients and square completion}
-
-For Proposition~\ref{prop:cate-pointwise-lambda-active}, measurability and conditional mean zero give
+The RF expansion gives
 \begin{align*}
-\mathbb E_R\{Z_0+\lambda(X)\Delta\mid X\}
-&=\tau(X)+\lambda(X)\mathbb E_R(\Delta\mid X)
-=\tau(X).
+\{(1-\omega)G_{R,\kappa}+\omega G_{O,r}+\rho P\}\beta
+&=h_{m_\lambda}+\omega d_{g,\kappa},
 \end{align*}
-At a fixed \(x\), expand the conditional noise as a quadratic in a scalar \(u\):
+which proves Equation~\eqref{eq:linear-sieve-rf}.
+
+The candidate-class inequality follows from set inclusion. For
+Theorem~\ref{thm:cate-finite-validation}, Hoeffding's inequality and a union
+bound over the \(M\) candidates give the uniform deviation
+\(\varepsilon_{\mathrm{val}}\). Comparing the selected score with an oracle
+candidate and cancelling the common \(Q_{\mathrm{ref}}\) gives the factor two.
+With approximate weights, direct expansion adds \(d_{r,c}+d_{\mathrm{nuis},c}\)
+to each candidate expectation, so two uniform drift bounds are added.
+
+For Theorem~\ref{thm:cate-sieve-identity}, the first-order condition is
+\((\widehat H_j+\rho P)\widehat\beta_j=\widehat h_j\). Subtracting its value at
+\(\beta_p\) proves Equation~\eqref{eq:sieve-coefficient-identity}. Projection
+orthogonality, \(\mathbb E_R[b(t_p-\tau)]=0\), removes the risk cross term and
+proves Equation~\eqref{eq:sieve-risk-identity}.
+
+For Theorem~\ref{thm:cate-fixed-candidate-bound}, let \(\psi_{R,j}\) and
+\(\psi_{O,j}\) be the raw RCT and OBS score contributions. Their source means
+\(a_{R,j}\triangleq P_R\psi_{R,j}\) and
+\(a_{O,j}\triangleq P_O\psi_{O,j}\) need not vanish separately, but exact
+transport gives \(a_{R,j}+a_{O,j}=0\). Center each source contribution by its
+own mean. Sub-Gaussian vector concentration then bounds the whitened score by
 \begin{align*}
-Q_x(u)
-&=Q_x(0)
-+2u\operatorname{Cov}_R(Z_0,\Delta\mid X=x)
-+u^2\operatorname{Var}_R(\Delta\mid X=x).
+C_{\mathrm{sg}}\left[
+\sigma_{R,j}\sqrt{\frac{p+\log(4/\delta_S)}{n_f}}
++\sigma_{O,j}\sqrt{\frac{p+\log(4/\delta_S)}{N_f}}\right].
 \end{align*}
-A positive quadratic coefficient yields the displayed pointwise ratio. If it is zero, \(\Delta=0\) conditionally almost surely and every \(u\)-dependent term vanishes.
+On \(\mathcal E_H\), the whitened inverse Hessian has norm at most
+\((1-\eta)^{-1}\). The triangle inequality and
+\((x+y)^2\leq2x^2+2y^2\) prove Equation~\eqref{eq:finite-sieve-bound}.
 
-For Proposition~\ref{prop:cate-square-completion-active}, expand the trial contribution as
-\begin{align*}
-\{Z_\lambda-t\}^2-\omega\{g-t\}^2
-&=(1-\omega)t^2-2(Z_\lambda-\omega g)t+Z_\lambda^2-\omega g^2.
-\end{align*}
-Since \((1-\omega)\widetilde Z_{\lambda,\omega}=Z_\lambda-\omega g\), completing the square leaves
-\begin{align*}
-Z_\lambda^2-\omega g^2-(1-\omega)\widetilde Z_{\lambda,\omega}^2
-&=-\frac{\omega}{1-\omega}(Z_\lambda-g)^2.
-\end{align*}
-Averaging and adding the transported OBS term proves the proposition. For a linear sieve, the Hessian of the original \(t\)-dependent quadratic is a nonnegative weighted sum of \(G_R\) and \(G_{O,r}\) for \(0\leq\omega\leq1\), which proves positive semidefiniteness in that range. The claim does not extend automatically to nonlinear parameterizations.
-
-\subsection{Loss-targeted balance and approximate drift}
-
-The two inequalities in Proposition~\ref{prop:cate-candidate-dominance} follow directly from the prespecified inclusion \(\mathfrak C_R\subseteq\mathfrak C\). Strict inclusion alone does not imply a strict risk inequality.
-
-For Proposition~\ref{prop:cate-selector-inequality}, fix the candidates fitted
-using the nuisance samples and the fitting portion of the tuning samples, then
-take expectation over the disjoint validation portion. Expanding the
-shared-reference score gives
-\begin{align*}
-\mathbb E_{\mathrm{val}}\{\widehat{\mathcal R}^{\mathrm{ref}}_c\}
-&=Q(\lambda_{\mathrm{ref}})
-+\mathcal R_{\mathrm{fit}}(c)
-+\delta_{r,c}+\delta_{\mathrm{nuis},c}.
-\end{align*}
-Compare the empirical score of \(\widehat c\) with that of an arbitrary \(c\in\mathfrak C\). Two validation deviations contribute at most \(2\varepsilon_{\mathrm{val}}\), and the difference between two ratio and nuisance drifts contributes at most \(2\Delta_r+2\Delta_{\mathrm{nuis}}\). Taking the infimum gives the stated oracle inequality.
-
-Suppose a nonnegative out-of-sample-evaluable weight \(w\) satisfies
-\begin{align}
-P_O\{w(g-t)^2\}=P_R\{(g-t)^2\}
-\quad\text{for every }t\in\mathcal T.
-\end{align}
-Replacing \(r\) by \(w\) then leaves the population correction exactly zero for
-every candidate, so the target identity remains valid.  If
-\(t_\beta=b^\top\beta\), expanding
-\begin{align}
-(g-b^\top\beta)^2
-&=g^2-2\beta^\top bg+\beta^\top bb^\top\beta
-\end{align}
-shows that balancing \(bg\) and \(bb^\top\) preserves the minimizer.  Balancing
-\(g^2\) is needed only to preserve the absolute loss value.
-
-For approximate weights, the difference between the weighted and target
-population losses is bounded uniformly over \(\mathcal T\) by
-\(|\omega|\Delta_\mathcal T(w)\).  Let \(t_w\) minimize the weighted population
-loss and \(t_0\) minimize the target loss.  Applying the uniform bound at both
-minimizers gives
-\begin{align}
-L_0(t_w)
-&\leq L_w(t_w)+|\omega|\Delta_\mathcal T(w)
-\\
-&\leq L_w(t_0)+|\omega|\Delta_\mathcal T(w)
-\\
-&\leq L_0(t_0)+2|\omega|\Delta_\mathcal T(w),
-\end{align}
-which is the claimed excess-risk bound.  If the same finite sample is used both
-to impose exact sieve balance and to fit \(\beta\), the balanced linear and
-quadratic coefficient terms cancel from the empirical correction (and the
-constant cancels as well if \(g^2\) is balanced).  This algebra explains why
-weight learning and candidate fitting require honest separation or a separate
-outer-fold argument.
+Finally, insert \(a_{p_n}^2=O(K_n^{-2s})\) and \(p_n\asymp K_n\) into that
+bound. The stated triangular-array conditions make the Gram and score events
+hold with probability tending to one. Balancing \(K_n^{-2s}\) with
+\(K_n/m_{\mathrm{eff}}\) proves Corollary~\ref{cor:cate-spline-rate}.
 
 \subsection{A two-stratum oracle calculation}
 
