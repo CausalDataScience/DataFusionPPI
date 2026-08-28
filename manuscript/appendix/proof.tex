@@ -285,7 +285,7 @@ Exact transport also gives
 The correction in Equation~\eqref{eq:dr-fusion-loss} therefore has mean zero,
 which proves Proposition~\ref{prop:cate-target}.
 
-For Proposition~\ref{prop:drf-score-orthogonality}, let
+For Proposition~\ref{prop:cate-orthogonality-audit}, let
 \(q_\varepsilon=q+\varepsilon h\). Direct differentiation gives
 \begin{align*}
 \dot Z_q[h]
@@ -295,8 +295,9 @@ For Proposition~\ref{prop:drf-score-orthogonality}, let
 Its conditional mean is zero, so
 \(\mathbb E_R\{v(X)\dot Z_q[h]\}=0\).  Differentiating the numerical loss
 instead gives \(2\mathbb E_R[(Z(q)-t)\dot Z_q[h]]\), which need not vanish.
-Differentiating the transported term in \(r\) proves
-Equation~\eqref{eq:drf-ratio-derivative}.
+Holding the remaining nuisances and \(t,g,\lambda,\omega\) fixed,
+differentiating the positive OBS term in either expected empirical loss with
+respect to \(r\) proves Equation~\eqref{eq:drf-ratio-derivative}.
 
 For the normalized RF identity, expand conditionally on \(X\). Randomization
 implies
@@ -313,7 +314,7 @@ It follows that
 \end{align*}
 Because \(\mathbb E_R(\kappa\mid X)=1\) and exact transport holds, the RF
 correction has mean zero. This proves Theorem~\ref{thm:rf-target}.
-For Proposition~\ref{prop:rf-score-orthogonality}, differentiation with
+For the RF part of Proposition~\ref{prop:cate-orthogonality-audit}, differentiation with
 respect to \(m\) gives a multiple of
 \(\mathbb E_R(A-e_0\mid X)=0\).  At
 \((t,m,e)=(\tau,m_0,e_0)\), replacing \(e_0\) by
@@ -335,12 +336,11 @@ The RF expansion gives
 \end{align*}
 which proves Equation~\eqref{eq:linear-sieve-rf}.
 
-The candidate-class inequality follows from set inclusion. For
-Theorem~\ref{thm:cate-finite-validation}, Hoeffding's inequality and a union
+For Theorem~\ref{thm:cate-finite-validation}, Hoeffding's inequality and a union
 bound over the \(M\) candidates give the uniform deviation
 \(\varepsilon_{\mathrm{val}}\). Comparing the selected score with an oracle
 candidate and cancelling the common \(Q_{\mathrm{ref}}\) gives the factor two.
-With approximate weights, direct expansion adds \(d_{r,c}+d_{\mathrm{nuis},c}\)
+With approximate weights, direct expansion adds \(d_{r,a}+d_{\mathrm{nuis},a}\)
 to each candidate expectation, so two uniform drift bounds are added.
 
 For Theorem~\ref{thm:cate-sieve-identity}, the first-order condition is

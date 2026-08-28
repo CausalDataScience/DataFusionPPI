@@ -3,6 +3,7 @@
 
 \subsection{Estimator and exact variance}
 
+\begin{definition}[ATE fusion estimator and its components]
 For fixed \((\lambda,\omega)\), define
 \begin{align}
 \widehat\theta_r(\lambda,\omega)
@@ -16,11 +17,21 @@ For fixed \((\lambda,\omega)\), define
 \right\}.
 \label{eq:ate-estimator}
 \end{align}
-Here \(Z_\lambda\) is the fusion score in
-Definition~\ref{def:fusion-score}, \(g\) is defined in
-Equation~\eqref{eq:obs-effect-prediction}, and \(r\) is the covariate weight
-used in the OBS empirical mean. Exact results set \(r=r_0\), while
-Section~\ref{sec:ratio-estimation} studies evaluation-independent estimates.
+\begin{itemize}
+\item \textbf{Target.} \(\theta\triangleq\mathbb E_R\{\tau(X)\}\), anchored by the RCT-valid score \(Z_\lambda\).
+\item \textbf{Nuisances.} Fixed \(\widehat\mu_R,\widehat\mu_O,g,r\); exact results use \(r=r_0\), and \(g\) need not be causal.
+\item \textbf{Tuning.} \(\lambda\) blends outcome regressions inside \(Z_\lambda\), while \(\omega\) scales the transported control variate.
+\end{itemize}
+\end{definition}
+Holding \(q_\lambda,g,\lambda,\omega\) fixed, for a ratio direction \(h\),
+\begin{align}
+D_r\,\mathbb E\{\widehat\theta_r(\lambda,\omega)\}[h]
+&=\omega\mathbb E_O\{h(X)g(X)\}.
+\label{eq:ate-ratio-gateaux}
+\end{align}
+Thus the ratio channel is generally nonorthogonal. In contrast, arbitrary
+fixed outcome regressions preserve the conditional target under known \(e_0\),
+and the \(g\)-correction is exactly centered under the exact \(r_0\).
 At the coefficient origin,
 \begin{align*}
 \widehat\theta_r(0,0)
