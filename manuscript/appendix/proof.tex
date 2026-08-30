@@ -285,21 +285,7 @@ Exact transport also gives
 The correction in Equation~\eqref{eq:dr-fusion-loss} therefore has mean zero,
 which proves Proposition~\ref{prop:cate-target}.
 
-For Proposition~\ref{prop:cate-orthogonality-audit}, let
-\(q_\varepsilon=q+\varepsilon h\). Direct differentiation gives
-\begin{align*}
-\dot Z_q[h]
-&=-\{A-e_0(X)\}\left\{\frac{h_1(X)}{e_0(X)}
-+\frac{h_0(X)}{1-e_0(X)}\right\}.
-\end{align*}
-Its conditional mean is zero, so
-\(\mathbb E_R\{v(X)\dot Z_q[h]\}=0\).  Differentiating the numerical loss
-instead gives \(2\mathbb E_R[(Z(q)-t)\dot Z_q[h]]\), which need not vanish.
-Holding the remaining nuisances and \(t,g,\lambda,\omega\) fixed,
-differentiating the positive OBS term in either expected empirical loss with
-respect to \(r\) proves Equation~\eqref{eq:drf-ratio-derivative}.
-
-For the normalized RF identity, expand conditionally on \(X\). Randomization
+For the RF identity, expand conditionally on \(X\). Randomization
 implies
 \begin{align*}
 \mathbb E_R[(A-e_0)\{Y-m(X)\}\mid X]
@@ -309,18 +295,130 @@ implies
 \end{align*}
 It follows that
 \begin{align*}
-\mathbb E_R\ell_R^{\mathrm{norm}}(t;m)
-&=C_R(m)+\mathbb E_R(t-\tau)^2.
+\mathcal L_R(\zeta;m)
+&=Q_R(m)+\mathcal R(\zeta).
 \end{align*}
 Because \(\mathbb E_R(\kappa\mid X)=1\) and exact transport holds, the RF
 correction has mean zero. This proves Theorem~\ref{thm:rf-target}.
-For the RF part of Proposition~\ref{prop:cate-orthogonality-audit}, differentiation with
-respect to \(m\) gives a multiple of
-\(\mathbb E_R(A-e_0\mid X)=0\).  At
-\((t,m,e)=(\tau,m_0,e_0)\), replacing \(e_0\) by
-\(e_0+\varepsilon k\) makes the conditional numerator equal
-\(-\varepsilon^2k(X)^2\tau(X)\), proving only local first-order propensity
-orthogonality.
+
+\subsection{Proofs for coefficient selection}
+
+For Proposition~\ref{prop:cate-noise-floor-lambda}, pseudo-outcome validity
+gives \(\mathbb E_R(\Delta\mid X)=0\).  Therefore
+\begin{align*}
+Q_{\mathrm{DR}}(\lambda)
+&=Q_{\mathrm{DR}}(0)
++2\lambda\mathbb E_R[(Z_0-\tau)\Delta]
++\lambda^2\mathbb E_R(\Delta^2),\\
+\mathbb E_R[(Z_0-\tau)\Delta]
+&=\mathbb E_R(Z_0\Delta).
+\end{align*}
+Completing the square gives Equation~\eqref{eq:cate-dr-noise-lambda} when
+\(\mathbb E_R(\Delta^2)>0\).  If \(\mathbb E_R(\Delta^2)=0\), then
+\(\Delta=0\) almost surely and the objective is flat.
+
+For the R loss, write
+\(s_0\triangleq e_0(1-e_0)\) and
+\(U_R\triangleq Y-m_R-(A-e_0)\tau\).  Since
+\(m_\lambda=m_R+\lambda d_m\),
+\begin{align*}
+Q_R(m_\lambda)
+&=Q_R(m_R)
+-2\lambda\mathbb E_R(U_Rd_m/s_0)
++\lambda^2\mathbb E_R(d_m^2/s_0),\\
+\mathbb E_R(U_Rd_m/s_0)
+&=\mathbb E_R[\{Y-m_R\}d_m/s_0].
+\end{align*}
+The second identity follows from
+\(\mathbb E_R(A-e_0\mid X)=0\).  Completing the square proves
+Equation~\eqref{eq:cate-r-noise-lambda}.  If
+\(\mathbb E_R(d_m^2/s_0)=0\), strict overlap implies \(d_m=0\) almost surely
+and the objective is flat.  A convex
+quadratic minimized over \([0,1]\) is minimized by projecting its
+unrestricted minimizer onto that interval.
+
+For the common-reference identity, condition on every fitted candidate and
+its validation-independent \(\nu_k\).  Conditional pseudo-outcome validity
+gives
+\begin{align*}
+\mathbb E_R\{Z_{\mathrm{ref}}-\widehat\tau_k(X)\}^2
+&=Q_{\mathrm{ref}}+\mathcal R(\widehat\tau_k).
+\end{align*}
+Exact transport gives
+\(\mathbb E_O(r_0G_k)=\mathbb E_R(G_k)\), so the term multiplied by
+\(\nu_k\) has mean zero.  This proves
+Equation~\eqref{eq:common-reference-identity} and also shows why the
+validation coefficient need not equal the training coefficient.
+
+\subsection{Proofs for the orthogonality audit}
+
+Condition throughout on the auxiliary samples and algorithmic randomness, so
+all nuisances, \(\lambda\), and \(\omega\) are fixed before the independent
+loss observations are used. Assume strict trial overlap, exact transport for
+claims at \(r_0\), and sufficient integrability and domination to interchange
+Gateaux differentiation and expectation. Directions belong to the tangent
+sets stated in the main text.
+
+Differentiating Equations~\eqref{eq:dr-fusion-loss} and
+\eqref{eq:rf-fusion-loss} in the target direction \(v\) gives
+Equations~\eqref{eq:drf-learning-equation} and
+\eqref{eq:rf-learning-equation}. For \(r=r_0\), exact transport gives
+\(\mathbb E_O(r_0f)=\mathbb E_R(f)\) for each integrable \(f(X)\). Also,
+\begin{align*}
+\mathbb E_R(\kappa_0\mid X)
+&=\mathbb E_R(\kappa\mid X)
+=\frac{\mathbb E_R[\{A-e_0(X)\}^2\mid X]}{s_0(X)}=1.
+\end{align*}
+The two correction terms in each learning equation therefore cancel. This
+proves Proposition~\ref{prop:cate-learning-equations}.
+
+For the \(q\)-direction in Proposition~\ref{prop:cate-orthogonality-audit},
+let \(q_\varepsilon=q+\varepsilon h\). Direct differentiation gives
+\begin{align*}
+\dot Z_q[h]
+&=-\{A-e_0(X)\}\left\{\frac{h_1(X)}{e_0(X)}
++\frac{h_0(X)}{1-e_0(X)}\right\}.
+\end{align*}
+Because \(h\) and \(v\) are functions of \(X\) and
+\(\mathbb E_R(A-e_0\mid X)=0\),
+\(\mathbb E_R\{v(X)\dot Z_q[h]\}=0\).
+
+For the \(m\)-direction, direct differentiation of the first term of
+Equation~\eqref{eq:rf-learning-equation} gives
+\begin{align*}
+D_m\Psi_{\mathrm{RF}}[h,v]
+&=-\mathbb E_R\left[v(X)\frac{A-e_0(X)}{s_0(X)}h(X)\right]=0.
+\end{align*}
+The last equality again uses conditional randomization.
+
+For a prediction path \(g_\varepsilon=g+\varepsilon u\), only the transported
+correction changes. Exact transport, and \(\mathbb E_R(\kappa_0\mid X)=1\)
+for RF, give
+\begin{align*}
+D_g\Psi_j[u,v]
+&=\omega\mathbb E_O[\{r-r_0\}uv],\\
+D_g\mathbb E(\widehat L_j)[u]
+&=2\omega\mathbb E_O[\{r-r_0\}(g-\zeta)u],
+\end{align*}
+which proves Equations~\eqref{eq:cate-g-score-derivative} and
+\eqref{eq:cate-g-loss-derivative}. A ratio path
+\(r_\varepsilon=r+\varepsilon h_r\) affects only the positive OBS term, so
+\begin{align*}
+D_r\Psi_j[h_r,v]
+&=\omega\mathbb E_O[h_rv(g-\zeta)],\\
+D_r\mathbb E(\widehat L_j)[h_r]
+&=\omega\mathbb E_O[h_r(g-\zeta)^2].
+\end{align*}
+This proves Equations~\eqref{eq:cate-ratio-score-derivative} and
+\eqref{eq:drf-ratio-derivative}.
+
+To prove Proposition~\ref{prop:cate-ratio-nonorthogonality}, take any
+\(f=v(g-\zeta)\in L^2(P_O^X)\). Its inner product with every element of
+\(L_0^2(P_O^X)\) is zero if and only if \(f\) lies in the orthogonal
+complement of that space, which consists of the almost-sure constants.
+For example, the centered direction \(h=f-\mathbb E_O(f)\) has pairing
+\(\mathbb E_O(hf)=\operatorname{Var}_O(f)\). Multiplication by nonzero
+\(\omega\) does not change the zero set.
 
 For each linear sieve, expand its empirical objective and set the penalized
 gradient to zero.  The DRF normal equation is
@@ -335,13 +433,25 @@ The RF expansion gives
 &=h_{m_\lambda}+\omega d_{g,\kappa},
 \end{align*}
 which proves Equation~\eqref{eq:linear-sieve-rf}.
+For fixed \(\omega\), the Hessian does not depend on \(\lambda\), while
+\(Z_\lambda=Z_0+\lambda\Delta\) and
+\(m_\lambda=m_R+\lambda d_m\) make each right-hand side affine in
+\(\lambda\).  Multiplication by the fixed inverse Hessian proves
+Equation~\eqref{eq:linear-sieve-lambda-profile}.  Substituting
+\(\widehat t_{\lambda,\omega}^j=
+\widehat t_{0,\omega}^j+\lambda\dot t_\omega^j\) into
+Equation~\eqref{eq:common-reference-validation} and expanding the two
+squares yields Equation~\eqref{eq:linear-sieve-validation-profile} and its
+displayed coefficients.
 
 For Theorem~\ref{thm:cate-finite-validation}, Hoeffding's inequality and a union
 bound over the \(M\) candidates give the uniform deviation
 \(\varepsilon_{\mathrm{val}}\). Comparing the selected score with an oracle
 candidate and cancelling the common \(Q_{\mathrm{ref}}\) gives the factor two.
-With approximate weights, direct expansion adds \(d_{r,a}+d_{\mathrm{nuis},a}\)
-to each candidate expectation, so two uniform drift bounds are added.
+With approximate weights or a conditionally biased reference score, direct
+expansion perturbs each candidate expectation.  The main-text quantities
+\(\Delta_r\) and \(\Delta_{\mathrm{ref}}\) uniformly bound these two
+perturbations, so the comparison adds twice each bound.
 
 For Theorem~\ref{thm:cate-sieve-identity}, the first-order condition is
 \((\widehat H_j+\rho P)\widehat\beta_j=\widehat h_j\). Subtracting its value at

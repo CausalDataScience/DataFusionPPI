@@ -1,151 +1,136 @@
-\section{Prediction-Powered Fusion Learning for CATE}
+\section{Data Fusion for CATE Estimation}
 \label{sec:cate}
 
-In this section, we develop prediction-powered learners for estimating the
-CATE in the RCT population. The RCT identifies the causal target, whereas the
-potentially confounded OBS supplies a treatment-effect prediction that may be
-statistically informative but need not be causally valid. We preserve an
-RCT-valid CATE risk and use the OBS prediction only through a transported,
-mean-zero loss correction. We develop two constructions: the Doubly Robust
-Fusion Learner, based on an AIPW pseudo-outcome, and the normalized R-Fusion
-Learner, based on a normalized R-loss.
+In this section, we develop two methods that combine an RCT with a potentially
+confounded OBS to estimate the CATE in the RCT population. The RCT identifies
+the causal target. The OBS outcome regressions and their treatment-effect
+prediction may improve statistical efficiency, but they need not be causally
+valid. The first method is the Doubly Robust Fusion Learner, based on an AIPW
+pseudo-outcome. The second is the R-Fusion Learner, based on an R-loss scaled
+by the known trial propensity variance.
 
 \subsection{CATE targets and RCT-valid learning losses}
 \label{sec:cate-loss}
 
-\begin{definition}[CATE target, candidate, and ideal risk]
+\begin{definition}[CATE target, candidate class, and ideal risk]
 The target is
-\(\tau(x)\triangleq\mathbb E_R\{Y(1)-Y(0)\mid X=x\}\). A candidate CATE
-function is a measurable \(\zeta\in\mathcal Z\subseteq L^2(P_R^X)\), and its
-ideal risk is
-\begin{align*}
+\(\tau(x)\triangleq\mathbb E_R\{Y(1)-Y(0)\mid X=x\}\). Let
+\(\mathcal Z\subseteq L^2(P_R^X)\) be a prespecified nonempty class of
+candidate CATE functions, such as a fixed linear sieve, and let
+\(\zeta\in\mathcal Z\). Its ideal risk is
+\begin{align}
 \mathcal R(\zeta)
 &\triangleq\mathbb E_R\{\zeta(X)-\tau(X)\}^2.
-\end{align*}
-Nuisance functions are trained on
-\(D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}\), independently of the observations
-on which a candidate loss is evaluated. Tuning coefficients are selected on
-the separate validation samples
-\(D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}\). Throughout each conditional
-calculation, the nuisance and tuning samples and their learned objects are
-held fixed, as required by Assumption~\ref{ass:honest-separation}.
+\label{eq:cate-ideal-risk}
+\end{align}
+Throughout each conditional calculation, the nuisance fits are held fixed.
 \end{definition}
 
-Write \(q_R\triangleq\widehat\mu_R\) and
-\(q_O\triangleq\widehat\mu_O\) for the RCT and OBS outcome-regression pairs
-defined in Section~\ref{sec:setup}. The first tuning coefficient blends these
-nuisances inside an RCT-valid score.
+The first tuning coefficient blends the RCT and OBS outcome-regression pairs
+inside an RCT-valid score.
 \begin{definition}[Fused outcome nuisance and pseudo-outcome]
-For a fixed \(\lambda\), define
+For a fixed \(\lambda\in[0,1]\), define
 \begin{align*}
+q_R
+&\triangleq\widehat\mu_R,\\
+q_O
+&\triangleq\widehat\mu_O,\\
 q_\lambda
-&\triangleq(1-\lambda)q_R+\lambda q_O,
-&Z_\lambda
+&\triangleq(1-\lambda)q_R+\lambda q_O,\\
+Z_\lambda
 &\triangleq\varphi(V;q_\lambda).
 \end{align*}
-The coefficient \(\lambda\) controls nuisance fusion; it is not a probability
-that the OBS regression is causally correct.
+The AIPW score \(\varphi\) is defined in Equation~\eqref{eq:aipw-score}.
 \end{definition}
 
-\begin{lemma}[Conditional validity of the fused pseudo-outcome]
-\label{lem:cate-pseudo-validity}
-Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation}, every fixed
-\(\lambda\) satisfies
+Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation},
+Equation~\eqref{eq:pseudo-valid} gives, for every fixed \(\lambda\),
 \begin{align*}
 \mathbb E_R(Z_\lambda\mid X)&=\tau(X).
 \end{align*}
-\end{lemma}
+Thus the known RCT propensity makes the fused pseudo-outcome conditionally
+valid without requiring either fitted outcome regression to be correct.
 
-The lemma follows directly from Equation~\eqref{eq:pseudo-valid}: the known
-RCT propensity makes the augmentation terms correct the conditional mean for
-any fixed outcome-regression pair. It yields the RCT-only learning identity.
-\begin{proposition}[RCT pseudo-outcome risk decomposition]
+\begin{proposition}[RCT DR loss and target]
 \label{prop:cate-rct-risk}
-Suppose \(Z_\lambda\in L^2(P_R)\) and
-\(\zeta\in L^2(P_R^X)\), and define
+Under the same assumptions, for fixed \(\lambda\in[0,1]\),
+\(Z_\lambda\in L^2(P_R)\), and \(\zeta\in\mathcal Z\), define
 \begin{align*}
-Q_{\mathrm{DRF}}(\lambda)
-&\triangleq\mathbb E_R\{Z_\lambda-\tau(X)\}^2.
+\mathcal L_{\mathrm{DR}}(\zeta;\lambda)
+&\triangleq
+\mathbb E_R\{Z_\lambda-\zeta(X)\}^2,\\
+Q_{\mathrm{DR}}(\lambda)
+&\triangleq
+\mathbb E_R\{Z_\lambda-\tau(X)\}^2.
 \end{align*}
-Equivalently,
-\(Q_{\mathrm{DRF}}(\lambda)
-=\mathbb E_R\{\operatorname{Var}_R(Z_\lambda\mid X)\}\).
 Then
 \begin{align*}
-\mathbb E_R\{Z_\lambda-\zeta(X)\}^2
-&=Q_{\mathrm{DRF}}(\lambda)+\mathcal R(\zeta).
+\mathcal L_{\mathrm{DR}}(\zeta;\lambda)
+&=Q_{\mathrm{DR}}(\lambda)+\mathcal R(\zeta).
 \end{align*}
-Thus the RCT-only loss has the correct population minimizers, while
-\(Q_{\mathrm{DRF}}(\lambda)\) records its integrated pseudo-outcome noise.
+Consequently,
+\begin{align*}
+\operatorname*{arg\,min}_{\zeta\in\mathcal Z}
+\mathcal L_{\mathrm{DR}}(\zeta;\lambda)
+&=
+\operatorname*{arg\,min}_{\zeta\in\mathcal Z}
+\mathcal R(\zeta).
+\end{align*}
+Thus minimizing the population RCT DR loss over \(\mathcal Z\) returns the
+best CATE approximation in \(\mathcal Z\) under the ideal risk in
+Equation~\eqref{eq:cate-ideal-risk}.
+The term \(Q_{\mathrm{DR}}(\lambda)\) is a \(\zeta\)-independent noise floor,
+not the final risk of a fitted learner.
 \end{proposition}
 
-The residualized route begins from the same target but has a different
-curvature. Let \(e_0(x)\triangleq P_R(A=1\mid X=x)\), which is known by RCT
-design, and define
+For the R-learner-style construction, define the known RCT propensity and
+the corresponding marginal-outcome nuisances using the same \(\lambda\):
 \begin{align*}
+e_0(x)&\triangleq P_R(A=1\mid X=x),\\
 m_R(x)&\triangleq e_0(x)q_{R,1}(x)+\{1-e_0(x)\}q_{R,0}(x),\\
 m_O(x)&\triangleq e_0(x)q_{O,1}(x)+\{1-e_0(x)\}q_{O,0}(x),\\
-m_\lambda(x)&\triangleq(1-\lambda)m_R(x)+\lambda m_O(x),\\
-v_0(x)&\triangleq e_0(x)\{1-e_0(x)\}.
+m_\lambda(x)&\triangleq(1-\lambda)m_R(x)+\lambda m_O(x).
 \end{align*}
-Strict overlap in Assumption~\ref{ass:trial} gives \(v_0(X)>0\) almost surely.
 
-\begin{lemma}[Raw R-loss curvature]
-\label{lem:raw-r-loss}
-For any fixed measurable \(m\) such that
-\(Y-m(X)\in L^2(P_R)\), and for
-\(\zeta\in L^2(P_R^X)\), randomization gives
-\begin{align*}
-\mathbb E_R[\{A-e_0(X)\}\{Y-m(X)\}\mid X]
-&=v_0(X)\tau(X),\\
-\mathbb E_R[\{A-e_0(X)\}^2\mid X]
-&=v_0(X).
-\end{align*}
-Consequently, for
-\begin{align*}
-\ell_R^{\mathrm{raw}}(\zeta;m)
-&\triangleq[\,Y-m(X)-\{A-e_0(X)\}\zeta(X)\,]^2,
-\end{align*}
-we have
-\begin{align*}
-\mathbb E_R\{\ell_R^{\mathrm{raw}}(\zeta;m)\mid X\}
-&=C_R^{\mathrm{raw}}(X;m)
-+v_0(X)\{\zeta(X)-\tau(X)\}^2,
-\end{align*}
-where
-\begin{align*}
-C_R^{\mathrm{raw}}(X;m)
-&\triangleq
-\mathbb E_R[\{Y-m(X)\}^2\mid X]-v_0(X)\tau(X)^2
-\end{align*}
-does not depend on \(\zeta\).
-\end{lemma}
-
-Lemma~\ref{lem:raw-r-loss} shows that a restricted class is projected using
-the weight \(v_0(X)\), not the unweighted ideal risk
-\(\mathcal R(\zeta)\). Dividing by this curvature restores the desired target.
-\begin{definition}[Normalized R-loss and RF noise floor]
-For any fixed \(m\), define
-\begin{align*}
-\ell_R^{\mathrm{norm}}(\zeta;m)
-&\triangleq
-\frac{[\,Y-m(X)-\{A-e_0(X)\}\zeta(X)\,]^2}{v_0(X)},\\
-Q_{\mathrm{RF}}(\lambda)
-&\triangleq\mathbb E_R\{\ell_R^{\mathrm{norm}}(\tau;m_\lambda)\}.
-\end{align*}
-\end{definition}
-
-\begin{proposition}[Normalized R-loss risk decomposition]
+\begin{proposition}[RCT R loss and target]
 \label{prop:cate-rf-risk}
-If the displayed losses are integrable, then
+Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation}, let \(m\)
+be a fixed admissible measurable function, suppose
+\(Y-m(X)\in L^2(P_R)\), and let \(\zeta\in\mathcal Z\). Define
 \begin{align*}
-\mathbb E_R\{\ell_R^{\mathrm{norm}}(\zeta;m_\lambda)\}
-&=Q_{\mathrm{RF}}(\lambda)+\mathcal R(\zeta).
+\mathcal L_R(\zeta;m)
+&\triangleq
+\mathbb E_R\left[
+\frac{[\,Y-m(X)-\{A-e_0(X)\}\zeta(X)\,]^2}
+{e_0(X)\{1-e_0(X)\}}
+\right],\\
+Q_R(m)
+&\triangleq
+\mathbb E_R\left[
+\frac{[\,Y-m(X)-\{A-e_0(X)\}\tau(X)\,]^2}
+{e_0(X)\{1-e_0(X)\}}
+\right].
 \end{align*}
-Hence normalized R-loss and the ideal CATE risk have the same minimizers over
-every fixed restricted class \(\mathcal Z\). The two constants
-\(Q_{\mathrm{DRF}}(\lambda)\) and \(Q_{\mathrm{RF}}(\lambda)\) are different
-noise floors and need not select the same \(\lambda\).
+Suppose the displayed losses are integrable. Then
+\begin{align*}
+\mathcal L_R(\zeta;m)
+&=Q_R(m)+\mathcal R(\zeta).
+\end{align*}
+Consequently,
+\begin{align*}
+\operatorname*{arg\,min}_{\zeta\in\mathcal Z}
+\mathcal L_R(\zeta;m)
+&=
+\operatorname*{arg\,min}_{\zeta\in\mathcal Z}
+\mathcal R(\zeta).
+\end{align*}
+Thus minimizing the population RCT R loss over \(\mathcal Z\) returns the
+same best CATE approximation under the ideal risk in
+Equation~\eqref{eq:cate-ideal-risk}. In particular, \(Q_R(m_\lambda)\) is the
+noise floor associated with the fused marginal-outcome nuisance. The two
+terms \(Q_{\mathrm{DR}}(\lambda)\) and \(Q_R(m_\lambda)\) are different noise
+floors and need not select the same \(\lambda\); neither is the fitted CATE
+risk.
 \end{proposition}
 
 Both RCT-only routes identify the desired projection, but neither directly
@@ -155,10 +140,11 @@ define \(G_\zeta(X)\triangleq\{g(X)-\zeta(X)\}^2\). The following full-fusion
 objects are retained here so that the subsequent orthogonality and
 finite-sample results remain self-contained.
 
-The primary \emph{Doubly Robust Fusion (DRF) Learner} uses the RCT-valid AIPW
+The primary \emph{Doubly Robust Fusion (DRF) Learner} extends
+\(\mathcal L_{\mathrm{DR}}\) to use OBS covariates through the RCT-valid AIPW
 score. Here ``doubly robust'' names that score construction under known
-\(e_0\); it does not assert joint robustness to a shared OBS nuisance or ratio
-error.
+\(e_0\); it does not by itself assert numerical-loss orthogonality or
+robustness to ratio error.
 \begin{definition}[Doubly Robust Fusion loss]
 For fixed \(\zeta\), define
 \begin{align}
@@ -170,10 +156,16 @@ For fixed \(\zeta\), define
 \right].
 \label{eq:dr-fusion-loss}
 \end{align}
-Assume \(Z_\lambda,\zeta\in L^2(P_R)\), \(G_\zeta\in L^1(P_R)\), and
+Assume \(Z_\lambda\in L^2(P_R)\), \(\zeta\in L^2(P_R^X)\),
+\(G_\zeta\in L^1(P_R)\), and
 \(r_0G_\zeta\in L^1(P_O)\). The coefficient \(\omega\) scales the
-prediction-powered correction and is not part of \(G_\zeta\).
+OBS loss correction and is not part of \(G_\zeta\).
 \end{definition}
+
+The first term in Equation~\eqref{eq:dr-fusion-loss} is the sample counterpart
+of \(\mathcal L_{\mathrm{DR}}(\zeta;\lambda)\). The coefficient \(\omega\)
+multiplies the transported OBS loss correction, whose mean is zero when
+\(r=r_0\).
 
 \begin{proposition}[Exact DRF target]
 \label{prop:cate-target}
@@ -183,7 +175,9 @@ Assumption~\ref{ass:exact-transport} holds and
 \(r_0=dP_R^X/dP_O^X\). Use \(r=r_0\). Then
 \begin{align}
 \mathbb E\{\widehat L_{\mathrm{DRF}}(\zeta;\lambda,\omega,r_0)\}
-&=Q_{\mathrm{DRF}}(\lambda)+\mathcal R(\zeta).
+&=\mathcal L_{\mathrm{DR}}(\zeta;\lambda)
+\nonumber\\
+&=Q_{\mathrm{DR}}(\lambda)+\mathcal R(\zeta).
 \label{eq:cate-target}
 \end{align}
 Thus the population minimizers over any fixed class \(\mathcal Z\) are the
@@ -191,187 +185,505 @@ Thus the population minimizers over any fixed class \(\mathcal Z\) are the
 \(r_0=1\). The expected loss is flat in \(\omega\).
 \end{proposition}
 
-The secondary \emph{normalized R-Fusion (RF) Learner} uses the following
-curvature-matched residual loss.
-\begin{definition}[Normalized R-Fusion loss]
+To leverage OBS covariates through the R route, the secondary
+\emph{R-Fusion (RF) Learner} extends \(\mathcal L_R(\zeta;m)\) with a
+transported loss correction.
+\begin{definition}[R-Fusion loss]
 For a fixed marginal-outcome function \(m\), define
 \begin{align*}
-\kappa(A,X)&\triangleq
-\frac{\{A-e_0(X)\}^2}{v_0(X)},
-&\mathbb E_R(\kappa\mid X)&=1,\\
-\ell_R^{\mathrm{norm}}(\zeta;m)&\triangleq
-\frac{\{Y-m(X)-\{A-e_0(X)\}\zeta(X)\}^2}{v_0(X)}.
+\kappa(A,X)
+&\triangleq
+\frac{\{A-e_0(X)\}^2}{e_0(X)\{1-e_0(X)\}}.
 \end{align*}
-The normalization removes the \(v_0(X)\)-weighted projection displayed in
-Lemma~\ref{lem:raw-r-loss}. Define
+Define
 \begin{align}
 \widehat L_{\mathrm{RF}}(\zeta;m,\omega,r)
-&\triangleq\mathbb P_R^{\mathrm{fit}}\ell_R^{\mathrm{norm}}(\zeta;m)
-+\omega\left[
+&\triangleq\mathbb P_R^{\mathrm{fit}}\left[
+\frac{[\,Y-m(X)-\{A-e_0(X)\}\zeta(X)\,]^2}
+{e_0(X)\{1-e_0(X)\}}
+\right]\notag\\
+&\quad+\omega\left[
 \mathbb P_O^{\mathrm{fit}}\{r(X)G_\zeta(X)\}
 -\mathbb P_R^{\mathrm{fit}}\{\kappa(A,X)G_\zeta(X)\}
 \right].
 \label{eq:rf-fusion-loss}
 \end{align}
 Assume \(\tau\in L^2(P_R)\) and
-\(\ell_R^{\mathrm{norm}}(\zeta;m)\in L^1(P_R)\).
+the displayed RCT loss is integrable.
 \end{definition}
-\begin{theorem}[Exact normalized RF target]
+
+The first term in Equation~\eqref{eq:rf-fusion-loss} is the sample counterpart
+of \(\mathcal L_R(\zeta;m)\). The factor \(\kappa(A,X)\) is the RCT curvature
+weight induced by the scaled squared treatment residual, so the RCT
+subtraction matches the R-loss curvature. The correction has mean zero under
+exact transport.
+\begin{theorem}[Exact RF target]
 \label{thm:rf-target}
 Under the assumptions of Proposition~\ref{prop:cate-target},
 \begin{align}
 \mathbb E\{\widehat L_{\mathrm{RF}}(\zeta;m,\omega,r_0)\}
-&=C_R(m)+\mathcal R(\zeta).
+&=\mathcal L_R(\zeta;m)
+\nonumber\\
+&=Q_R(m)+\mathcal R(\zeta).
 \label{eq:rf-target}
 \end{align}
-where
-\begin{align*}
-C_R(m)&\triangleq\mathbb E_R\left[
-\frac{\{Y-m(X)\}^2}{e_0(X)\{1-e_0(X)\}}-\tau(X)^2\right]
-\end{align*}
-is finite and independent of \(\zeta\). In particular,
-\(Q_{\mathrm{RF}}(\lambda)=C_R(m_\lambda)\).
+In particular, setting \(m=m_\lambda\) gives the noise floor
+\(Q_R(m_\lambda)\).
 Hence the population minimizers over a fixed class are the same unweighted
 \(L_2(P_R^X)\) projections of \(\tau\).
 \end{theorem}
 
-\subsection{Orthogonality audit}
-\begin{proposition}[DRF and RF orthogonality audit]
-\label{prop:cate-orthogonality-audit}
-For fixed \(v,g,r_0\), define
+\subsection{Orthogonality of learning equations and nuisance sensitivity}
+\label{sec:cate-orthogonality}
+
+Proposition~\ref{prop:cate-target} and Theorem~\ref{thm:rf-target} establish
+the exact population targets. We now ask a different question: how does each
+fitted object enter the first-order equation that learns \(\zeta\)? Following
+\citet[Assumption~1]{foster2023orthogonal}, loss orthogonality means that the
+mixed derivative \(D_\eta D_\zeta L\) vanishes at the population target and
+nuisance truth. Equivalently, up to scaling, it means
+\(D_\eta\Psi=0\) for \(\Psi\triangleq-D_\zeta L/2\). This definition alone
+does not establish an oracle convergence rate.
+
+\begin{definition}[Derivative directions and learning roles]
+For a functional \(F\), an object \(\eta\), and an admissible direction \(h\),
+define the Gateaux derivative
 \begin{align*}
-\Psi_{\mathrm{DRF}}(\zeta,q)[v]
-&\triangleq\mathbb E_R[v(X)\{\varphi(V;q)-\zeta(X)\}],
+D_\eta F(\eta)[h]
+&\triangleq
+\left.\frac{d}{d\varepsilon}F(\eta+\varepsilon h)
+\right|_{\varepsilon=0}.
 \end{align*}
-and define the RF projection score by
-\begin{align*}
-\Psi_{\mathrm{RF}}(\zeta,m)[v]&\triangleq\mathbb E_R\left[
-v(X)\frac{A-e_0(X)}{e_0(X)\{1-e_0(X)\}}
-\{Y-m(X)-\{A-e_0(X)\}\zeta(X)\}\right].
-\end{align*}
-The DRF derivative in \(q\) and the RF derivative in \(m\) are zero, holding
-\((g,r_0)\) fixed, although numerical loss derivatives need not vanish.
-Holding all other nuisances and \(\zeta,g,\lambda,\omega\) fixed, the
-\(r\)-partial derivative for either empirical loss is
+The target argument is \(\zeta\), and \(v\) denotes an admissible target
+direction such that \(\zeta+\varepsilon v\) remains in the ambient loss domain
+for all sufficiently small \(\varepsilon\). The learned objects \(q,m,g,r\)
+are nuisance directions. The coefficients \(\lambda\) and \(\omega\) are held fixed during
+this audit: \(\lambda\) selects \(q_\lambda\) or \(m_\lambda\), while
+\(\omega\) scales the OBS correction. The trial propensity \(e_0\) is known
+by design.
+\end{definition}
+
+Write \(Z_q\triangleq\varphi(V;q)\),
+\(s_0(X)\triangleq e_0(X)\{1-e_0(X)\}\), and
+\(\kappa_0(A,X)\triangleq\kappa(A,X)
+=\{A-e_0(X)\}^2/s_0(X)\).
+\begin{definition}[Full fusion learning equations]
+For fixed \((\lambda,\omega)\), define the DRF and RF population learning
+equations by
 \begin{align}
-D_r\,\mathbb E\{\widehat L_j\}[h]
-&=\omega\mathbb E_O[h(X)\{g(X)-\zeta(X)\}^2].
-\label{eq:drf-ratio-derivative}
+\Psi_{\mathrm{DRF}}(\zeta;q,g,r)[v]
+&\triangleq
+-\frac12D_\zeta\mathbb E\{\widehat L_{\mathrm{DRF}}\}[v]
+\nonumber\\
+&=\mathbb E_R[v(X)\{Z_q-\zeta(X)\}]
+\nonumber\\
+&\quad+\omega\left[
+\mathbb E_O\{r(X)v(X)[g(X)-\zeta(X)]\}
+-\mathbb E_R\{v(X)[g(X)-\zeta(X)]\}
+\right],
+\label{eq:drf-learning-equation}\\
+\Psi_{\mathrm{RF}}(\zeta;m,g,r)[v]
+&\triangleq
+-\frac12D_\zeta\mathbb E\{\widehat L_{\mathrm{RF}}\}[v]
+\nonumber\\
+&=\mathbb E_R\left[
+v(X)\frac{A-e_0(X)}{s_0(X)}
+\{Y-m(X)-[A-e_0(X)]\zeta(X)\}\right]
+\nonumber\\
+&\quad+\omega\left[
+\mathbb E_O\{r(X)v(X)[g(X)-\zeta(X)]\}
+-\mathbb E_R\{\kappa_0(A,X)v(X)[g(X)-\zeta(X)]\}
+\right].
+\label{eq:rf-learning-equation}
 \end{align}
-For an estimated
-propensity, propensity orthogonality holds only locally at
-\((\zeta,m,e)=(\tau,m_0,e_0)\), where
-\(m_0(X)\triangleq\mathbb E_R(Y\mid X)\). Ratio perturbations remain
-nonorthogonal as in Equation~\eqref{eq:drf-ratio-derivative}.
-This is not joint orthogonality when shared OBS regressions generate both a
-score nuisance and \(g\). Known RCT propensity is load-bearing for arbitrary
-fused \(q_\lambda\).
+All derivatives hold the remaining displayed arguments fixed.
+\end{definition}
+
+\begin{proposition}[Exact-transport learning equations]
+\label{prop:cate-learning-equations}
+Assume RCT consistency and conditional randomization, a known propensity
+\(e_0\) satisfying strict overlap, and nuisance functions fitted honestly on
+data independent of the loss-evaluation observations.  Suppose either that
+the RCT and OBS have a common covariate marginal, in which case \(r_0=1\),
+or that exact covariate transport holds with
+\(r_0=dP_R^X/dP_O^X\).  Use \(r=r_0\), and suppose all displayed
+expectations below are finite.
+For every integrable function \(f(X)\), exact transport gives
+\(\mathbb E_O(r_0f)=\mathbb E_R(f)\), and randomization gives
+\(\mathbb E_R(\kappa_0\mid X)=1\). Consequently,
+\begin{align*}
+\Psi_{\mathrm{DRF}}(\zeta;q,g,r_0)[v]
+&=\mathbb E_R[v(X)\{Z_q-\zeta(X)\}],\\
+\Psi_{\mathrm{RF}}(\zeta;m,g,r_0)[v]
+&=\mathbb E_R\left[
+v(X)\frac{A-e_0(X)}{s_0(X)}
+\{Y-m(X)-[A-e_0(X)]\zeta(X)\}\right].
+\end{align*}
+Thus exact transport removes the OBS correction from the population learning
+equation without removing it from the empirical optimization problem.
 \end{proposition}
 
-Define
+\begin{proposition}[Direction-by-direction learning-equation orthogonality]
+\label{prop:cate-orthogonality-audit}
+Assume honest fitting, strict trial overlap, the integrability needed to
+interchange differentiation and expectation, and exact fixed \(r_0\) where
+stated. Then the following partial-path statements hold.
+\begin{enumerate}
+\item For an outcome-regression direction \(h=(h_0,h_1)\),
 \begin{align*}
-m_R(x)&\triangleq e_0(x)q_{R,1}(x)+\{1-e_0(x)\}q_{R,0}(x),\\
-m_O(x)&\triangleq e_0(x)q_{O,1}(x)+\{1-e_0(x)\}q_{O,0}(x),\\
-m_\lambda(x)&\triangleq(1-\lambda)m_R(x)+\lambda m_O(x).
+\dot Z_q[h]
+&\triangleq
+-\{A-e_0(X)\}\left\{
+\frac{h_1(X)}{e_0(X)}+\frac{h_0(X)}{1-e_0(X)}\right\},\\
+D_q\Psi_{\mathrm{DRF}}[h,v]
+&=\mathbb E_R\{v(X)\dot Z_q[h]\}=0.
 \end{align*}
-Theorem~\ref{thm:rf-target} holds for every fixed \(m_\lambda\), so
-\(\lambda\) is target-preserving but may change residual noise.
+This exact score orthogonality is the main protection supplied by the known
+trial propensity.
 
-\subsection{Final learner-risk coefficients and honest selection}
+\item For a marginal-outcome direction \(h\),
+\begin{align*}
+D_m\Psi_{\mathrm{RF}}[h,v]
+&=-\mathbb E_R\left[
+v(X)\frac{A-e_0(X)}{s_0(X)}h(X)\right]=0.
+\end{align*}
+
+\item For a prediction direction \(u\) and either
+\(j\in\{\mathrm{DRF},\mathrm{RF}\}\),
+\begin{align}
+D_g\Psi_j[u,v]
+&=\omega\mathbb E_O[\{r(X)-r_0(X)\}u(X)v(X)],
+\label{eq:cate-g-score-derivative}\\
+D_g\mathbb E(\widehat L_j)[u]
+&=2\omega\mathbb E_O[\{r(X)-r_0(X)\}
+\{g(X)-\zeta(X)\}u(X)].
+\label{eq:cate-g-loss-derivative}
+\end{align}
+Both derivatives vanish when \(r=r_0\), but not generally for an approximate
+ratio.
+
+\item For a ratio direction \(h_r\),
+\begin{align}
+D_r\Psi_j[h_r,v]
+&=\omega\mathbb E_O[h_r(X)v(X)\{g(X)-\zeta(X)\}],
+\label{eq:cate-ratio-score-derivative}\\
+D_r\mathbb E\{\widehat L_j\}[h_r]
+&=\omega\mathbb E_O[h_r(X)\{g(X)-\zeta(X)\}^2].
+\label{eq:drf-ratio-derivative}
+\end{align}
+These derivatives are generally nonzero.
+\end{enumerate}
+\end{proposition}
+
+The normalization constraint on a density ratio restricts its regular tangent
+directions. Define
+\begin{align*}
+\mathcal T_r
+&\triangleq L_0^2(P_O^X)
+=\{h\in L^2(P_O^X):\mathbb E_O(h)=0\}.
+\end{align*}
+This linear space describes first-order normalization; admissible paths must
+also respect support and nonnegativity, and a ratio on the positivity boundary
+may have only a tangent cone.
+
+\begin{proposition}[Density-ratio nonorthogonality]
+\label{prop:cate-ratio-nonorthogonality}
+Suppose \(\omega\neq0\) and
+\(v(g-\zeta)\in L^2(P_O^X)\).
+Over the full normalized tangent space \(\mathcal T_r\), the ratio-score
+derivative in Equation~\eqref{eq:cate-ratio-score-derivative} vanishes for
+every \(h_r\in\mathcal T_r\) if and only if
+\(v(X)\{g(X)-\zeta(X)\}\) is constant \(P_O^X\)-almost surely. Therefore,
+the learning equations are generally not orthogonal to the density ratio.
+Balancing selected empirical moments does not generally produce orthogonality
+over the full normalized tangent space.
+\end{proposition}
+
+As a direct chain-rule consequence of items 1--3 in
+Proposition~\ref{prop:cate-orthogonality-audit}, if the same OBS outcome
+regression generates \((q_O,g)\) for DRF or \((m_O,g)\) for RF, then its
+total learning-equation derivative is zero when \(e_0\) is known and exact
+\(r_0\) is held fixed. This conclusion does not cover paths that change
+\(r\), or the use of an approximate ratio.
+
+These results audit nuisance sensitivity; they do not select the target
+function or the tuning coefficients. The learner optimizes over \(\zeta\),
+while \(\lambda\) changes the fused nuisance and \(\omega\) changes the
+transported correction. The next subsection therefore selects
+\((\lambda,\omega)\) by the risk of the fitted CATE function.
+
+\subsection{Choosing the fusion coefficients}
 \label{sec:cate-risk-selection}
 
-For \(j\in\{\mathrm{DRF},\mathrm{RF}\}\), with other learner choices fixed,
-let \(\Theta_{\mathrm{CATE}}\subseteq\mathbb R^2\) be a prespecified nonempty
-coefficient domain. When the minimum is attained, define the algorithm risk
-and its fusion oracle by
+Let \(j\in\{\mathrm{DRF},\mathrm{RF}\}\) label the Doubly Robust Fusion
+Learner or the R-Fusion Learner.  Let \(\Omega\subset\mathbb R\) be a
+prespecified compact set containing zero.  For fixed
+\((\lambda,\omega)\in[0,1]\times\Omega\), define
+\(\widehat\tau_j(\cdot;\lambda,\omega)\in\mathcal Z\) as the output of a
+prespecified empirical minimization rule, with deterministic tie-breaking,
+applied to the empirical DRF loss in
+Equation~\eqref{eq:dr-fusion-loss} or the empirical RF loss in
+Equation~\eqref{eq:rf-fusion-loss}, respectively, on the fitting sample.
+In DRF, \(\lambda\) changes \(Z_\lambda\).  In RF, it changes
+\(m_\lambda\).  In both methods, \(\omega\) changes the empirical transported
+OBS correction.  Hence the fitted function depends on both coefficients,
+even though exact transport cancels the correction in expectation for each
+fixed candidate function.
+
+Recall from Equation~\eqref{eq:cate-ideal-risk} that the ideal CATE risk of a
+function \(f\) is
+\begin{align*}
+\mathcal R(f)&=\mathbb E_R[\{f(X)-\tau(X)\}^2].
+\end{align*}
+Throughout this section, an efficiency gain means a reduction in the
+integrated squared CATE error \(\mathcal R\) of the fitted learner.  This
+operational learning criterion is distinct from attaining a semiparametric
+efficiency bound.  OBS information may reduce this error without changing
+the RCT-population target.  Conditional on the nuisance and fitting samples
+and all fitting-stage algorithmic randomness, whenever the minimum is
+attained, define the infeasible final-risk oracle by
 \begin{align}
-\mathfrak R_j(\lambda,\omega)&\triangleq
-\mathbb E_{\mathrm{fit}}\mathcal R(\widehat\zeta^j_{\lambda,\omega}),\\
-(\lambda_j^\star,\omega_j^\star)&\in
-\operatorname*{arg\,min}_{(\lambda,\omega)\in\Theta_{\mathrm{CATE}}}
-\mathfrak R_j(\lambda,\omega).
+(\lambda_j^\star,\omega_j^\star)
+&\in\operatorname*{arg\,min}_{\lambda\in[0,1],\,\omega\in\Omega}
+\mathcal R\{\widehat\tau_j(\cdot;\lambda,\omega)\}.
 \label{eq:final-risk-oracle}
 \end{align}
-There is no universal closed form for this algorithm-induced oracle. ATE
-variance, pseudo-outcome-noise, and fixed-loss-variance oracles are different
-objects, as detailed in the Appendix.
-
-For honest selection, let \(\mathfrak A\) be one prespecified finite set of
-candidates \(a=(j,\lambda,\omega,p,\rho,\text{basis},\ldots)\), including an
-identical RCT-only candidate \(a_R\in\mathfrak A\). Define
+This oracle is infeasible because \(\tau\) is unknown, and its value changes
+across fitting-sample realizations.  For both methods,
+\((\lambda,\omega)=(0,0)\) gives the corresponding RCT-only learner.  Since
+this pair is feasible, the oracle obeys
+the conditional comparison
 \begin{align}
-\mathcal R_{\mathrm{fit}}(a)&\triangleq\mathcal R(\widehat t_a).
-\label{eq:sample-cate-risk}
+\mathcal R\{\widehat\tau_j(\cdot;\lambda_j^\star,\omega_j^\star)\}
+&\leq\mathcal R\{\widehat\tau_j(\cdot;0,0)\}.
+\label{eq:conditional-rct-oracle-comparison}
 \end{align}
+This is an oracle comparison, not a guarantee for estimated coefficients.
+There is no universal closed form for Equation~\eqref{eq:final-risk-oracle}.
 
-Use one shared RCT-valid \(Z_{\mathrm{ref}}\), independent of validation. For
-\(G_a(X)\triangleq\{g(X)-\widehat t_a(X)\}^2\), define
+Two simpler closed forms minimize the base-loss noise floors rather than the
+fitted risk.  Recall that \(Z_0=\varphi(V;q_R)\) and
+\(Z_1=\varphi(V;q_O)\), while \(m_R\) and \(m_O\) are the corresponding
+RCT and OBS marginal-outcome nuisances.  Propositions~\ref{prop:cate-rct-risk}
+and \ref{prop:cate-rf-risk} define \(Q_{\mathrm{DR}}(\lambda)\) and
+\(Q_R(m_\lambda)\), respectively.  These terms do not equal the ideal risk
+of a fitted CATE function.
+
+\begin{proposition}[Closed-form noise-floor coefficients]
+\label{prop:cate-noise-floor-lambda}
+Assume RCT consistency and conditional randomization, a known propensity
+\(e_0\) satisfying strict overlap, and nuisance functions fitted honestly on
+data independent of the observations used below.  Condition on these fixed
+nuisance fits and suppose the displayed expectations are finite.  Let
+\(q_R=(q_{R,0},q_{R,1})\) and \(q_O=(q_{O,0},q_{O,1})\) be the fixed RCT and
+OBS outcome-regression pairs, and define
+\begin{align*}
+Z_0&\triangleq\varphi(V;q_R),
+&Z_1&\triangleq\varphi(V;q_O),\\
+m_R(X)&\triangleq e_0(X)q_{R,1}(X)+\{1-e_0(X)\}q_{R,0}(X),\\
+m_O(X)&\triangleq e_0(X)q_{O,1}(X)+\{1-e_0(X)\}q_{O,0}(X),\\
+\Delta&\triangleq Z_1-Z_0,
+&d_m(X)&\triangleq m_O(X)-m_R(X).
+\end{align*}
+For \(Z_\lambda\triangleq Z_0+\lambda\Delta\) and
+\(m_\lambda\triangleq m_R+\lambda d_m\), define
+\begin{align*}
+Q_{\mathrm{DR}}(\lambda)
+&\triangleq\mathbb E_R\{Z_\lambda-\tau(X)\}^2,\\
+Q_R(m_\lambda)
+&\triangleq\mathbb E_R\left[
+\frac{[Y-m_\lambda(X)-\{A-e_0(X)\}\tau(X)]^2}
+{e_0(X)\{1-e_0(X)\}}\right].
+\end{align*}
+For an interval, the projection used below is
+\(\operatorname{Proj}_{[0,1]}(u)\triangleq\min\{1,\max(0,u)\}\).
+If \(\mathbb E_R(\Delta^2)>0\), the constrained DR noise-floor minimizer is
 \begin{align}
-\widehat{\mathcal R}^{\mathrm{ref}}_a
+\lambda_{\mathrm{DR},Q}^{\star}
+&\triangleq\operatorname{Proj}_{[0,1]}
+\left\{-\frac{\mathbb E_R(Z_0\Delta)}{\mathbb E_R(\Delta^2)}\right\}.
+\label{eq:cate-dr-noise-lambda}
+\end{align}
+If
+\(\mathbb E_R[d_m(X)^2/\{e_0(X)(1-e_0(X))\}]>0\), the constrained R
+noise-floor minimizer is
+\begin{align}
+\lambda_{R,Q}^{\star}
+&\triangleq\operatorname{Proj}_{[0,1]}\left[
+\frac{
+\mathbb E_R[\{Y-m_R(X)\}d_m(X)/\{e_0(X)(1-e_0(X))\}]
+}{
+\mathbb E_R[d_m(X)^2/\{e_0(X)(1-e_0(X))\}]
+}\right].
+\label{eq:cate-r-noise-lambda}
+\end{align}
+If either denominator is zero, its corresponding noise floor is flat in
+\(\lambda\), so every \(\lambda\in[0,1]\) is a minimizer.  The displayed
+equivalent moments do not involve \(\tau\).
+\end{proposition}
+
+The expected full-fusion loss at a fixed function is flat in \(\omega\) under
+exact transport.  Thus no analogous population-loss formula selects
+\(\omega\).  We instead approximate the infeasible oracle in
+Equation~\eqref{eq:final-risk-oracle} by honest validation.
+
+Let \(M\geq1\), and let
+\(\widehat\tau_0,\ldots,\widehat\tau_{M-1}\) be the finite collection of
+fitted CATE functions produced by prespecified candidate specifications and
+fixed before validation.  Each specification encodes its method, fitting
+coefficients, basis, and penalty.
+Candidate \(0\) is the identical RCT-only learner.  Let
+\(Z_{\mathrm{ref}}\) be a common RCT-valid pseudo-outcome, fixed before
+validation, with
+\(\mathbb E_R(Z_{\mathrm{ref}}\mid X)=\tau(X)\).  Let \(g\) be the fitted
+OBS treatment-effect prediction from
+Equation~\eqref{eq:obs-effect-prediction}.  Define the validation ratio by
+\begin{align*}
+r_{\mathrm{val}}&\triangleq
+\begin{cases}
+1, & \text{under the common covariate marginal},\\
+r_0, & \text{under exact covariate transport}.
+\end{cases}
+\end{align*}
+This exact \(r_{\mathrm{val}}\) is supplied to the validation identity and
+theorem below; it is not fitted within Algorithm~\ref{alg:cate-fusion-selection}.
+The feasible evaluation-independent estimate \(\widehat r_{\mathrm{val}}\)
+and its resulting drift are treated after the theorem.
+Let \(\mathbb P_{R,\mathrm{val}}\) and
+\(\mathbb P_{O,\mathrm{val}}\) denote the empirical averages over the RCT
+and OBS validation samples.  For each \(k\), fix a validation
+control-variate coefficient \(\nu_k\) before observing validation outcomes
+and define
+\begin{align*}
+G_k(X)&\triangleq\{g(X)-\widehat\tau_k(X)\}^2.
+\end{align*}
+Under exact \(r_{\mathrm{val}}\), the coefficient \(\nu_k\) affects only
+validation-score variability and need not equal the \(\omega\) used to fit
+candidate \(k\).  Define
+\begin{align}
+\widehat C_k
 &\triangleq\mathbb P_{R,\mathrm{val}}
-\{Z_{\mathrm{ref}}-\widehat t_a(X)\}^2
-+\omega_a\left[
-\mathbb P_{O,\mathrm{val}}\{r^\dagger G_a\}
--\mathbb P_{R,\mathrm{val}}G_a\right].
+\{Z_{\mathrm{ref}}-\widehat\tau_k(X)\}^2
++\nu_k\left[
+\mathbb P_{O,\mathrm{val}}\{r_{\mathrm{val}}G_k\}
+-\mathbb P_{R,\mathrm{val}}G_k\right].
 \label{eq:common-reference-validation}
 \end{align}
-Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation}, use
-\(r^\dagger=r_0=1\) under Assumption~\ref{ass:common-marginal}, or
-\(r^\dagger=r_0\) under Assumption~\ref{ass:exact-transport}. Then
+
+\begin{algorithm}[H]
+\caption{Honest selection of CATE fusion coefficients}
+\label{alg:cate-fusion-selection}
+\DontPrintSemicolon
+\KwIn{Independent nuisance, fitting, and validation samples; \(M\) prespecified
+candidate specifications; a shared
+\(Z_{\mathrm{ref}}\); the prespecified exact validation ratio
+\(r_{\mathrm{val}}\); and validation-independent coefficients
+\(\nu_0,\ldots,\nu_{M-1}\).}
+Fit the nuisances on the nuisance samples.  A candidate specification may
+also fit its own prespecified training ratio on these samples.\;
+Fit every \(\widehat\tau_k\) on the fitting samples using its prespecified
+method and tuning values.\;
+Compute \(\widehat C_k\) in Equation~\eqref{eq:common-reference-validation}
+for every \(k\) on the common validation samples.\;
+Set \(\widehat k\in\operatorname*{arg\,min}_{0\leq k<M}\widehat C_k\).\;
+\KwOut{The selected learner \(\widehat\tau_{\widehat k}\).}
+\end{algorithm}
+
+The simple choices \(\nu_k=0\), \(\nu_k=1\), or \(\nu_k=\omega_k\), where
+\(\omega_k\) is candidate \(k\)'s fitting coefficient, are valid when
+prespecified.  A variance-oriented \(\nu_k\) may instead be learned on an
+additional sample,
+but optimizing it on the same validation outcomes is not covered below.
+
+Under the exact common-marginal or transport regime just defined,
 \begin{align}
-\mathbb E_{\mathrm{val}}\widehat{\mathcal R}^{\mathrm{ref}}_a
-&=Q_{\mathrm{ref}}+\mathcal R_{\mathrm{fit}}(a),
+\mathbb E_{\mathrm{val}}(\widehat C_k)
+&=Q_{\mathrm{ref}}+\mathcal R(\widehat\tau_k),
 \label{eq:common-reference-identity}
 \end{align}
 where \(Q_{\mathrm{ref}}\triangleq
 \mathbb E_R\{Z_{\mathrm{ref}}-\tau(X)\}^2\).
+Define the best realized candidate by
+\begin{align*}
+k^\star&\in\operatorname*{arg\,min}_{0\leq k<M}
+\mathcal R(\widehat\tau_k).
+\end{align*}
 
 \begin{theorem}[Finite-class honest validation]
 \label{thm:cate-finite-validation}
-Let \(M\triangleq|\mathfrak A|<\infty\). Suppose the centered RCT and OBS
-per-observation scores have range lengths at most \(B_R\) and \(B_O\). Define
+Let the RCT and OBS validation samples be mutually independent and independent
+of the fitted candidates, and condition on candidates and coefficients fixed
+before validation.  Let the common reference score be RCT-valid,
+\(\mathbb E_R(Z_{\mathrm{ref}}\mid X)=\tau(X)\), and independent of the
+validation observations.  Use exact transport
+\(r_{\mathrm{val}}=r_0=dP_R^X/dP_O^X\), including the common-marginal case
+\(r_{\mathrm{val}}=r_0=1\).  Let
+\(\widehat\tau_0,\ldots,\widehat\tau_{M-1}\) be finite and fixed before
+validation, with candidate \(0\) the identical RCT-only learner.  Suppose
+\(\nu_0,\ldots,\nu_{M-1}\) are fixed before validation.  For each \(k\),
+let \(g\) be the fixed OBS treatment-effect prediction and define
+\begin{align*}
+G_k(X)&\triangleq\{g(X)-\widehat\tau_k(X)\}^2,\\
+\widehat C_k
+&\triangleq\mathbb P_{R,\mathrm{val}}
+\{Z_{\mathrm{ref}}-\widehat\tau_k(X)\}^2
++\nu_k\left[
+\mathbb P_{O,\mathrm{val}}\{r_{\mathrm{val}}G_k\}
+-\mathbb P_{R,\mathrm{val}}G_k\right].
+\end{align*}
+Here, \(\mathbb P_{R,\mathrm{val}}\) and
+\(\mathbb P_{O,\mathrm{val}}\) are the corresponding empirical averages.
+Let \(n_v\) and \(N_v\) be the RCT and OBS validation sample sizes, define
+\(\mathcal R(f)\triangleq\mathbb E_R[\{f(X)-\tau(X)\}^2]\), and let
+\(k^\star\in\operatorname*{arg\,min}_{0\leq k<M}
+\mathcal R(\widehat\tau_k)\).  Suppose
+the centered RCT and OBS per-observation scores, including their prespecified
+\(\nu_k\) multipliers, have uniform range lengths at most \(B_R\) and
+\(B_O\). Define
 \begin{align*}
 \varepsilon_{\mathrm{val}}(\delta)&\triangleq
 B_R\sqrt{\frac{\log(4M/\delta)}{2n_v}}
 +B_O\sqrt{\frac{\log(4M/\delta)}{2N_v}}.
 \end{align*}
-If \(\widehat a\in\arg\min_{a\in\mathfrak A}\widehat{\mathcal R}^{\mathrm{ref}}_a\), then,
+Here, \(\varepsilon_{\mathrm{val}}(\delta)\) is a uniform validation
+estimation-error radius across the \(M\) candidates; it decreases with the
+validation sizes \(n_v,N_v\), and increases with \(M\) and confidence level
+\(1-\delta\).  If
+\(\widehat k\in\operatorname*{arg\,min}_{0\leq k<M}\widehat C_k\), then,
 with probability at least \(1-\delta\),
 \begin{align}
-\mathcal R_{\mathrm{fit}}(\widehat a)
-&\leq\min_{a\in\mathfrak A}\mathcal R_{\mathrm{fit}}(a)
+\mathcal R(\widehat\tau_{\widehat k})
+&\leq\mathcal R(\widehat\tau_{k^\star})
++2\varepsilon_{\mathrm{val}}(\delta)
+\leq\mathcal R(\widehat\tau_0)
 +2\varepsilon_{\mathrm{val}}(\delta).
 \label{eq:cate-selector-inequality}
-\end{align}
-In particular,
-\begin{align}
-\mathcal R_{\mathrm{fit}}(\widehat a)
-&\leq\mathcal R_{\mathrm{fit}}(a_R)+2\varepsilon_{\mathrm{val}}(\delta).
-\label{eq:cate-rct-comparator}
 \end{align}
 This is not realized-sample universal dominance.
 \end{theorem}
 
 For an evaluation-independent approximate ratio, define
-\(d_{r,a}\triangleq\omega_a\mathbb E_O[(r^\dagger-r_0)G_a]\).
-If the reference conditional bias is
+\(\widehat r_{\mathrm{val}}\) and replace \(r_{\mathrm{val}}\) in
+Equation~\eqref{eq:common-reference-validation}.  If the reference
+conditional bias is
 \(b_{\mathrm{ref}}(X)\triangleq
 \mathbb E_R(Z_{\mathrm{ref}}-\tau(X)\mid X)\), define
-\(d_{\mathrm{nuis},a}\triangleq
-2\mathbb E_R[b_{\mathrm{ref}}\{\tau-\widehat t_a\}]\).
-Write the corresponding uniform validation drifts as
+the two uniform drifts directly by
 \begin{align}
-\Delta_r&\triangleq\sup_{a\in\mathfrak A}|d_{r,a}|,
-&
-\Delta_{\mathrm{nuis}}&\triangleq
-\sup_{a\in\mathfrak A}|d_{\mathrm{nuis},a}|.
+\Delta_r
+&\triangleq\max_{0\leq k<M}
+\left|\nu_k\mathbb E_O[(\widehat r_{\mathrm{val}}-r_0)G_k]\right|,\\
+\Delta_{\mathrm{ref}}
+&\triangleq\max_{0\leq k<M}
+\left|2\mathbb E_R[b_{\mathrm{ref}}
+\{\tau-\widehat\tau_k\}]\right|.
 \label{eq:validation-drift-bounds}
 \end{align}
 Theorem~\ref{thm:cate-finite-validation} then adds
-\(2\Delta_r+2\Delta_{\mathrm{nuis}}\), provided its
+\(2\Delta_r+2\Delta_{\mathrm{ref}}\), provided its
 concentration envelope holds for the actual weighted scores.
 
-\subsection{Why general error analysis is hard and the linear-sieve solution}
+\subsection{Linear-sieve estimation and profiled coefficient selection}
 \label{sec:cate-sieve}
 
 In general, the empirical inverse Hessian and score depend on the same fitting
@@ -441,6 +753,64 @@ For either \(j\), the penalized normal equation is
 \begin{align*}
 (\widehat H_j+\rho P)\widehat\beta_j&=\widehat h_j.
 \end{align*}
+These expressions profile the sieve coefficient, not the final-risk fusion
+coefficients.  More precisely, for fixed \(\omega\), write the now-defined
+right-hand side as
+\begin{align}
+\widehat h_j(\lambda,\omega)
+&\triangleq\widehat h_{j,0}(\omega)
++\lambda\widehat h_{j,1}(\omega).
+\end{align}
+It follows that
+\begin{align}
+\widehat\beta^j_{\lambda,\omega}
+&=\widehat\beta^j_{0,\omega}
++\lambda\dot\beta^j_{\omega},
+&
+\dot\beta^j_{\omega}
+&\triangleq
+\{\widehat H_j(\omega)+\rho P\}^{-1}
+\widehat h_{j,1}(\omega).
+\label{eq:linear-sieve-lambda-profile}
+\end{align}
+Let
+\(\widehat t_{0,\omega}^j\triangleq b^\top\widehat\beta^j_{0,\omega}\),
+\(\dot t_\omega^j\triangleq b^\top\dot\beta_\omega^j\), and suppose the
+validation coefficient \(\nu_\omega\) is fixed across the profiled values of
+\(\lambda\).  Expanding Equation~\eqref{eq:common-reference-validation}
+gives
+\begin{align}
+\widehat C_j(\lambda,\omega)
+&=c_0(\omega)+2c_1(\omega)\lambda+c_2(\omega)\lambda^2,
+\label{eq:linear-sieve-validation-profile}\\
+c_1(\omega)
+&\triangleq-\mathbb P_{R,\mathrm{val}}
+[\{Z_{\mathrm{ref}}-\widehat t^j_{0,\omega}\}\dot t_\omega^j]
+\nonumber\\
+&\quad-\nu_\omega\left[
+\mathbb P_{O,\mathrm{val}}
+\{r_{\mathrm{val}}(g-\widehat t^j_{0,\omega})\dot t_\omega^j\}
+-\mathbb P_{R,\mathrm{val}}
+\{(g-\widehat t^j_{0,\omega})\dot t_\omega^j\}
+\right],\nonumber\\
+c_2(\omega)
+&\triangleq\mathbb P_{R,\mathrm{val}}(\dot t_\omega^j)^2
++\nu_\omega\left[
+\mathbb P_{O,\mathrm{val}}\{r_{\mathrm{val}}(\dot t_\omega^j)^2\}
+-\mathbb P_{R,\mathrm{val}}(\dot t_\omega^j)^2
+\right].\nonumber
+\end{align}
+For each \(\omega\) in a prespecified finite grid, this quadratic can be
+minimized on \([0,1]\) by checking its interior stationary point, when it is
+a minimum, and the two endpoints.  This reduces computation to a finite
+one-dimensional search over \(\omega\).  If the profiling is performed on an
+additional tuning sample, its finitely many resulting candidates are fixed
+before validation and Theorem~\ref{thm:cate-finite-validation} applies.  A
+prespecified finite \((\lambda,\omega)\) grid is another directly covered
+option.  Profiling \(\lambda\) on the same validation sample, or searching
+continuously over \(\omega\), requires a separate uniform-convergence
+argument and is not covered by the finite-class theorem.
+
 Define
 \begin{align*}
 \widehat S_j&\triangleq\widehat h_j-\widehat H_j\beta_p.
