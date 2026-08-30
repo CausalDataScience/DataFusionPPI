@@ -357,18 +357,18 @@ Substitution into Equations~\eqref{eq:dr-fusion-loss} and
 \(\omega\in\Omega\).  Each objective is therefore constant on the nonempty
 set \(\Omega\), and its minimizer set is all of \(\Omega\).
 
-For the common-reference identity, condition on every fitted candidate and
-its validation-independent \(\nu_k\).  Conditional pseudo-outcome validity
-gives
+For Equation~\eqref{eq:common-reference-identity}, condition on the fitted
+grid function at each \((\lambda,\omega)\in\mathcal G_j\).  Conditional
+pseudo-outcome validity gives
 \begin{align*}
-\mathbb E_R\{Z_{\mathrm{ref}}-\widehat\tau_k(X)\}^2
-&=Q_{\mathrm{ref}}+\mathcal R(\widehat\tau_k).
+\mathbb E_R\{Z_0-\widehat\tau_j(X;\lambda,\omega)\}^2
+&=Q_{\mathrm{DR}}(0)
++\mathcal R\{\widehat\tau_j(\cdot;\lambda,\omega)\}.
 \end{align*}
 Exact transport gives
-\(\mathbb E_O(r_0G_k)=\mathbb E_R(G_k)\), so the term multiplied by
-\(\nu_k\) has mean zero.  This proves
-Equation~\eqref{eq:common-reference-identity} and also shows why the
-validation coefficient need not equal the training coefficient.
+\(\mathbb E_O(r_0G_{j,\lambda,\omega})
+=\mathbb E_R(G_{j,\lambda,\omega})\), so the term multiplied by \(\omega\)
+has mean zero.  This proves Equation~\eqref{eq:common-reference-identity}.
 
 \subsection{Proofs for the orthogonality audit}
 
@@ -465,13 +465,14 @@ squares yields Equation~\eqref{eq:linear-sieve-validation-profile} and its
 displayed coefficients.
 
 For Theorem~\ref{thm:cate-finite-validation}, Hoeffding's inequality and a union
-bound over the \(M\) candidates give the uniform deviation
-\(\varepsilon_{\mathrm{val}}\). Comparing the selected score with an oracle
-candidate and cancelling the common \(Q_{\mathrm{ref}}\) gives the factor two.
-With approximate weights or a conditionally biased reference score, direct
-expansion perturbs each candidate expectation.  The main-text quantities
-\(\Delta_r\) and \(\Delta_{\mathrm{ref}}\) uniformly bound these two
-perturbations, so the comparison adds twice each bound.
+bound over the \(M=|\mathcal G_j|\) grid pairs gives the uniform deviation
+\(\varepsilon_{\mathrm{val}}\). Comparing the selected score with the
+grid-oracle score and cancelling the common \(Q_{\mathrm{DR}}(0)\) gives the
+factor two. With an approximate ratio, direct expansion perturbs the
+expectation at each grid pair by
+\(\omega\mathbb E_O[(\widehat r-r_0)G_{j,\lambda,\omega}]\).
+The main-text quantity \(\Delta_r\) bounds these perturbations uniformly, so
+the comparison adds \(2\Delta_r\).
 
 For Theorem~\ref{thm:cate-sieve-identity}, the first-order condition is
 \((\widehat H_j+\rho P)\widehat\beta_j=\widehat h_j\). Subtracting its value at

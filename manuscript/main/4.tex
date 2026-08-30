@@ -574,46 +574,36 @@ validation.  Honest validation uses validation observations only to compare
 fully fixed candidates, never to fit nuisances, candidates, or validation
 coefficients.
 
-Let \(M\geq1\), and let
-\(\widehat\tau_0,\ldots,\widehat\tau_{M-1}\) be the finite collection of
-fitted CATE functions produced by prespecified candidate specifications and
-fixed before validation.  Each specification encodes its method, fitting
-coefficients, basis, and penalty.
-Candidate \(0\) is the identical RCT-only learner.  Let
-\(Z_{\mathrm{ref}}\) be a common RCT-valid pseudo-outcome, fixed before
-validation, with
-\(\mathbb E_R(Z_{\mathrm{ref}}\mid X)=\tau(X)\).  Let \(g\) be the fitted
-OBS treatment-effect prediction from
-Equation~\eqref{eq:obs-effect-prediction}.  Define the validation ratio by
-\begin{align*}
-r_{\mathrm{val}}&\triangleq
-\begin{cases}
-1, & \text{under the common covariate marginal},\\
-r_0, & \text{under exact covariate transport}.
-\end{cases}
-\end{align*}
-This exact \(r_{\mathrm{val}}\) is supplied to the validation identity and
-theorem below; it is not fitted within Algorithm~\ref{alg:cate-fusion-selection}.
-The feasible evaluation-independent estimate \(\widehat r_{\mathrm{val}}\)
-and its resulting drift are treated after the theorem.
+Fix \(j\in\{\mathrm{DRF},\mathrm{RF}\}\), its function class, and its
+penalty before validation.  Let
+\(\mathcal G_j\subseteq[0,1]\times\Omega\) be a prespecified nonempty finite
+grid containing \((0,0)\).  For every \((\lambda,\omega)\in\mathcal G_j\),
+fit \(\widehat\tau_j(\cdot;\lambda,\omega)\) before validation.  Candidate
+\((0,0)\) is the otherwise identical RCT-only learner.  Use the common
+RCT-valid pseudo-outcome \(Z_0=\varphi(V;q_R)\), where \(q_R\) is fixed before
+validation and Equation~\eqref{eq:pseudo-valid} gives
+\(\mathbb E_R(Z_0\mid X)=\tau(X)\).  Let \(g\) be the fitted OBS
+treatment-effect prediction in Equation~\eqref{eq:obs-effect-prediction}.
+Exact validation uses \(r_0=1\) under the common covariate marginal and
+\(r_0=dP_R^X/dP_O^X\) under covariate shift.
+
 Let \(\mathbb P_{R,\mathrm{val}}\) and
-\(\mathbb P_{O,\mathrm{val}}\) denote the empirical averages over the RCT
-and OBS validation samples.  For each \(k\), fix a validation
-control-variate coefficient \(\nu_k\) before observing validation outcomes
-and define
+\(\mathbb P_{O,\mathrm{val}}\) denote empirical averages over independent
+RCT and OBS validation samples.  For each grid pair, define
 \begin{align*}
-G_k(X)&\triangleq\{g(X)-\widehat\tau_k(X)\}^2.
+G_{j,\lambda,\omega}(X)
+&\triangleq
+\{g(X)-\widehat\tau_j(X;\lambda,\omega)\}^2
 \end{align*}
-Under exact \(r_{\mathrm{val}}\), the coefficient \(\nu_k\) affects only
-validation-score variability and need not equal the \(\omega\) used to fit
-candidate \(k\).  Define
+and use the same \(\omega\) that fitted the learner in the validation
+correction:
 \begin{align}
-\widehat C_k
+\widehat C_j(\lambda,\omega)
 &\triangleq\mathbb P_{R,\mathrm{val}}
-\{Z_{\mathrm{ref}}-\widehat\tau_k(X)\}^2
-+\nu_k\left[
-\mathbb P_{O,\mathrm{val}}\{r_{\mathrm{val}}G_k\}
--\mathbb P_{R,\mathrm{val}}G_k\right].
+\{Z_0-\widehat\tau_j(X;\lambda,\omega)\}^2
++\omega\left[
+\mathbb P_{O,\mathrm{val}}\{r_0G_{j,\lambda,\omega}\}
+-\mathbb P_{R,\mathrm{val}}G_{j,\lambda,\omega}\right].
 \label{eq:common-reference-validation}
 \end{align}
 
@@ -621,114 +611,119 @@ candidate \(k\).  Define
 \caption{Honest selection of CATE fusion coefficients}
 \label{alg:cate-fusion-selection}
 \DontPrintSemicolon
-\KwIn{Independent nuisance, fitting, and validation samples; \(M\) prespecified
-candidate specifications; a shared
-\(Z_{\mathrm{ref}}\); the prespecified exact validation ratio
-\(r_{\mathrm{val}}\); and validation-independent coefficients
-\(\nu_0,\ldots,\nu_{M-1}\).}
-Fit the nuisances on the nuisance samples.  A candidate specification may
-also fit its own prespecified training ratio on these samples.\;
-Fit every \(\widehat\tau_k\) on the fitting samples using its prespecified
-method and tuning values.\;
-Compute \(\widehat C_k\) in Equation~\eqref{eq:common-reference-validation}
-for every \(k\) on the common validation samples.\;
-Set \(\widehat k\in\operatorname*{arg\,min}_{0\leq k<M}\widehat C_k\).\;
-\KwOut{The selected learner \(\widehat\tau_{\widehat k}\).}
+\KwIn{Independent nuisance, fitting, and validation samples; a fixed method
+\(j\); a finite grid \(\mathcal G_j\) containing \((0,0)\); the common
+pseudo-outcome \(Z_0\); and the exact ratio \(r_0\).}
+Fit the nuisances on the nuisance sample.\;
+For every \((\lambda,\omega)\in\mathcal G_j\), fit
+\(\widehat\tau_j(\cdot;\lambda,\omega)\) on the fitting sample.\;
+Compute \(\widehat C_j(\lambda,\omega)\) in
+Equation~\eqref{eq:common-reference-validation} for every grid pair on the
+common validation samples.\;
+Set
+\((\widehat\lambda_j,\widehat\omega_j)
+\in\operatorname*{arg\,min}_{(\lambda,\omega)\in\mathcal G_j}
+\widehat C_j(\lambda,\omega)\).\;
+\KwOut{\((\widehat\lambda_j,\widehat\omega_j)\) and
+\(\widehat\tau_j(\cdot;\widehat\lambda_j,\widehat\omega_j)\).}
 \end{algorithm}
 
-The simple choices \(\nu_k=0\), \(\nu_k=1\), or \(\nu_k=\omega_k\), where
-\(\omega_k\) is candidate \(k\)'s fitting coefficient, are valid when
-prespecified.  A variance-oriented \(\nu_k\) may instead be learned on an
-additional sample,
-but optimizing it on the same validation outcomes is not covered below.
-
-Under the exact common-marginal or transport regime just defined,
-\begin{align}
-\mathbb E_{\mathrm{val}}(\widehat C_k)
-&=Q_{\mathrm{ref}}+\mathcal R(\widehat\tau_k),
-\label{eq:common-reference-identity}
-\end{align}
-where \(Q_{\mathrm{ref}}\triangleq
-\mathbb E_R\{Z_{\mathrm{ref}}-\tau(X)\}^2\).
-Define the best realized candidate by
-\begin{align*}
-k^\star&\in\operatorname*{arg\,min}_{0\leq k<M}
-\mathcal R(\widehat\tau_k).
-\end{align*}
-
-\begin{theorem}[Finite-class honest validation]
+\begin{theorem}[Finite-grid honest validation]
 \label{thm:cate-finite-validation}
-Let the RCT and OBS validation samples be mutually independent and independent
-of the fitted candidates, and condition on candidates and coefficients fixed
-before validation.  Let the common reference score be RCT-valid,
-\(\mathbb E_R(Z_{\mathrm{ref}}\mid X)=\tau(X)\), and independent of the
-validation observations.  Use exact transport
-\(r_{\mathrm{val}}=r_0=dP_R^X/dP_O^X\), including the common-marginal case
-\(r_{\mathrm{val}}=r_0=1\).  Let
-\(\widehat\tau_0,\ldots,\widehat\tau_{M-1}\) be finite and fixed before
-validation, with candidate \(0\) the identical RCT-only learner.  Suppose
-\(\nu_0,\ldots,\nu_{M-1}\) are fixed before validation.  For each \(k\),
-let \(g\) be the fixed OBS treatment-effect prediction and define
+Assume RCT consistency and conditional randomization, a known propensity
+\(e_0\) satisfying strict overlap, and honest nuisance fitting independent of
+the validation observations.  Fix \(j\in\{\mathrm{DRF},\mathrm{RF}\}\) and
+a nonempty finite grid
+\(\mathcal G_j\subseteq[0,1]\times\Omega\) containing \((0,0)\).  Fit every
+\(\widehat\tau_j(\cdot;\lambda,\omega)\) before validation, using
+deterministic tie-breaking, and condition on all fitted functions and fitting
+randomness.  If a tuning sample generates \(\mathcal G_j\), condition on the
+resulting finite grid, which must be independent of final validation.  Let the
+RCT and OBS validation samples be mutually independent and independent of
+these fitted objects.  Fix \(q_R\) before validation and
+set \(Z_0=\varphi(V;q_R)\), so
+\(\mathbb E_R(Z_0\mid X)=\tau(X)\).  Suppose either
+\(P_R^X=P_O^X\), in which case set \(r_0=1\), or
+\(P_R^X\ll P_O^X\), in which case use the exact ratio
+\(r_0=dP_R^X/dP_O^X\).  Let \(g\) be fixed, and define
 \begin{align*}
-G_k(X)&\triangleq\{g(X)-\widehat\tau_k(X)\}^2,\\
-\widehat C_k
+G_{j,\lambda,\omega}(X)
+&\triangleq\{g(X)-\widehat\tau_j(X;\lambda,\omega)\}^2,\\
+S_{R,j,\lambda,\omega}
+&\triangleq
+\{Z_0-\widehat\tau_j(X;\lambda,\omega)\}^2
+-\omega G_{j,\lambda,\omega}(X),\\
+S_{O,j,\lambda,\omega}
+&\triangleq\omega r_0(X)G_{j,\lambda,\omega}(X),\\
+\widehat C_j(\lambda,\omega)
 &\triangleq\mathbb P_{R,\mathrm{val}}
-\{Z_{\mathrm{ref}}-\widehat\tau_k(X)\}^2
-+\nu_k\left[
-\mathbb P_{O,\mathrm{val}}\{r_{\mathrm{val}}G_k\}
--\mathbb P_{R,\mathrm{val}}G_k\right].
+\{Z_0-\widehat\tau_j(X;\lambda,\omega)\}^2
++\omega\left[
+\mathbb P_{O,\mathrm{val}}\{r_0G_{j,\lambda,\omega}\}
+-\mathbb P_{R,\mathrm{val}}G_{j,\lambda,\omega}\right].
 \end{align*}
 Here, \(\mathbb P_{R,\mathrm{val}}\) and
 \(\mathbb P_{O,\mathrm{val}}\) are the corresponding empirical averages.
-Let \(n_v\) and \(N_v\) be the RCT and OBS validation sample sizes, define
-\(\mathcal R(f)\triangleq\mathbb E_R[\{f(X)-\tau(X)\}^2]\), and let
-\(k^\star\in\operatorname*{arg\,min}_{0\leq k<M}
-\mathcal R(\widehat\tau_k)\).  Suppose
-the centered RCT and OBS per-observation scores, including their prespecified
-\(\nu_k\) multipliers, have uniform range lengths at most \(B_R\) and
-\(B_O\). Define
+Suppose the finite validation scores \(S_{R,j,\lambda,\omega}\) and
+\(S_{O,j,\lambda,\omega}\) have uniform range lengths at most \(B_R\) and
+\(B_O\), respectively, over \(\mathcal G_j\).  These bounds ensure that the
+displayed validation expectations are finite.
+For every grid pair, exact transport gives
+\begin{align}
+\mathbb E_{\mathrm{val}}\{\widehat C_j(\lambda,\omega)\}
+&=Q_{\mathrm{DR}}(0)
++\mathcal R\{\widehat\tau_j(\cdot;\lambda,\omega)\},
+\label{eq:common-reference-identity}
+\end{align}
+where
+\(Q_{\mathrm{DR}}(0)\triangleq\mathbb E_R\{Z_0-\tau(X)\}^2\) and
+\(\mathcal R(f)\triangleq\mathbb E_R[\{f(X)-\tau(X)\}^2]\).
+Let \(n_v,N_v\) be the validation sample sizes,
+\(M\triangleq|\mathcal G_j|\), and
+\begin{align*}
+(\lambda_j^{\mathcal G},\omega_j^{\mathcal G})
+&\in\operatorname*{arg\,min}_{(\lambda,\omega)\in\mathcal G_j}
+\mathcal R\{\widehat\tau_j(\cdot;\lambda,\omega)\}.
+\end{align*}
+Define
 \begin{align*}
 \varepsilon_{\mathrm{val}}(\delta)&\triangleq
 B_R\sqrt{\frac{\log(4M/\delta)}{2n_v}}
 +B_O\sqrt{\frac{\log(4M/\delta)}{2N_v}}.
 \end{align*}
-Here, \(\varepsilon_{\mathrm{val}}(\delta)\) is a uniform validation
-estimation-error radius across the \(M\) candidates; it decreases with the
-validation sizes \(n_v,N_v\), and increases with \(M\) and confidence level
-\(1-\delta\).  If
-\(\widehat k\in\operatorname*{arg\,min}_{0\leq k<M}\widehat C_k\), then,
-with probability at least \(1-\delta\),
+This is a uniform validation estimation-error radius across the \(M\) grid
+pairs.  Let the deterministically tie-broken selected pair satisfy
+\begin{align*}
+ (\widehat\lambda_j,\widehat\omega_j)
+&\in\operatorname*{arg\,min}_{(\lambda,\omega)\in\mathcal G_j}
+\widehat C_j(\lambda,\omega).
+\end{align*}
+Then, with probability at least \(1-\delta\),
 \begin{align}
-\mathcal R(\widehat\tau_{\widehat k})
-&\leq\mathcal R(\widehat\tau_{k^\star})
+\mathcal R\{\widehat\tau_j
+(\cdot;\widehat\lambda_j,\widehat\omega_j)\}
+&\leq\mathcal R\{\widehat\tau_j
+(\cdot;\lambda_j^{\mathcal G},\omega_j^{\mathcal G})\}
 +2\varepsilon_{\mathrm{val}}(\delta)
-\leq\mathcal R(\widehat\tau_0)
+\leq\mathcal R\{\widehat\tau_j(\cdot;0,0)\}
 +2\varepsilon_{\mathrm{val}}(\delta).
 \label{eq:cate-selector-inequality}
 \end{align}
 This is not realized-sample universal dominance.
 \end{theorem}
 
-For an evaluation-independent approximate ratio, define
-\(\widehat r_{\mathrm{val}}\) and replace \(r_{\mathrm{val}}\) in
-Equation~\eqref{eq:common-reference-validation}.  If the reference
-conditional bias is
-\(b_{\mathrm{ref}}(X)\triangleq
-\mathbb E_R(Z_{\mathrm{ref}}-\tau(X)\mid X)\), define
-the two uniform drifts directly by
+For an evaluation-independent approximate ratio \(\widehat r\), replace
+\(r_0\) in Equation~\eqref{eq:common-reference-validation} and define
 \begin{align}
 \Delta_r
-&\triangleq\max_{0\leq k<M}
-\left|\nu_k\mathbb E_O[(\widehat r_{\mathrm{val}}-r_0)G_k]\right|,\\
-\Delta_{\mathrm{ref}}
-&\triangleq\max_{0\leq k<M}
-\left|2\mathbb E_R[b_{\mathrm{ref}}
-\{\tau-\widehat\tau_k\}]\right|.
+&\triangleq
+\max_{(\lambda,\omega)\in\mathcal G_j}
+\left|\omega\mathbb E_O[
+(\widehat r-r_0)G_{j,\lambda,\omega}]\right|.
 \label{eq:validation-drift-bounds}
 \end{align}
-Theorem~\ref{thm:cate-finite-validation} then adds
-\(2\Delta_r+2\Delta_{\mathrm{ref}}\), provided its
-concentration envelope holds for the actual weighted scores.
+Theorem~\ref{thm:cate-finite-validation} then adds \(2\Delta_r\), provided
+its concentration envelope holds for the actual weighted scores.
 
 \subsection{Linear-sieve estimation and profiled coefficient selection}
 \label{sec:cate-sieve}
@@ -822,28 +817,27 @@ It follows that
 \end{align}
 Let
 \(\widehat t_{0,\omega}^j\triangleq b^\top\widehat\beta^j_{0,\omega}\),
-\(\dot t_\omega^j\triangleq b^\top\dot\beta_\omega^j\), and suppose the
-validation coefficient \(\nu_\omega\) is fixed across the profiled values of
-\(\lambda\).  Expanding Equation~\eqref{eq:common-reference-validation}
-gives
+\(\dot t_\omega^j\triangleq b^\top\dot\beta_\omega^j\).  Expanding
+Equation~\eqref{eq:common-reference-validation} with the same fixed
+\(\omega\) across the profiled values of \(\lambda\) gives
 \begin{align}
 \widehat C_j(\lambda,\omega)
 &=c_0(\omega)+2c_1(\omega)\lambda+c_2(\omega)\lambda^2,
 \label{eq:linear-sieve-validation-profile}\\
 c_1(\omega)
 &\triangleq-\mathbb P_{R,\mathrm{val}}
-[\{Z_{\mathrm{ref}}-\widehat t^j_{0,\omega}\}\dot t_\omega^j]
+[\{Z_0-\widehat t^j_{0,\omega}\}\dot t_\omega^j]
 \nonumber\\
-&\quad-\nu_\omega\left[
+&\quad-\omega\left[
 \mathbb P_{O,\mathrm{val}}
-\{r_{\mathrm{val}}(g-\widehat t^j_{0,\omega})\dot t_\omega^j\}
+\{r_0(g-\widehat t^j_{0,\omega})\dot t_\omega^j\}
 -\mathbb P_{R,\mathrm{val}}
 \{(g-\widehat t^j_{0,\omega})\dot t_\omega^j\}
 \right],\nonumber\\
 c_2(\omega)
 &\triangleq\mathbb P_{R,\mathrm{val}}(\dot t_\omega^j)^2
-+\nu_\omega\left[
-\mathbb P_{O,\mathrm{val}}\{r_{\mathrm{val}}(\dot t_\omega^j)^2\}
++\omega\left[
+\mathbb P_{O,\mathrm{val}}\{r_0(\dot t_\omega^j)^2\}
 -\mathbb P_{R,\mathrm{val}}(\dot t_\omega^j)^2
 \right].\nonumber
 \end{align}
@@ -852,11 +846,12 @@ minimized on \([0,1]\) by checking its interior stationary point, when it is
 a minimum, and the two endpoints.  This reduces computation to a finite
 one-dimensional search over \(\omega\).  If the profiling is performed on an
 additional tuning sample, its finitely many resulting candidates are fixed
-before validation and Theorem~\ref{thm:cate-finite-validation} applies.  A
-prespecified finite \((\lambda,\omega)\) grid is another directly covered
-option.  Profiling \(\lambda\) on the same validation sample, or searching
-continuously over \(\omega\), requires a separate uniform-convergence
-argument and is not covered by the finite-class theorem.
+before validation and may form the finite grid \(\mathcal G_j\) in
+Theorem~\ref{thm:cate-finite-validation}.  A prespecified finite
+\((\lambda,\omega)\) grid is directly covered.  Profiling \(\lambda\) on the
+same validation sample, or searching continuously over \(\omega\), requires
+a separate uniform-convergence argument and is not covered by the
+finite-grid theorem.
 
 Define
 \begin{align*}
