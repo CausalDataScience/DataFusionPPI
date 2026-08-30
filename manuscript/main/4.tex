@@ -522,10 +522,57 @@ If either denominator is zero, its corresponding noise floor is flat in
 equivalent moments do not involve \(\tau\).
 \end{proposition}
 
-The expected full-fusion loss at a fixed function is flat in \(\omega\) under
-exact transport.  Thus no analogous population-loss formula selects
-\(\omega\).  We instead approximate the infeasible oracle in
-Equation~\eqref{eq:final-risk-oracle} by honest validation.
+\begin{proposition}[Population-loss flatness in the fusion scale]
+\label{prop:cate-omega-flatness}
+Assume RCT consistency and conditional randomization, a known trial
+propensity \(e_0\) satisfying strict overlap, and nuisance functions fitted
+honestly on data independent of the loss-evaluation observations.  Suppose
+either that the RCT and OBS have a common covariate marginal with \(r_0=1\),
+or that exact covariate transport holds with
+\(r_0=dP_R^X/dP_O^X\).  Use \(r=r_0\), let
+\(\Omega\subset\mathbb R\) be nonempty and compact, and fix
+\(\zeta\in\mathcal Z\) and \(\lambda\in[0,1]\).  Condition on the fitted
+nuisances and suppose the expectations below are finite.  For every
+\(\omega\in\Omega\), the method-specific corrections satisfy
+\begin{align*}
+\mathbb E_O\{r_0(X)G_\zeta(X)\}-\mathbb E_R\{G_\zeta(X)\}
+&=0,\\
+\mathbb E_O\{r_0(X)G_\zeta(X)\}
+-\mathbb E_R\{\kappa(A,X)G_\zeta(X)\}
+&=0.
+\end{align*}
+Consequently,
+\begin{align*}
+\mathbb E\{\widehat L_{\mathrm{DRF}}
+(\zeta;\lambda,\omega,r_0)\}
+&=\mathcal L_{\mathrm{DR}}(\zeta;\lambda),\\
+\mathbb E\{\widehat L_{\mathrm{RF}}
+(\zeta;m_\lambda,\omega,r_0)\}
+&=\mathcal L_R(\zeta;m_\lambda),
+\end{align*}
+and both right-hand sides are constant in \(\omega\).  Therefore,
+\begin{align*}
+\operatorname*{arg\,min}_{\omega\in\Omega}
+\mathbb E\{\widehat L_{\mathrm{DRF}}
+(\zeta;\lambda,\omega,r_0)\}
+&=\Omega,\\
+\operatorname*{arg\,min}_{\omega\in\Omega}
+\mathbb E\{\widehat L_{\mathrm{RF}}
+(\zeta;m_\lambda,\omega,r_0)\}
+&=\Omega.
+\end{align*}
+Thus population loss at a fixed function and fixed \(\lambda\) cannot select
+a unique fusion scale.
+\end{proposition}
+
+This fixed-function result does not imply that
+\(\mathcal R\{\widehat\tau_j(\cdot;\lambda,\omega)\}\) is flat in
+\(\omega\), because the empirical fitting problem, and hence its fitted
+output, depends on \(\omega\).  To address this issue, we instead approximate
+the infeasible oracle in Equation~\eqref{eq:final-risk-oracle} by honest
+validation.  Honest validation uses validation observations only to compare
+fully fixed candidates, never to fit nuisances, candidates, or validation
+coefficients.
 
 Let \(M\geq1\), and let
 \(\widehat\tau_0,\ldots,\widehat\tau_{M-1}\) be the finite collection of

@@ -337,6 +337,26 @@ and the objective is flat.  A convex
 quadratic minimized over \([0,1]\) is minimized by projecting its
 unrestricted minimizer onto that interval.
 
+For Proposition~\ref{prop:cate-omega-flatness}, exact transport gives
+\begin{align*}
+\mathbb E_O(r_0G_\zeta)-\mathbb E_R(G_\zeta)=0.
+\end{align*}
+Moreover, conditional randomization and strict overlap give
+\(\mathbb E_R(\kappa\mid X)=1\), so
+\begin{align*}
+\mathbb E_R(\kappa G_\zeta)
+&=\mathbb E_R[\mathbb E_R(\kappa\mid X)G_\zeta]
+=\mathbb E_R(G_\zeta),\\
+\mathbb E_O(r_0G_\zeta)-\mathbb E_R(\kappa G_\zeta)
+&=0.
+\end{align*}
+Substitution into Equations~\eqref{eq:dr-fusion-loss} and
+\eqref{eq:rf-fusion-loss} leaves
+\(\mathcal L_{\mathrm{DR}}(\zeta;\lambda)\) and
+\(\mathcal L_R(\zeta;m_\lambda)\), respectively, for every
+\(\omega\in\Omega\).  Each objective is therefore constant on the nonempty
+set \(\Omega\), and its minimizer set is all of \(\Omega\).
+
 For the common-reference identity, condition on every fitted candidate and
 its validation-independent \(\nu_k\).  Conditional pseudo-outcome validity
 gives
