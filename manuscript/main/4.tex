@@ -134,9 +134,11 @@ risk.
 \end{proposition}
 
 Both RCT-only routes identify the desired projection, but neither directly
-averages the large OBS covariate sample. Let \(g\) denote the fitted OBS
-treatment-effect prediction in Equation~\eqref{eq:obs-effect-prediction} and
-define \(G_\zeta(X)\triangleq\{g(X)-\zeta(X)\}^2\). The following full-fusion
+averages the large OBS covariate sample. Recall the fitted OBS
+treatment-effect prediction \(\widehat g\) from
+Equation~\eqref{eq:obs-effect-prediction}. For compact formulas in this section,
+write \(g\triangleq\widehat g\), and define
+\(G_\zeta(X)\triangleq\{g(X)-\zeta(X)\}^2\). The following full-fusion
 objects are retained here so that the subsequent orthogonality and
 finite-sample results remain self-contained.
 
@@ -246,14 +248,8 @@ nuisance truth. Equivalently, up to scaling, it means
 does not establish an oracle convergence rate.
 
 \begin{definition}[Derivative directions and learning roles]
-For a functional \(F\), an object \(\eta\), and an admissible direction \(h\),
-define the Gateaux derivative
-\begin{align*}
-D_\eta F(\eta)[h]
-&\triangleq
-\left.\frac{d}{d\varepsilon}F(\eta+\varepsilon h)
-\right|_{\varepsilon=0}.
-\end{align*}
+Use the Gateaux derivative defined in Equation~\eqref{eq:gateaux-derivative}.
+For an object \(\eta\), let \(h\) denote an admissible direction.
 The target argument is \(\zeta\), and \(v\) denotes an admissible target
 direction such that \(\zeta+\varepsilon v\) remains in the ambient loss domain
 for all sufficiently small \(\varepsilon\). The learned objects \(q,m,g,r\)

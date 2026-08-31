@@ -15,6 +15,10 @@ Let \((X_i,Y_i)\), \(i=1,\ldots,n\), be labeled pairs and let \(\widetilde X_j\)
 \right\}.
 \end{align}
 When labeled and unlabeled covariates share a marginal law and the two samples are independent, the expression in braces has mean zero for every fixed predictor \(f\). PPI++ selects \(\omega\) to control how strongly this mean-zero prediction difference enters the estimator. Our construction retains this control-variate role and introduces a separate outcome-regression blending coefficient only after defining the RCT-valid score.
+When the predictions are informative, this adaptive control variate can reduce
+variance relative to the labeled-only estimator. The gain is not universal:
+an uninformative prediction or an unstable estimated coefficient can provide no
+improvement and can be worse in a realized finite sample.
 
 \subsection{RCT--OBS problem setting and notation}
 \label{sec:rct-obs-setting}
@@ -135,11 +139,24 @@ predictor. Define
 &\triangleq
 (\widehat\mu_{O,0},\widehat\mu_{O,1}).
 \end{align*}
-Then define the observational treatment-effect prediction
+Then define the fitted observational treatment-effect prediction
 \begin{align}
-g(x)
+\widehat g(x)
 &\triangleq\widehat\mu_{O,1}(x)-\widehat\mu_{O,0}(x),
 \label{eq:obs-effect-prediction}
+\end{align}
+For compact formulas below, write \(g\triangleq\widehat g\); this shorthand always
+denotes the honestly fitted OBS prediction, not an identified causal effect.
+
+For a functional \(F\) of a function-valued argument \(u\), let \(h\) be an
+admissible direction such that \(u+\varepsilon h\) remains in the domain of
+\(F\) for all sufficiently small \(|\varepsilon|\). Whenever the derivative
+exists, define the Gateaux derivative by
+\begin{align}
+D_uF(u)[h]
+&\triangleq
+\left.\frac{d}{d\varepsilon}F(u+\varepsilon h)\right|_{\varepsilon=0}.
+\label{eq:gateaux-derivative}
 \end{align}
 
 \begin{definition}[RCT-valid AIPW score]
@@ -183,7 +200,9 @@ Z_\lambda
 Equation~\eqref{eq:pseudo-valid} implies
 \(\mathbb E_R(Z_\lambda\mid X)=\tau(X)\) and
 \(\mathbb E_R(\Delta\mid X)=0\). The observational contrast \(g\)
-is used only as a prediction and need not equal \(\tau\).
+is the shorthand for the fitted function \(\widehat g\) in
+Equation~\eqref{eq:obs-effect-prediction}; it is used only as a prediction and
+need not equal \(\tau\).
 
 \begin{definition}[RCT-only AIPW estimator]
 \label{def:rct-only-aipw}
@@ -209,6 +228,31 @@ Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation},
 \subsection{Existing data-fusion estimators}
 \label{sec:existing-fusion}
 
-Three existing strategies provide the nearest comparisons. First, shrinkage methods combine an unbiased experimental estimate with a potentially biased observational estimate and trade variance against observational bias \citep{rosenman2020shrinkage}. Second, adaptive RCT--OBS estimators estimate source-specific conditional effects and downweight the observational estimator when its discrepancy from the trial is large \citep{cheng2021adaptive}. Third, direct multi-source learners construct weighted pseudo-outcomes for heterogeneous effects across sources \citep{li2022directfusion}. Our estimator differs at the level of the fusion object: \(\lambda\) changes the nuisance regression inside a trial-valid score, while \(\omega\) centers a fixed prediction across study covariate samples. Neither channel treats the observational treatment contrast as identified causal truth.
+Data integration first asks whether information from different regimes or
+populations identifies a common target. Transport and general data-fusion
+frameworks make the source and target populations explicit
+\citep{bareinboim2016fusion,shi2022integration,colnet2020causal}. Our target is
+already identified by the RCT; transport is used to align fixed OBS covariate
+functions with the RCT population.
 
-Within the adaptive and integrative line, the elastic procedure of \citet{yang2023elastic} tests whether real-world data are sufficiently compatible with the randomized trial before pooling information for prespecified effect modifiers. The confounding-function approach of \citet{yang2025confounding} instead introduces and jointly estimates an HTE function and an observational confounding function under explicit cross-source identification conditions. These methods use observational outcomes through a poolability decision or an identified confounding-function model; our two fusion channels retain the RCT-valid score as the causal anchor.
+Robust borrowing methods instead trade potential efficiency gains against
+observational bias. They include shrinkage, compatibility testing, and adaptive
+weighting that returns toward the randomized estimate when the sources disagree
+\citep{rosenman2020shrinkage,cheng2021adaptive}. These
+methods clarify why observational information can help without implying a
+universal gain.
+
+For heterogeneous effects, direct multi-source learners combine weighted
+pseudo-outcomes, while experimental-grounding and RCT--OBS procedures use the
+trial to constrain or diagnose observational HTE estimates
+\citep{li2022directfusion,kallus2018removing}. The elastic
+procedure of \citet{yang2023elastic} tests compatibility before pooling
+real-world data for prespecified effect modifiers. The confounding-function
+approach of \citet{yang2025confounding} jointly models an HTE function and an
+observational confounding function under explicit identification conditions.
+
+Our construction differs at the fusion object. The coefficient \(\lambda\)
+changes the outcome regression inside an RCT-valid score, whereas \(\omega\)
+scales a transported mean-zero control variate built from the fitted prediction
+\(\widehat g\). This PPI-style use of prediction does not combine two causal
+effect estimates and does not require the OBS contrast to equal the CATE.

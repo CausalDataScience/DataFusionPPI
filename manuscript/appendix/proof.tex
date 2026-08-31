@@ -36,6 +36,39 @@ iterated expectation. This gives
 &=\mathbb E_R\{\tau(X)\}=\theta.
 \end{align*}
 
+\subsection{Proof of Proposition~\ref{prop:ate-nuisance-sensitivity}}
+
+For a pair direction \(h_q=(h_{q,0},h_{q,1})\), direct differentiation gives
+\begin{align*}
+D_qP_R\{\varphi(V;q)\}[h_q]
+&=P_R\left[
+h_{q,1}(X)-h_{q,0}(X)
+-\frac{A}{e_0(X)}h_{q,1}(X)
++\frac{1-A}{1-e_0(X)}h_{q,0}(X)
+\right]
+=0,
+\end{align*}
+because \(P_R(A\mid X)=e_0(X)\). Thus perturbing the fixed outcome
+regression does not change \(\mathbb E_R(Z_\lambda\mid X)=\tau(X)\). For a fitted-prediction path
+\(\widehat g_\varepsilon=\widehat g+\varepsilon u\), exact transport gives
+\begin{align*}
+\left.\frac{d}{d\varepsilon}
+\omega\{P_O(r_0\widehat g_\varepsilon)-P_R(\widehat g_\varepsilon)\}
+\right|_{\varepsilon=0}
+&=\omega\{P_O(r_0u)-P_R(u)\}=0.
+\end{align*}
+For a ratio path \(r_\varepsilon=r_0+\varepsilon h\), differentiation under
+the finite expectation gives
+\begin{align*}
+\left.\frac{d}{d\varepsilon}
+\omega P_O(r_\varepsilon\widehat g)\right|_{\varepsilon=0}
+&=\omega P_O(h\widehat g),
+\end{align*}
+which proves Equation~\eqref{eq:ate-ratio-gateaux}. This derivative is generally
+nonzero on admissible normalized paths. It is zero when \(\omega=0\). It is
+also zero when \(\widehat g\) is constant \(P_O^X\)-almost surely because every
+\(h\in\mathcal T_r\) satisfies \(P_Oh=0\).
+
 \subsection{Proof of Theorem~\ref{thm:ate-variance}}
 
 Using \(\mathbb E_R(Z_\lambda)=\theta\) and exact transport,
@@ -225,7 +258,7 @@ gives attainment on every nonempty compact feasible set \(\Theta\). If
 \(2\boldsymbol\ell^\top\boldsymbol\beta
 +\boldsymbol\beta^\top\mathbf H_{\mathrm{ATE}}\boldsymbol\beta<0\).
 
-\subsection{Proof of Corollary~\ref{cor:ate-separable-oracle}}
+\paragraph{Separable specialization.}
 
 Equation~\eqref{eq:pseudo-valid} gives
 \(\mathbb E_R(Z_a\mid X)=\tau(X)\) for \(a\in\{0,1\}\). Subtracting the two
@@ -803,7 +836,7 @@ convex hull of the weighted OBS feature vectors. Boundary or infeasible cases re
 approximate-balance rule and are not covered by the exact first-order
 condition.
 
-\paragraph{Proof of Lemma~\ref{lem:ratio-error-coefficients}.}
+\paragraph{Proof of Proposition~\ref{lem:ratio-error-coefficients}.}
 On the tuning OBS sample, \(\widehat r g=r_0g+\delta_{\widehat r}\). The
 sample-variance identity
 \(\widehat{\operatorname{Var}}(U+V)=
@@ -824,12 +857,13 @@ Condition on the nuisance and tuning samples. At the same selected
 coefficients, the only direct difference between
 \(\widehat\theta_{\widehat r}\) and \(\widehat\theta_{r_0}\) in
 Equation~\eqref{eq:ate-estimator} is
-\(\widehat\omega\mathbb P_{O,N}\delta_{\widehat r}\). This proves
-Equation~\eqref{eq:estimated-ratio-exact-decomposition}. Adding and subtracting
-\(P_O\delta_{\widehat r}\) proves
-Equation~\eqref{eq:estimated-ratio-mean-fluctuation}.
+\(\widehat\omega\mathbb P_{O,N}\delta_{\widehat r}\). Adding and subtracting
+\(\widehat\omega P_O\delta_{\widehat r}\) identifies the scalar drift
+\(b_{\widehat r}\) and centered fluctuation \(e_{\widehat r}\), proving both
+equalities in Equations~\eqref{eq:estimated-ratio-exact-decomposition} and
+\eqref{eq:estimated-ratio-mean-fluctuation}.
 
-\paragraph{Proof of Corollary~\ref{cor:estimated-ratio-mean-preservation}.}
+\paragraph{Proof of Proposition~\ref{cor:estimated-ratio-mean-preservation}.}
 Taking the conditional expectation of
 Equation~\eqref{eq:estimated-ratio-mean-fluctuation} removes its centered
 empirical term. The remaining added mean is
@@ -842,7 +876,7 @@ P_O\delta_{\widehat r}
 \end{align*}
 which proves Equation~\eqref{eq:estimated-ratio-mean-preservation}.
 
-\paragraph{Proof of Corollary~\ref{cor:estimated-ratio-inheritance}.}
+\paragraph{Proof of Theorem~\ref{cor:estimated-ratio-inheritance}.}
 Equation~\eqref{eq:estimated-ratio-mean-rate} makes the scaled population
 drift in Equation~\eqref{eq:estimated-ratio-mean-fluctuation} negligible. For
 the centered OBS evaluation perturbation,
@@ -887,17 +921,6 @@ its first-order variance ordering.
 If either ratio-error condition fails, the ratio learner's influence term,
 the OBS empirical-process term, and their covariances must enter the limiting
 variance. None of these arguments compares realized finite-sample variances.
-
-\subsection{Outer-fold honesty}
-
-For Proposition~\ref{prop:ate-outer-unbiased-active}, condition on the prespecified or independently randomized split assignments and on one outer complement. Every fitted object is fixed, and the held-out paired folds retain the required RCT and OBS laws. The exact centering argument applies within that fold. Iterated expectation proves aggregate unbiasedness. It does not make different fold statistics independent: in general,
-\begin{align*}
-\operatorname{Var}\left(\sum_k a_k\widehat\theta_k\right)
-&=\sum_k a_k^2\operatorname{Var}(\widehat\theta_k)
-+2\sum_{k<\ell}a_ka_\ell
-\operatorname{Cov}(\widehat\theta_k,\widehat\theta_\ell).
-\end{align*}
-The second sum need not vanish because outer training complements overlap.
 
 \subsection{Counterexamples to adaptive reuse}
 
