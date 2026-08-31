@@ -406,11 +406,196 @@ total learning-equation derivative is zero when \(e_0\) is known and exact
 \(r_0\) is held fixed. This conclusion does not cover paths that change
 \(r\), or the use of an approximate ratio.
 
-These results audit nuisance sensitivity; they do not select the target
-function or the tuning coefficients. The learner optimizes over \(\zeta\),
-while \(\lambda\) changes the fused nuisance and \(\omega\) changes the
-transported correction. The next subsection therefore selects
-\((\lambda,\omega)\) by the risk of the fitted CATE function.
+These results establish the target and its first-order nuisance sensitivity,
+but they do not control the error of the fitted CATE function. We first derive
+that error for a general function class with explicit RCT and OBS fitting
+sample sizes. We then select \((\lambda,\omega)\) by honest validation.
+
+\subsection{General two-source learning theory}
+\label{sec:cate-general-learning}
+
+Fix a method \(j\in\{\mathrm{DRF},\mathrm{RF}\}\), coefficients
+\((\lambda,\omega)\), and honestly fitted nuisances.  Let \(n_f\) and \(N_f\)
+denote the independent RCT and OBS fitting-sample sizes.  The method-specific
+losses in Equations~\eqref{eq:dr-fusion-loss} and
+\eqref{eq:rf-fusion-loss} can be written as an RCT contribution
+\(\ell_{R,j}(\zeta)\) and an OBS contribution \(\ell_{O,j}(\zeta)\).
+
+\begin{definition}[General fusion empirical learner]
+For \(\zeta\in\mathcal Z\), define
+\begin{align*}
+L_j(\zeta)
+&\triangleq P_R\ell_{R,j}(\zeta)+P_O\ell_{O,j}(\zeta),\\
+\widehat L_j(\zeta)
+&\triangleq
+\mathbb P_{R,n_f}\ell_{R,j}(\zeta)
++\mathbb P_{O,N_f}\ell_{O,j}(\zeta).
+\end{align*}
+Let
+\begin{align*}
+\zeta_j^\circ
+&\in\operatorname*{arg\,min}_{\zeta\in\mathcal Z}\mathcal R(\zeta)
+\end{align*}
+be a prespecified, deterministically selected best-in-class function.  Let
+\(\operatorname{Pen}:\mathcal Z\to[0,\infty]\) be the full penalty functional
+and define
+\begin{align*}
+\widehat J_j(\zeta)
+&\triangleq\widehat L_j(\zeta)+\operatorname{Pen}(\zeta).
+\end{align*}
+Assume \(\widehat J_j\) is bounded below and has a measurable global
+\(\epsilon_{\mathrm{opt}}\)-approximate minimizer \(\widehat\zeta_j\), meaning
+\begin{align*}
+\widehat J_j(\widehat\zeta_j)
+&\leq\inf_{\zeta\in\mathcal Z}\widehat J_j(\zeta)
++\epsilon_{\mathrm{opt}}.
+\end{align*}
+Finally, define the centered comparator process
+\begin{align*}
+\mathbb Z_j(\zeta)
+&\triangleq
+\{\widehat L_j-L_j\}(\zeta)
+-\{\widehat L_j-L_j\}(\zeta_j^\circ).
+\end{align*}
+\end{definition}
+
+The next theorem is deterministic once the two fitting samples and fitted
+nuisances are fixed.  It is the master reduction from fusion-loss fluctuation
+to CATE excess risk.
+\begin{theorem}[Exact general fusion ERM reduction]
+\label{thm:cate-general-erm}
+Assume RCT consistency and conditional randomization, a known propensity
+\(e_0\) satisfying strict overlap, and honest nuisance fitting.  Suppose either
+\(P_R^X=P_O^X\) and \(r_0=1\), or \(P_R^X\ll P_O^X\) and the exact ratio
+\(r_0=dP_R^X/dP_O^X\) is used.  Suppose the displayed losses are finite and
+the learner satisfies the preceding global approximate-ERM condition. Then
+\begin{align}
+\mathcal R(\widehat\zeta_j)-\mathcal R(\zeta_j^\circ)
+&\leq-\mathbb Z_j(\widehat\zeta_j)
++\operatorname{Pen}(\zeta_j^\circ)
+-\operatorname{Pen}(\widehat\zeta_j)
++\epsilon_{\mathrm{opt}}.
+\label{eq:cate-general-erm-exact}
+\end{align}
+Consequently, the right-hand side is at most
+\(\sup_{\zeta\in\mathcal Z}\{-\mathbb Z_j(\zeta)\}
++\operatorname{Pen}(\zeta_j^\circ)+\epsilon_{\mathrm{opt}}\).
+\end{theorem}
+
+To obtain a sample-size-dependent result, localize by excess risk rather than
+by an unnamed norm.  For \(u\geq0\), define
+\begin{align*}
+\mathcal Z_j(u)
+&\triangleq\{\zeta\in\mathcal Z:
+\mathcal R(\zeta)-\mathcal R(\zeta_j^\circ)\leq u\}.
+\end{align*}
+Let \(\mathbb Z_{R,j}\) and \(\mathbb Z_{O,j}\) be the sourcewise centered
+increments whose sum is \(\mathbb Z_j\).  Suppose measurable functions
+\(\psi_{R,j},\psi_{O,j}\) and \(\operatorname{Tail}_{R,j},
+\operatorname{Tail}_{O,j}\) satisfy, sourcewise and uniformly over the
+localized class, the high-probability upper bounds stated in the theorem
+below. Define
+\begin{align*}
+\Phi_{j,n_f,N_f}(u;\delta)
+&\triangleq
+\psi_{R,j}(u;n_f)+\psi_{O,j}(u;N_f)
++\operatorname{Tail}_{R,j}(u,\delta)
++\operatorname{Tail}_{O,j}(u,\delta),\\
+u_{j,n_f,N_f}^\star(\delta)
+&\triangleq
+\inf\{u>0:\Phi_{j,n_f,N_f}(u;\delta)\leq c_0u\},
+\qquad 0<c_0<1.
+\end{align*}
+For every fixed \(\delta\), assume that the full function
+\(u\mapsto\Phi_{j,n_f,N_f}(u;\delta)\) is nondecreasing and that
+\(u\mapsto\Phi_{j,n_f,N_f}(u;\delta)/\sqrt{u}\) is nonincreasing on
+\((0,\infty)\). Thus the full RCT-plus-OBS modulus, including its tail
+terms, has the sub-root scaling used below.
+Thus \(u_{j,n_f,N_f}^\star\) is an excess-risk level, not an
+\(L_2\)-distance radius.
+
+\begin{theorem}[Localized two-source excess risk]
+\label{thm:cate-general-localized}
+Assume RCT consistency and conditional randomization, a known strict-overlap
+propensity \(e_0\), honest fixed nuisances, and either a common covariate
+marginal with \(r_0=1\) or exact transport with
+\(r_0=dP_R^X/dP_O^X\). Assume the displayed losses are finite, the penalized
+objective is bounded below, and a measurable global
+\(\epsilon_{\mathrm{opt}}\)-approximate minimizer exists. Assume the RCT and
+OBS fitting samples are independent; the function class and
+localized loss-increment classes are measurable or separable; their envelopes
+are finite. For every fixed \(\delta\), assume the full modulus
+\(u\mapsto\Phi_{j,n_f,N_f}(u;\delta)\) is nondecreasing and
+\(u\mapsto\Phi_{j,n_f,N_f}(u;\delta)/\sqrt{u}\) is nonincreasing for
+\(u>0\). Assume also that, with probability at least
+\(1-\delta\) for each source,
+\begin{align*}
+\sup_{\zeta\in\mathcal Z_j(u)}\{-\mathbb Z_{R,j}(\zeta)\}
+&\leq\psi_{R,j}(u;n_f)+\operatorname{Tail}_{R,j}(u,\delta),\\
+\sup_{\zeta\in\mathcal Z_j(u)}\{-\mathbb Z_{O,j}(\zeta)\}
+&\leq\psi_{O,j}(u;N_f)+\operatorname{Tail}_{O,j}(u,\delta)
+\end{align*}
+simultaneously on the peeling levels used in the proof.  Then, with
+probability at least \(1-2\delta\),
+\begin{align}
+\mathcal R(\widehat\zeta_j)-\mathcal R(\zeta_j^\circ)
+&\leq C_0\left\{
+u_{j,n_f,N_f}^\star(\delta)
++\operatorname{Pen}(\zeta_j^\circ)
++\epsilon_{\mathrm{opt}}\right\},
+\label{eq:cate-general-localized}
+\end{align}
+where \(C_0\) depends only on the stated sub-root and fixed-point constants.
+The theorem does not assert empirical convexity; the global approximate-ERM
+condition remains substantive when the source correction is signed.
+\end{theorem}
+
+An estimated density ratio changes both the population loss and the empirical
+process.  Condition on the ratio-training sample and let
+\(u_{j,n_f,N_f}^\star(\widehat r;\delta)\) denote the preceding fixed point
+for the \(\widehat r\)-weighted empirical loss.  Define the fitting drift
+\begin{align*}
+\Delta_j^{\mathrm{fit}}(u;\widehat r)
+&\triangleq
+\sup_{\zeta\in\mathcal Z_j(u)}
+\left|\{L_j^{\widehat r}-L_j^{r_0}\}(\zeta)
+-\{L_j^{\widehat r}-L_j^{r_0}\}(\zeta_j^\circ)\right|.
+\end{align*}
+
+\begin{proposition}[General estimated-ratio fitting drift]
+\label{prop:cate-general-estimated-r}
+Assume RCT consistency and conditional randomization, a known strict-overlap
+propensity, honest nuisance fitting, independent RCT and OBS fitting samples,
+and an independent ratio-training sample. Condition on that ratio-training
+sample. Assume the actual \(\widehat r\)-weighted penalized objective is
+bounded below and has a measurable global approximate minimizer, and that its
+measurable localized classes satisfy the finite-envelope, sourcewise-modulus,
+tail, and full-modulus sub-root conditions stated above. Form the fixed point
+from the actual \(\widehat r\)-weighted loss. If the localization
+argument closes at a level \(\bar u\), then, with the same probability order,
+\begin{align*}
+\mathcal R(\widehat\zeta_j^{\widehat r})-
+\mathcal R(\zeta_j^\circ)
+&\leq C_1\left\{
+u_{j,n_f,N_f}^\star(\widehat r;\delta)
++\Delta_j^{\mathrm{fit}}(\bar u;\widehat r)
++\operatorname{Pen}(\zeta_j^\circ)
++\epsilon_{\mathrm{opt}}\right\}.
+\end{align*}
+If \(\|\widehat r-r_0\|_{L^2(P_O)}\leq a_{n_r,N_r}\) and
+\begin{align*}
+\sup_{\zeta\in\mathcal Z_j(u)}
+\|G_\zeta-G_{\zeta_j^\circ}\|_{L^2(P_O)}
+&\leq B_{G,j}(u),
+\end{align*}
+then
+\(\Delta_j^{\mathrm{fit}}(u;\widehat r)
+\leq|\omega|a_{n_r,N_r}B_{G,j}(u)\).
+This is a fitting-drift result, not density-ratio orthogonality.
+\end{proposition}
+
+The preceding results control each fixed candidate.  We now select the fusion
+coefficients while keeping the final validation observations separate.
 
 \subsection{Choosing the fusion coefficients}
 \label{sec:cate-risk-selection}
@@ -790,238 +975,428 @@ corollary only propagates the drift of a supplied validation-independent
 orthogonality with respect to the density-ratio direction.
 \end{corollary}
 
-\subsection{Linear-sieve estimation and profiled coefficient selection}
+The general fitting and validation results combine only after the fitting
+events hold simultaneously over the finite candidate set.  The next theorem
+makes that requirement explicit.
+\begin{theorem}[Risk of the honestly selected general learner]
+\label{thm:cate-general-selected-risk}
+Let \(\widehat\tau_1,\ldots,\widehat\tau_M\) be \(M<\infty\) fitted
+candidates fixed before final validation and assume
+RCT consistency and conditional randomization, known strict-overlap trial
+propensity, honest nuisance fitting, independent RCT and OBS fitting samples,
+and final RCT and OBS validation samples independent of all candidate fitting.
+Suppose either the covariate marginals agree and \(r_0=1\), or exact transport
+holds with \(r_0=dP_R^X/dP_O^X\). Allow independently trained ratios in fitting
+and validation, condition on them, and assume the candidate loss classes obey
+the measurable localized-modulus, tail, curvature, and global approximate-ERM
+conditions above. For candidate \(k\), let
+\(\zeta_k^\circ\) be its best-in-class target, let
+\(u_k^\star\triangleq
+u_{k,n_f,N_f}^\star(\widehat r_k;\delta_f/M)\), and define
+\begin{align*}
+B_k
+&\triangleq\mathcal R(\zeta_k^\circ)
++C_k\{u_k^\star+\Delta_k^{\mathrm{fit}}
++\operatorname{Pen}_k(\zeta_k^\circ)+\epsilon_{\mathrm{opt},k}\}.
+\end{align*}
+Assume the candidate-specific fitting bounds hold simultaneously with
+probability at least \(1-\delta_f\), as obtained by a finite union bound.
+Let \(\widehat k\) be the deterministically tie-broken index selected by the
+common-reference criterion in Equation~\eqref{eq:common-reference-validation}.
+Let \(\widehat\varepsilon_{\mathrm{val}}(\delta_v)\) and
+\(\Delta_r^{\mathrm{val}}\triangleq\Delta_r\) be the validation concentration
+radius and validation ratio drift in
+Equation~\eqref{eq:validation-drift-bounds}, respectively. Then, with probability at least
+\(1-\delta_f-\delta_v\),
+\begin{align}
+\mathcal R(\widehat\tau_{\widehat k})
+&\leq\min_{1\leq k\leq M}B_k
++2\widehat\varepsilon_{\mathrm{val}}(\delta_v)
++2\Delta_r^{\mathrm{val}}.
+\label{eq:cate-general-selected-risk}
+\end{align}
+Here \(\Delta_k^{\mathrm{fit}}\) changes a fitted candidate, whereas
+\(\Delta_r^{\mathrm{val}}\) changes how fixed candidates are ranked.  The
+result does not imply coefficient consistency, strict improvement, or
+approximation of the continuous coefficient oracle.
+\end{theorem}
+
+We next instantiate the abstract fitting bound and candidate construction in
+a class for which the estimator, covariance constants, and approximation rate
+are explicit.
+
+\subsection{Linear-sieve and additive-spline specialization}
 \label{sec:cate-sieve}
 
-In general, the empirical inverse Hessian and score depend on the same fitting
-sample, final-risk coefficients have no universal closed form, and ratio error
-perturbs both score and curvature. We therefore begin with a fixed linear
-sieve. Let \(b(x)\in\mathbb R^p\) be fixed or honestly trained and define
-\(t_\beta(x)\triangleq b(x)^\top\beta\). Let \(P\succeq0\) and \(\rho\geq0\).
+This specialization has two roles. It computes every fixed
+\((\lambda,\omega)\) candidate used in Section~\ref{sec:cate-risk-selection},
+and it turns the abstract two-source modulus into explicit covariance and
+approximation terms.
+
+\begin{definition}[Linear-sieve fusion estimator]
+Let \(b(x)\in\mathbb R^p\) be fixed or honestly trained and define
+\(\zeta_\beta(x)\triangleq b(x)^\top\beta\).  Let \(P=P^\top\succeq0\) and
+\(\rho\geq0\).  For \(j\in\{\mathrm{DRF},\mathrm{RF}\}\), define
+\begin{align*}
+\widehat J_j(\beta;\lambda,\omega)
+&\triangleq
+\widehat L_j(\zeta_\beta;\lambda,\omega)+\rho\beta^\top P\beta,\\
+\widehat\beta_{\lambda,\omega}^j
+&\in\operatorname*{arg\,min}_{\beta\in\mathbb R^p}
+\widehat J_j(\beta;\lambda,\omega),\\
+\widehat\tau_j(x;\lambda,\omega)
+&\triangleq b(x)^\top\widehat\beta_{\lambda,\omega}^j,
+\end{align*}
+using deterministic tie-breaking whenever needed.
+\end{definition}
+
 For DRF, define
 \begin{align*}
-G_R&\triangleq\mathbb P_R^{\mathrm{fit}}(bb^\top),
-&G_{O,r}&\triangleq\mathbb P_O^{\mathrm{fit}}(r_0bb^\top),\\
-h_\lambda&\triangleq\mathbb P_R^{\mathrm{fit}}(bZ_\lambda),
-&d_g&\triangleq\mathbb P_O^{\mathrm{fit}}(r_0bg)
+\widehat\Gamma_R&\triangleq\mathbb P_R^{\mathrm{fit}}(bb^\top),
+&\widehat\Gamma_{O,r}&\triangleq\mathbb P_O^{\mathrm{fit}}(r_0bb^\top),\\
+\widehat h_\lambda&\triangleq\mathbb P_R^{\mathrm{fit}}(bZ_\lambda),
+&\widehat d_g&\triangleq\mathbb P_O^{\mathrm{fit}}(r_0bg)
 -\mathbb P_R^{\mathrm{fit}}(bg).
 \end{align*}
-Whenever the matrix is invertible,
-\begin{align}
-\widehat\beta_{\lambda,\omega}^{\mathrm{DRF}}
-&=\{(1-\omega)G_R+\omega G_{O,r}+\rho P\}^{-1}
-\{h_\lambda+\omega d_g\}.
-\label{eq:linear-sieve}
-\end{align}
-For RF, define
+For RF, let
 \begin{align*}
 s_{m_\lambda}&\triangleq
 \frac{(A-e_0)(Y-m_\lambda)}{e_0(1-e_0)},
-&G_{R,\kappa}&\triangleq\mathbb P_R^{\mathrm{fit}}(\kappa bb^\top),\\
-h_{m_\lambda}&\triangleq\mathbb P_R^{\mathrm{fit}}(bs_{m_\lambda}),
-&d_{g,\kappa}&\triangleq\mathbb P_O^{\mathrm{fit}}(r_0bg)
+&\widehat\Gamma_{R,\kappa}
+&\triangleq\mathbb P_R^{\mathrm{fit}}(\kappa bb^\top),\\
+\widehat h_{m_\lambda}&\triangleq
+\mathbb P_R^{\mathrm{fit}}(bs_{m_\lambda}),
+&\widehat d_{g,\kappa}&\triangleq
+\mathbb P_O^{\mathrm{fit}}(r_0bg)
 -\mathbb P_R^{\mathrm{fit}}(\kappa bg).
 \end{align*}
-Then
+
+\begin{proposition}[Normal equations and positive semidefiniteness]
+\label{prop:cate-sieve-normal-equations}
+For DRF and RF, respectively, define
+\begin{align*}
+\widehat H_{\mathrm{DRF}}(\omega)
+&\triangleq(1-\omega)\widehat\Gamma_R
++\omega\widehat\Gamma_{O,r},
+&\widehat h_{\mathrm{DRF}}(\lambda,\omega)
+&\triangleq\widehat h_\lambda+\omega\widehat d_g,\\
+\widehat H_{\mathrm{RF}}(\omega)
+&\triangleq(1-\omega)\widehat\Gamma_{R,\kappa}
++\omega\widehat\Gamma_{O,r},
+&\widehat h_{\mathrm{RF}}(\lambda,\omega)
+&\triangleq\widehat h_{m_\lambda}+\omega\widehat d_{g,\kappa}.
+\end{align*}
+The normal equation is
+\begin{align*}
+\{\widehat H_j(\omega)+\rho P\}
+\widehat\beta_{\lambda,\omega}^j
+&=\widehat h_j(\lambda,\omega).
+\end{align*}
+When the matrix is invertible,
 \begin{align}
+\widehat\beta_{\lambda,\omega}^{\mathrm{DRF}}
+&=\{\widehat H_{\mathrm{DRF}}(\omega)+\rho P\}^{-1}
+\widehat h_{\mathrm{DRF}}(\lambda,\omega),
+\label{eq:linear-sieve}\\
 \widehat\beta_{\lambda,\omega}^{\mathrm{RF}}
-&=\{(1-\omega)G_{R,\kappa}+\omega G_{O,r}+\rho P\}^{-1}
-\{h_{m_\lambda}+\omega d_{g,\kappa}\}.
+&=\{\widehat H_{\mathrm{RF}}(\omega)+\rho P\}^{-1}
+\widehat h_{\mathrm{RF}}(\lambda,\omega).
 \label{eq:linear-sieve-rf}
 \end{align}
-For \(0\leq\omega\leq1\), nonnegative \(r_0\), and \(P\succeq0\), both
-Hessians are positive semidefinite. A feasible DRF or RF fit using
-\(\widehat r\) requires \(\widehat r\geq0\), a direct Hessian check, or an
-explicit projection onto the positive-semidefinite cone.
+If \(0\leq\omega\leq1\), the ratio weights are nonnegative, and
+\(P\succeq0\), both penalized Hessians are positive semidefinite.  The signed
+source representation alone does not imply invertibility.  A fit using
+\(\widehat r\) requires nonnegative weights, a direct Hessian check, or a
+prespecified positive-semidefinite projection.
+\end{proposition}
 
-For either learner, define
+For fixed \(\omega\), the Hessian does not depend on \(\lambda\), while the
+right-hand side is affine.  This yields an efficient candidate-generation
+device, not a replacement for final honest validation.
+\begin{proposition}[Fixed-scale profiling for candidate generation]
+\label{prop:cate-sieve-lambda-profile}
+Suppose \(\widehat H_j(\omega)+\rho P\) is invertible and write
 \begin{align*}
-G&\triangleq\mathbb E_R(bb^\top),
-&\gamma&\triangleq\mathbb E_R(b\tau),\\
-\beta_p&\triangleq G^{-1}\gamma,
-&t_p&\triangleq b^\top\beta_p,
-&a_p^2&\triangleq\mathbb E_R(\tau-t_p)^2.
-\end{align*}
-Assume \(G\succ0\).
-Define the unpenalized Hessian and right-hand-side objects by
-\begin{align*}
-\widehat H_{\mathrm{DRF}}
-&\triangleq(1-\omega)G_R+\omega G_{O,r},
-&
-\widehat h_{\mathrm{DRF}}
-&\triangleq h_\lambda+\omega d_g,\\
-\widehat H_{\mathrm{RF}}
-&\triangleq(1-\omega)G_{R,\kappa}+\omega G_{O,r},
-&
-\widehat h_{\mathrm{RF}}
-&\triangleq h_{m_\lambda}+\omega d_{g,\kappa}.
-\end{align*}
-For either \(j\), the penalized normal equation is
-\begin{align*}
-(\widehat H_j+\rho P)\widehat\beta_j&=\widehat h_j.
-\end{align*}
-These expressions profile the sieve coefficient, not the final-risk fusion
-coefficients.  More precisely, for fixed \(\omega\), write the now-defined
-right-hand side as
-\begin{align}
 \widehat h_j(\lambda,\omega)
 &\triangleq\widehat h_{j,0}(\omega)
 +\lambda\widehat h_{j,1}(\omega).
-\end{align}
-It follows that
+\end{align*}
+Then
 \begin{align}
-\widehat\beta^j_{\lambda,\omega}
-&=\widehat\beta^j_{0,\omega}
-+\lambda\dot\beta^j_{\omega},
-&
-\dot\beta^j_{\omega}
-&\triangleq
-\{\widehat H_j(\omega)+\rho P\}^{-1}
+\widehat\beta_{\lambda,\omega}^j
+&=\widehat\beta_{0,\omega}^j+\lambda\dot\beta_\omega^j,
+&\dot\beta_\omega^j
+&\triangleq\{\widehat H_j(\omega)+\rho P\}^{-1}
 \widehat h_{j,1}(\omega).
 \label{eq:linear-sieve-lambda-profile}
 \end{align}
-Let
-\(\widehat t_{0,\omega}^j\triangleq b^\top\widehat\beta^j_{0,\omega}\),
-\(\dot t_\omega^j\triangleq b^\top\dot\beta_\omega^j\).  Expanding
-Equation~\eqref{eq:common-reference-validation} with the same fixed
-\(\omega\) across the profiled values of \(\lambda\) gives
+On a separate tuning sample, the corresponding quadratic criterion has the
+form
 \begin{align}
-\widehat C_j(\lambda,\omega)
-&=c_0(\omega)+2c_1(\omega)\lambda+c_2(\omega)\lambda^2,
-\label{eq:linear-sieve-validation-profile}\\
-c_1(\omega)
-&\triangleq-\mathbb P_{R,\mathrm{val}}
-[\{Z_0-\widehat t^j_{0,\omega}\}\dot t_\omega^j]
-\nonumber\\
-&\quad-\omega\left[
-\mathbb P_{O,\mathrm{val}}
-\{r_0(g-\widehat t^j_{0,\omega})\dot t_\omega^j\}
--\mathbb P_{R,\mathrm{val}}
-\{(g-\widehat t^j_{0,\omega})\dot t_\omega^j\}
-\right],\nonumber\\
-c_2(\omega)
-&\triangleq\mathbb P_{R,\mathrm{val}}(\dot t_\omega^j)^2
-+\omega\left[
-\mathbb P_{O,\mathrm{val}}\{r_0(\dot t_\omega^j)^2\}
--\mathbb P_{R,\mathrm{val}}(\dot t_\omega^j)^2
-\right].\nonumber
+\widehat C_j^{\mathrm{tune}}(\lambda,\omega)
+&=c_0(\omega)+2c_1(\omega)\lambda+c_2(\omega)\lambda^2.
+\label{eq:linear-sieve-validation-profile}
 \end{align}
-For each \(\omega\) in a prespecified finite grid, this quadratic can be
-minimized on \([0,1]\) by checking its interior stationary point, when it is
-a minimum, and the two endpoints.  This reduces computation to a finite
-one-dimensional search over \(\omega\).  If the profiling is performed on an
-additional tuning sample, its finitely many resulting candidates are fixed
-before validation and may form the finite grid \(\mathcal G_j\) in
-Theorem~\ref{thm:cate-finite-validation}.  A prespecified finite
-\((\lambda,\omega)\) grid is directly covered.  Profiling \(\lambda\) on the
-same validation sample, or searching continuously over \(\omega\), requires
-a separate uniform-convergence argument and is not covered by the
-finite-grid theorem.
+For a prespecified finite \(\omega\)-grid, checking the admissible stationary
+point and the endpoints of \([0,1]\) generates finitely many candidates.
+Those candidates must be fixed before the final validation used in
+Theorem~\ref{thm:cate-finite-validation}.  Continuous profiling on the final
+validation sample requires a separate uniform-convergence argument.
+\end{proposition}
 
-Define
+We now separate sieve approximation from estimation. Define
 \begin{align*}
-\widehat S_j&\triangleq\widehat h_j-\widehat H_j\beta_p.
+\Gamma_R&\triangleq\mathbb E_R(bb^\top),
+&\gamma_R&\triangleq\mathbb E_R(b\tau),\\
+\beta_p&\triangleq\Gamma_R^{-1}\gamma_R,
+&\zeta_p&\triangleq b^\top\beta_p,
+&a_p^2&\triangleq\mathbb E_R(\tau-\zeta_p)^2,
+\end{align*}
+and assume \(\Gamma_R\succ0\).  For a fixed candidate, let
+\(\widehat H_j\triangleq\widehat H_j(\omega)\),
+\(\widehat h_j\triangleq\widehat h_j(\lambda,\omega)\), and define
+\begin{align*}
+\widehat u_j&\triangleq\widehat h_j-\widehat H_j\beta_p.
 \end{align*}
 
-\begin{theorem}[Exact sieve excess-risk identity]
+\begin{theorem}[Exact random-Hessian sieve identity]
 \label{thm:cate-sieve-identity}
-If \(\widehat H_j+\rho P\) is invertible, then
+For any realized fitting samples and fixed fitted nuisances, if
+\(\widehat H_j+\rho P\) is invertible, then
 \begin{align}
 \widehat\beta_j-\beta_p
 &=(\widehat H_j+\rho P)^{-1}
-\{\widehat S_j-\rho P\beta_p\},
+\{\widehat u_j-\rho P\beta_p\},
 \label{eq:sieve-coefficient-identity}\\
-\mathbb E_R(\widehat t_j-\tau)^2
+\mathcal R(\widehat\tau_j)
 &=a_p^2+(\widehat\beta_j-\beta_p)^\top
-G(\widehat\beta_j-\beta_p).
+\Gamma_R(\widehat\beta_j-\beta_p).
 \label{eq:sieve-risk-identity}
 \end{align}
-No same-sample bias-variance split follows from
-\(\mathbb E(\widehat S_j)=0\), because the inverse Hessian and score are
-dependent.
+The identity is exact, but it is not a same-sample bias-variance
+decomposition because the random inverse Hessian and score are dependent.
 \end{theorem}
 
-\begin{theorem}[Fixed-candidate finite-sample bound]
+For the concentration result, define the raw source contributions explicitly:
+\begin{align*}
+\psi_{R,\mathrm{DRF}}
+&\triangleq b\{Z_\lambda-\omega g-(1-\omega)\zeta_p\},
+&\psi_{O,\mathrm{DRF}}
+&\triangleq\omega r_0b(g-\zeta_p),\\
+\psi_{R,\mathrm{RF}}
+&\triangleq b[s_{m_\lambda}
+-\kappa\{\omega g+(1-\omega)\zeta_p\}],
+&\psi_{O,\mathrm{RF}}
+&\triangleq\omega r_0b(g-\zeta_p).
+\end{align*}
+Under the exact-target conditions,
+\(\mathbb E_R\psi_{R,j}+\mathbb E_O\psi_{O,j}=0\); the two source means need
+not vanish separately.  Let
+\begin{align*}
+\Sigma_{R,j}&\triangleq\operatorname{Var}_R(\psi_{R,j}),
+&\Sigma_{O,j}&\triangleq\operatorname{Var}_O(\psi_{O,j}).
+\end{align*}
+For \(S\in\{R,O\}\), define
+\begin{align*}
+\nu_{S,j}
+&\triangleq
+\|\Gamma_R^{-1/2}\Sigma_{S,j}\Gamma_R^{-1/2}\|_{\mathrm{op}}.
+\end{align*}
+
+\begin{theorem}[Fixed-candidate covariance-sensitive bound]
 \label{thm:cate-fixed-candidate-bound}
-Assume the exact-target conditions of Proposition~\ref{prop:cate-target} and
-Theorem~\ref{thm:rf-target}, known \(e_0\), exact \(r_0\), and honestly fixed
-nuisances. Let fitting sizes be \(n_f,N_f\). Let \(\psi_{R,j}\) and \(\psi_{O,j}\)
-denote the raw RCT and OBS vector contributions to \(\widehat S_j\), including
-their signs and \(\omega\)-multipliers. Define
+Assume RCT consistency and conditional randomization, known strict-overlap
+\(e_0\), exact \(r_0\), honestly fixed nuisances and basis, fixed
+\((j,\lambda,\omega,p,\rho)\), and independent fitting samples of sizes
+\(n_f,N_f\).  Assume the centered source vectors are sub-Gaussian with the
+displayed covariance proxies and the weighted designs satisfy, with failure
+probability at most \(\delta_H\),
 \begin{align*}
-\xi_{R,j}&\triangleq G^{-1/2}\{\psi_{R,j}-\mathbb E_R\psi_{R,j}\},
-&
-\xi_{O,j}&\triangleq G^{-1/2}\{\psi_{O,j}-\mathbb E_O\psi_{O,j}\}.
+\mathcal E_H
+&\triangleq\{\|\Gamma_R^{-1/2}
+(\widehat H_j-\Gamma_R)\Gamma_R^{-1/2}\|_{\mathrm{op}}
+\leq\eta\},\qquad 0\leq\eta<1.
 \end{align*}
-The source means obey the exact cancellation
-\(\mathbb E_R\psi_{R,j}+\mathbb E_O\psi_{O,j}=0\), equivalently
-\(\mathbb E(\widehat S_j)=0\).
-Suppose every one-dimensional projection of these centered whitened scores is
-sub-Gaussian with norm at most \(\sigma_{R,j}\) and \(\sigma_{O,j}\),
-respectively. On the Gram
-event
-\begin{align*}
-\mathcal E_H&\triangleq
-\{\|G^{-1/2}(\widehat H_j-G)G^{-1/2}\|_{\mathrm{op}}\leq\eta\},
-\qquad 0\leq\eta<1,
-\end{align*}
-the following holds with probability at least
-\(1-\delta_H-\delta_S\), where \(\Pr(\mathcal E_H^c)\leq\delta_H\):
+Then, with probability at least \(1-\delta_H-\delta_S\),
 \begin{align}
-\mathbb E_R(\widehat t_j-\tau)^2
-&\leq a_p^2+
-\frac{2C_{\mathrm{sg}}^2}{(1-\eta)^2}
-\left[\sigma_{R,j}\sqrt{\frac{p+\log(4/\delta_S)}{n_f}}
-+\sigma_{O,j}\sqrt{\frac{p+\log(4/\delta_S)}{N_f}}\right]^2
-\nonumber\\
-&\quad+\frac{2\rho^2}{(1-\eta)^2}
-\|G^{-1/2}P\beta_p\|_2^2.
+\mathcal R(\widehat\tau_j)
+&\leq a_p^2+\frac{C_{\mathrm{sg}}}{(1-\eta)^2}
+\left[
+\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{R,j})
++\nu_{R,j}\log(4/\delta_S)}{n_f}
+\right.\nonumber\\
+&\left.\qquad+
+\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{O,j})
++\nu_{O,j}\log(4/\delta_S)}{N_f}
+\right]
++\frac{C_\rho\rho^2}{(1-\eta)^2}
+\|\Gamma_R^{-1/2}P\beta_p\|_2^2,
 \label{eq:finite-sieve-bound}
 \end{align}
-Here \(C_{\mathrm{sg}}>0\) is a universal constant from Euclidean-norm
-concentration for means of independent sub-Gaussian vectors.
-The order \(a_p^2+O_p(p/n_f+p/N_f)\) additionally requires bounded score
-envelopes, a Gram event bounded away from singularity with probability tending
-to one, and ridge bias no larger than that order.
+where \(\nu_{S,j}\) bounds the corresponding whitened covariance operator
+norm and \(C_{\mathrm{sg}},C_\rho\) are universal constants under the stated
+sub-Gaussian convention. Independence makes the source covariance proxies add;
+the bound has no artificial \(1/\sqrt{n_fN_f}\) cross term.
 \end{theorem}
 
-With an honest estimated ratio, the conditional score and Hessian drifts are
+The preceding theorem is a safe finite-sample upper bound.  A trace expression
+for the leading risk requires a separate fixed-dimensional asymptotic result.
+\begin{proposition}[Fixed-dimensional leading expected risk]
+\label{prop:cate-fixed-p-leading-risk}
+Assume RCT consistency and conditional randomization, known strict-overlap
+\(e_0\), exact \(r_0\), honest fixed nuisances and basis, fixed
+\((j,\lambda,\omega,p)\), and independent RCT and OBS fitting samples with
+\(n_f,N_f\to\infty\) at a stable sample-size ratio. Assume finite
+\((2+\delta)\)-moments, \(\Gamma_R\succ0\), Gram convergence, and first-order
+negligible ridge. Define the linearization remainder
+\begin{align*}
+R_{n_f,N_f}
+&\triangleq \widehat\beta_j-\beta_p
+-\Gamma_R^{-1}\left[
+(\mathbb P_R-P_R)\psi_{R,j}
++(\mathbb P_O-P_O)\psi_{O,j}\right],
+\end{align*}
+and assume explicitly that
+\begin{align*}
+\mathbb E\|R_{n_f,N_f}\|_{\Gamma_R}^2
+&=o(n_f^{-1}+N_f^{-1}),
+\qquad \|a\|_{\Gamma_R}^2\triangleq a^\top\Gamma_Ra.
+\end{align*}
+Then
+\begin{align*}
+\widehat\beta_j-\beta_p
+&=\Gamma_R^{-1}\left[
+(\mathbb P_R-P_R)\psi_{R,j}
++(\mathbb P_O-P_O)\psi_{O,j}\right]
++R_{n_f,N_f},
+\end{align*}
+and
 \begin{align}
-d_{r,j}&\triangleq\omega\mathbb E_O[(\widehat r-r_0)b(g-t_p)],
+\mathbb E\{\mathcal R(\widehat\tau_j)\}-a_p^2
+&=\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{R,j})}{n_f}
++\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{O,j})}{N_f}
++o(n_f^{-1}+N_f^{-1}).
+\label{eq:cate-fixed-p-leading-risk}
+\end{align}
+This is an asymptotic expected leading-risk expansion, not an exact
+finite-sample identity.
+\end{proposition}
+
+\begin{corollary}[First-order RCT versus fusion comparison]
+\label{cor:cate-rct-fusion-leading-risk}
+Assume the conditions in
+Proposition~\ref{prop:cate-fixed-p-leading-risk} hold for a fixed fusion rule
+\((\lambda,\omega)\) and the strict RCT-only comparator
+\((\lambda,\omega)=(0,0)\). The two rules use the same basis, penalty, RCT
+nuisance, and sample split. Their difference in first-order expected excess
+risk is
+\begin{align}
+\mathcal V_{\mathrm{FUS}}^{(1)}-\mathcal V_{\mathrm{RCT}}^{(1)}
+&\triangleq
+\frac{\operatorname{tr}\!\left[
+\Gamma_R^{-1}\{\Sigma_{R,j}(\lambda,\omega)
+-\Sigma_{R,j}(0,0)\}\right]}{n_f}
++\frac{\operatorname{tr}\!\left[
+\Gamma_R^{-1}\Sigma_{O,j}(\lambda,\omega)\right]}{N_f}.
+\label{eq:cate-rct-fusion-leading-gap}
+\end{align}
+The fixed fusion rule improves on the strict RCT-only comparator at first
+order if and only if the right-hand side of
+Equation~\eqref{eq:cate-rct-fusion-leading-gap} is negative. Equality does
+not order the higher-order remainders, and this comparison gives no universal
+finite-sample dominance.
+\end{corollary}
+
+An estimated ratio can perturb both the normal-equation right-hand side and
+its Hessian. Define
+\begin{align}
+\widehat\Delta_{h,j}
+&\triangleq\omega\mathbb P_O^{\mathrm{fit}}
+[(\widehat r-r_0)bg],
 \label{eq:cate-ratio-score-drift}\\
-H_{r,j}&\triangleq\omega\mathbb E_O[(\widehat r-r_0)bb^\top].
+\widehat\Delta_{H,j}
+&\triangleq\omega\mathbb P_O^{\mathrm{fit}}
+[(\widehat r-r_0)bb^\top].
 \label{eq:cate-ratio-hessian-drift}
 \end{align}
-Normalization alone controls neither object.
+\begin{proposition}[Estimated-ratio perturbation of a fitted sieve]
+\label{prop:cate-sieve-ratio-perturbation}
+Condition on an independent ratio-training sample and use the same candidate
+specification with \(r_0\) and \(\widehat r\). If both penalized Hessians are
+invertible, then
+\begin{align*}
+\widehat\beta_j^{\widehat r}-\widehat\beta_j^{r_0}
+&=\{\widehat H_j^{\widehat r}+\rho P\}^{-1}
+\{\widehat\Delta_{h,j}
+-\widehat\Delta_{H,j}\widehat\beta_j^{r_0}\}.
+\end{align*}
+Thus ratio normalization alone controls neither the score nor Hessian
+perturbation. This proposition instantiates the fitting drift in
+Proposition~\ref{prop:cate-general-estimated-r}; it is not an orthogonality
+result.
+\end{proposition}
 
+Finally, the additive specialization exposes how the two sample sizes enter
+the rate through method-specific variance constants rather than a generic
+effective sample size.
 \begin{corollary}[Operational additive-spline rate]
 \label{cor:cate-spline-rate}
 Suppose \(\tau(x)=\sum_{\ell=1}^d\tau_\ell(x_\ell)\), with fixed \(d\) and
-smoothness \(s>0\). Consider a deterministic \(K_n\), or a prespecified finite
-grid selected by Theorem~\ref{thm:cate-finite-validation}. Let
-\(p_n\asymp K_n\), \(a_{p_n}^2=O(K_n^{-2s})\), and
-\(\delta_n\downarrow0\). Assume exact \(r_0\), known \(e_0\), and uniformly
-along the sequence: (i) the eigenvalues of \(G_{p_n}\) are bounded above and
-away from zero; (ii) the centered whitened scores and weighted designs are
-sub-Gaussian with bounded norms, while \(r_0\) and \(\kappa\) are nonnegative
-and bounded; (iii)
-\(K_n+\log(1/\delta_n)=o\{\min(n_f,N_f)\}\); and (iv)
+smoothness \(s>0\).  Let \(K\) denote the spline dimension and suppose
+\(a_K^2=O(K^{-2s})\). Assume RCT consistency and randomization, known
+strict-overlap \(e_0\), exact \(r_0\) unless an explicit fitting-drift term is
+retained, honest fixed nuisances and basis, independent fitting samples, and
+uniformly bounded eigenvalues of \(\Gamma_R\). Assume the centered source
+scores and weighted designs have uniformly bounded sub-Gaussian norms,
+\(K+\log(1/\delta)=o\{\min(n_f,N_f)\}\), and the Gram event holds with
+probability tending to one. Define the per-dimension
+variance scale
 \begin{align*}
-\rho_n^2\|G_{p_n}^{-1/2}P\beta_{p_n}\|_2^2
-&=O\left(K_n^{-2s}+\frac{K_n}{n_f}+\frac{K_n}{N_f}\right).
+c_{S,j}(K;\lambda,\omega)
+&\triangleq K^{-1}\operatorname{tr}
+\{\Gamma_R(K)^{-1}\Sigma_{S,j}^{(K)}(\lambda,\omega)\},
+\qquad S\in\{R,O\},\\
+v_j(K;\lambda,\omega)
+&\triangleq
+\frac{c_{R,j}(K;\lambda,\omega)}{n_f}
++\frac{c_{O,j}(K;\lambda,\omega)}{N_f},
 \end{align*}
-If a finite grid is used, also require the validation remainder in
-Theorem~\ref{thm:cate-finite-validation} to be no larger than this target rate.
-Then
+and suppress \(\lambda\) from \(c_{O,j}\) only when the OBS score contribution
+is invariant to it.
+If the fitting ratio drift and ridge bias are \(B_{r,j}^{\mathrm{fit}}\) and
+\(B_{\rho,j}\), then
 \begin{align}
-\mathbb E_R(\widehat t_j-\tau)^2
-&=O_p\left(K_n^{-2s}+\frac{K_n}{n_f}+\frac{K_n}{N_f}\right).
+\mathcal R(\widehat\tau_j)
+&=O_p\{K^{-2s}+Kv_j(K;\lambda,\omega)
++B_{r,j}^{\mathrm{fit}}+B_{\rho,j}\}.
 \label{eq:cate-spline-rate}
 \end{align}
-With \(m_{\mathrm{eff}}\triangleq(1/n_f+1/N_f)^{-1}\) and
-\(K_n\asymp m_{\mathrm{eff}}^{1/(2s+1)}\), this becomes
-\(O_p\{m_{\mathrm{eff}}^{-2s/(2s+1)}\}\), provided the same conditions hold.
-If \(N_f\geq c n_f\), the RCT size determines the generic exponent.
+For a prespecified admissible dimension set \(\mathcal K_n\), define the
+noncircular oracle dimension by
+\begin{align*}
+K_j^\star(\lambda,\omega)
+&\in\operatorname*{arg\,min}_{K\in\mathcal K_n}
+\{K^{-2s}+K v_j(K;\lambda,\omega)\}.
+\end{align*}
+If, along the admissible sequence and uniformly over the coefficient
+candidates under consideration,
+\(c_{S,j}(K;\lambda,\omega)\to
+c_{S,j}^\infty(\lambda,\omega)\), where the limiting constants are uniformly
+bounded away from zero and infinity, define
+\begin{align*}
+v_j^\infty(\lambda,\omega)
+&\triangleq
+\frac{c_{R,j}^\infty(\lambda,\omega)}{n_f}
++\frac{c_{O,j}^\infty(\lambda,\omega)}{N_f}.
+\end{align*}
+Then a rate-optimal admissible choice satisfies
+\(K\asymp\{v_j^\infty(\lambda,\omega)\}^{-1/(2s+1)}\), and the first two
+terms are of order
+\(\{v_j^\infty(\lambda,\omega)\}^{2s/(2s+1)}\). For a validation-selected learner, the
+validation radius and validation ratio drift from
+Theorem~\ref{thm:cate-general-selected-risk} must also be added.  The harmonic
+size \((1/n_f+1/N_f)^{-1}\) is only a rough simplification when the two
+variance constants have comparable, uniformly bounded order.
 \end{corollary}
 
 \subsection{Implementation boundaries and open theory}

@@ -301,6 +301,65 @@ It follows that
 Because \(\mathbb E_R(\kappa\mid X)=1\) and exact transport holds, the RF
 correction has mean zero. This proves Theorem~\ref{thm:rf-target}.
 
+\subsection{Proofs for general two-source learning}
+
+For Theorem~\ref{thm:cate-general-erm}, exact transport and the target
+identities in Section~\ref{sec:cate-loss} imply
+\begin{align*}
+L_j(\zeta)-L_j(\zeta_j^\circ)
+&=\mathcal R(\zeta)-\mathcal R(\zeta_j^\circ).
+\end{align*}
+The global approximate-ERM inequality gives
+\begin{align*}
+\widehat L_j(\widehat\zeta_j)+\operatorname{Pen}(\widehat\zeta_j)
+&\leq
+\widehat L_j(\zeta_j^\circ)+\operatorname{Pen}(\zeta_j^\circ)
++\epsilon_{\mathrm{opt}}.
+\end{align*}
+Add and subtract the two population losses.  By the definition of the
+centered comparator process, the resulting stochastic term is exactly
+\(-\mathbb Z_j(\widehat\zeta_j)\).  This proves
+Equation~\eqref{eq:cate-general-erm-exact}, including its sign and without an
+extra factor two.
+
+For Theorem~\ref{thm:cate-general-localized}, work on the intersection of the
+two sourcewise modulus events.  Independence and a union bound give probability
+at least \(1-2\delta\).  The exact ERM reduction shows that any approximate
+minimizer with excess risk in a peeling shell
+\(2^m u<\mathcal R(\zeta)-\mathcal R(\zeta_j^\circ)\leq2^{m+1}u\)
+must satisfy an upper bound by the sum of the two source moduli, the penalty at
+the comparator, and \(\epsilon_{\mathrm{opt}}\).  Sub-root regularity and the
+definition of \(u_{j,n_f,N_f}^\star\) make that upper bound strictly smaller
+than the shell's lower endpoint once \(u\) is a sufficiently large universal
+multiple of
+\(u_{j,n_f,N_f}^\star+\operatorname{Pen}(\zeta_j^\circ)
++\epsilon_{\mathrm{opt}}\). For each fixed \(\delta\), the full-modulus
+sub-root condition gives
+\(\Phi_{j,n_f,N_f}(tu;\delta)\leq
+\sqrt{t}\,\Phi_{j,n_f,N_f}(u;\delta)\) for every \(t\geq1\).
+Thus the stochastic upper bound grows only as the square root of the peeling
+level, whereas the shell's excess-risk lower endpoint grows linearly. Summing the
+geometric tail allocation over shells proves
+Equation~\eqref{eq:cate-general-localized}.  Separability permits the displayed
+suprema to be taken over countable dense subclasses; otherwise the same
+argument is understood in outer probability.
+
+For Proposition~\ref{prop:cate-general-estimated-r}, condition on the
+ratio-training sample.  The preceding argument now uses the actual
+\(\widehat r\)-weighted source process, hence its fixed point is
+\(u_{j,n_f,N_f}^\star(\widehat r;\delta)\).  Add and subtract the exact-ratio
+population loss at \(\zeta\) and \(\zeta_j^\circ\).  Their increment is bounded
+by \(\Delta_j^{\mathrm{fit}}\), after which the same localization argument
+closes at \(\bar u\).  If the two stated \(L^2(P_O)\) bounds hold,
+Cauchy--Schwarz gives
+\begin{align*}
+\Delta_j^{\mathrm{fit}}(u;\widehat r)
+&\leq |\omega|\|\widehat r-r_0\|_{L^2(P_O)}
+\sup_{\zeta\in\mathcal Z_j(u)}
+\|G_\zeta-G_{\zeta_j^\circ}\|_{L^2(P_O)},
+\end{align*}
+which proves the final claim.
+
 \subsection{Proofs for coefficient selection}
 
 For Proposition~\ref{prop:cate-noise-floor-lambda}, pseudo-outcome validity
@@ -440,29 +499,27 @@ For example, the centered direction \(h=f-\mathbb E_O(f)\) has pairing
 \(\mathbb E_O(hf)=\operatorname{Var}_O(f)\). Multiplication by nonzero
 \(\omega\) does not change the zero set.
 
-For each linear sieve, expand its empirical objective and set the penalized
-gradient to zero.  The DRF normal equation is
-\begin{align}
-\{(1-\omega)G_R+\omega G_{O,r}+\rho P\}\beta
-&=h_\lambda+\omega d_g,
-\end{align}
-which proves Equation~\eqref{eq:linear-sieve} whenever the matrix is invertible.
-The RF expansion gives
-\begin{align*}
-\{(1-\omega)G_{R,\kappa}+\omega G_{O,r}+\rho P\}\beta
-&=h_{m_\lambda}+\omega d_{g,\kappa},
-\end{align*}
-which proves Equation~\eqref{eq:linear-sieve-rf}.
-For fixed \(\omega\), the Hessian does not depend on \(\lambda\), while
+For Proposition~\ref{prop:cate-sieve-normal-equations}, expand each quadratic
+objective in \(\beta\).  The DRF curvature and right-hand side are
+\((1-\omega)\widehat\Gamma_R+\omega\widehat\Gamma_{O,r}+\rho P\) and
+\(\widehat h_\lambda+\omega\widehat d_g\).  The RF counterparts are
+\((1-\omega)\widehat\Gamma_{R,\kappa}
++\omega\widehat\Gamma_{O,r}+\rho P\) and
+\(\widehat h_{m_\lambda}+\omega\widehat d_{g,\kappa}\).  Setting the
+gradients to zero proves Equations~\eqref{eq:linear-sieve} and
+\eqref{eq:linear-sieve-rf}.  For \(0\leq\omega\leq1\), each unpenalized
+Hessian is a convex combination of positive-semidefinite weighted Gram
+matrices; adding \(\rho P\succeq0\) preserves positive semidefiniteness.
+
+For Proposition~\ref{prop:cate-sieve-lambda-profile}, fixed \(\omega\) makes
+the Hessian independent of \(\lambda\), while
 \(Z_\lambda=Z_0+\lambda\Delta\) and
-\(m_\lambda=m_R+\lambda d_m\) make each right-hand side affine in
-\(\lambda\).  Multiplication by the fixed inverse Hessian proves
-Equation~\eqref{eq:linear-sieve-lambda-profile}.  Substituting
-\(\widehat t_{\lambda,\omega}^j=
-\widehat t_{0,\omega}^j+\lambda\dot t_\omega^j\) into
-Equation~\eqref{eq:common-reference-validation} and expanding the two
-squares yields Equation~\eqref{eq:linear-sieve-validation-profile} and its
-displayed coefficients.
+\(m_\lambda=m_R+\lambda d_m\) make the right-hand side affine. Multiplication
+by the fixed inverse Hessian proves
+Equation~\eqref{eq:linear-sieve-lambda-profile}. Substitution of the affine
+fitted function into the separate tuning criterion and expansion of its
+squares proves Equation~\eqref{eq:linear-sieve-validation-profile}. The
+coefficients are the constant, linear, and quadratic terms of that expansion.
 
 For Theorem~\ref{thm:cate-finite-validation}, Hoeffding's inequality and a union
 bound over the \(M=|\mathcal G_j|\) grid pairs gives the uniform deviation
@@ -480,31 +537,93 @@ applied to the actual scores gives
 \(2\widehat\varepsilon_{\mathrm{val}}(\delta)\), proving both displayed
 bounds.
 
+For Theorem~\ref{thm:cate-general-selected-risk}, assign fitting failure
+probability \(\delta_f/M\) to each of the \(M\) fixed candidates.  A union
+bound makes all candidate-specific fitting inequalities hold simultaneously
+with probability at least \(1-\delta_f\).  On that event, the ideal risk of
+candidate \(k\) is at most \(B_k\).  Independently, the validation event in
+Corollary~\ref{cor:cate-estimated-r-validation} holds with probability at
+least \(1-\delta_v\) and compares the selected fitted candidate with the
+best fitted candidate, adding
+\(2\widehat\varepsilon_{\mathrm{val}}(\delta_v)
++2\Delta_r^{\mathrm{val}}\).  Intersecting the fitting and validation events
+and then minimizing the simultaneous upper bounds over \(k\) proves
+Equation~\eqref{eq:cate-general-selected-risk}.  No independence among the
+candidate fits is required; only their joint independence from final
+validation is used.
+
 For Theorem~\ref{thm:cate-sieve-identity}, the first-order condition is
 \((\widehat H_j+\rho P)\widehat\beta_j=\widehat h_j\). Subtracting its value at
 \(\beta_p\) proves Equation~\eqref{eq:sieve-coefficient-identity}. Projection
-orthogonality, \(\mathbb E_R[b(t_p-\tau)]=0\), removes the risk cross term and
+orthogonality, \(\mathbb E_R[b(\zeta_p-\tau)]=0\), removes the risk cross term and
 proves Equation~\eqref{eq:sieve-risk-identity}.
 
 For Theorem~\ref{thm:cate-fixed-candidate-bound}, let \(\psi_{R,j}\) and
-\(\psi_{O,j}\) be the raw RCT and OBS score contributions. Their source means
-\(a_{R,j}\triangleq P_R\psi_{R,j}\) and
-\(a_{O,j}\triangleq P_O\psi_{O,j}\) need not vanish separately, but exact
-transport gives \(a_{R,j}+a_{O,j}=0\). Center each source contribution by its
-own mean. Sub-Gaussian vector concentration then bounds the whitened score by
+\(\psi_{O,j}\) be the explicit raw contributions in the main text. Their
+source means need not vanish separately, but exact transport gives
+\(P_R\psi_{R,j}+P_O\psi_{O,j}=0\). Center each source by its own mean. Since
+the centered RCT and OBS sample means are independent, their covariance
+proxies add:
 \begin{align*}
-C_{\mathrm{sg}}\left[
-\sigma_{R,j}\sqrt{\frac{p+\log(4/\delta_S)}{n_f}}
-+\sigma_{O,j}\sqrt{\frac{p+\log(4/\delta_S)}{N_f}}\right].
+\operatorname{Cov}\left(
+\mathbb P_R\psi_{R,j}+\mathbb P_O\psi_{O,j}\right)
+&=\frac{\Sigma_{R,j}}{n_f}+\frac{\Sigma_{O,j}}{N_f}.
 \end{align*}
-On \(\mathcal E_H\), the whitened inverse Hessian has norm at most
-\((1-\eta)^{-1}\). The triangle inequality and
-\((x+y)^2\leq2x^2+2y^2\) prove Equation~\eqref{eq:finite-sieve-bound}.
+The stated sub-Gaussian vector concentration inequality bounds the squared
+\(\Gamma_R^{-1/2}\)-norm by the sum of the two trace terms and their operator
+norm tail terms, without applying a triangle inequality between sources. On
+\(\mathcal E_H\), the whitened inverse penalized Hessian has norm at most
+\((1-\eta)^{-1}\). Combining this fact with
+Equation~\eqref{eq:sieve-coefficient-identity} and bounding the ridge vector
+separately proves Equation~\eqref{eq:finite-sieve-bound}.
 
-Finally, insert \(a_{p_n}^2=O(K_n^{-2s})\) and \(p_n\asymp K_n\) into that
-bound. The stated triangular-array conditions make the Gram and score events
-hold with probability tending to one. Balancing \(K_n^{-2s}\) with
-\(K_n/m_{\mathrm{eff}}\) proves Corollary~\ref{cor:cate-spline-rate}.
+For Proposition~\ref{prop:cate-fixed-p-leading-risk}, write the leading term
+as
+\(A_{n_f,N_f}\triangleq\Gamma_R^{-1}\{(\mathbb P_R-P_R)\psi_{R,j}
++(\mathbb P_O-P_O)\psi_{O,j}\}\), so the remainder defined in the
+proposition gives
+\(\widehat\beta_j-\beta_p=A_{n_f,N_f}+R_{n_f,N_f}\).
+Insert this identity into Equation~\eqref{eq:sieve-risk-identity}.
+Independence removes the cross covariance between the RCT and OBS components
+of \(A_{n_f,N_f}\), and hence
+\begin{align*}
+\mathbb E\|A_{n_f,N_f}\|_{\Gamma_R}^2
+&=\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{R,j})}{n_f}
++\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{O,j})}{N_f}.
+\end{align*}
+Moreover, Cauchy--Schwarz and the stated mean-square remainder condition give
+\begin{align*}
+\left|\mathbb E\langle A_{n_f,N_f},R_{n_f,N_f}\rangle_{\Gamma_R}\right|
+&\leq
+\{\mathbb E\|A_{n_f,N_f}\|_{\Gamma_R}^2\}^{1/2}
+\{\mathbb E\|R_{n_f,N_f}\|_{\Gamma_R}^2\}^{1/2}
+=o(n_f^{-1}+N_f^{-1}),
+\end{align*}
+and the expected squared remainder has the same smaller order. The identities
+\(\operatorname{tr}(AB)=\operatorname{tr}(BA)\) then give
+Equation~\eqref{eq:cate-fixed-p-leading-risk}. The comparison in
+Corollary~\ref{cor:cate-rct-fusion-leading-risk} follows by subtracting the two
+leading expansions; it is not a finite-sample comparison.
+
+For Proposition~\ref{prop:cate-sieve-ratio-perturbation}, write the estimated-
+ratio normal equation as
+\((\widehat H_j^{r_0}+\widehat\Delta_{H,j}+\rho P)
+\widehat\beta_j^{\widehat r}
+=\widehat h_j^{r_0}+\widehat\Delta_{h,j}\). Subtract the exact-ratio equation
+and rearrange. Invertibility gives the displayed resolvent identity.
+
+Finally, substitute \(a_K^2=O(K^{-2s})\) and the covariance scales
+\(Kc_{R,j}(K;\lambda,\omega)/n_f\) and
+\(Kc_{O,j}(K;\lambda,\omega)/N_f\) into the finite-sample result. Adding
+the stated ridge and fitting-ratio terms proves
+Equation~\eqref{eq:cate-spline-rate}. Minimizing the resulting criterion over
+\(\mathcal K_n\) gives the displayed definition of \(K_j^\star\). Under the
+stated uniform positive finite limits, that criterion is asymptotically
+equivalent, uniformly over the coefficient candidates, to
+\(K^{-2s}+K v_j^\infty\). Balancing its two terms gives
+\(K\asymp(v_j^\infty)^{-1/(2s+1)}\) and rate
+\((v_j^\infty)^{2s/(2s+1)}\), proving
+Corollary~\ref{cor:cate-spline-rate}.
 
 \subsection{A two-stratum oracle calculation}
 
