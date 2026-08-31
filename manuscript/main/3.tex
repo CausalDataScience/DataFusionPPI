@@ -106,9 +106,9 @@ The mean follows from \(\mathbb E_R(Z_\lambda)=\theta\) and \(\mathbb E_O(rg)=\m
 \begin{corollary}[Common-marginal specialization]
 \label{cor:ate-common-active}
 Under Assumptions~\ref{ass:trial}, \ref{ass:common-marginal}, and
-\ref{ass:honest-separation}, set \(r=r_0=1\) in
-Theorem~\ref{thm:ate-variance}. Then Equation~\eqref{eq:ate-estimator} is
-exactly unbiased, and its OBS variance term is
+\ref{ass:honest-separation}, set \(r=r_0=1\), suppose \(n,N>0\), and suppose
+the displayed scores are square-integrable. Then
+Equation~\eqref{eq:ate-estimator} is exactly unbiased, and its OBS variance term is
 \(\omega^2\operatorname{Var}_R\{g(X)\}/N\).
 \end{corollary}
 
@@ -416,25 +416,10 @@ For a coupled constraint or a nonzero interaction, the original quadratic must b
 
 \subsubsection{Coefficient estimation and honest evaluation}
 
-For \(S\in\{R,O\}\), let \(m_S\triangleq n_S^{\mathrm{tune}}\geq2\). For any
-random quantity \(H\) evaluated on \(D_S^{\mathrm{tune}}\), define its sample
-mean by
-\begin{align*}
-\overline H_S
-&\triangleq
-\frac{1}{m_S}\sum_{i=1}^{m_S}H_{S,i}.
-\end{align*}
-For random quantities \(U\) and \(W\), conditional on the fixed nuisance fits,
-define their sample covariance and variance by
-\begin{align*}
-\widehat{\operatorname{Cov}}_S(U,W)
-&\triangleq
-\frac{1}{m_S-1}\sum_{i=1}^{m_S}
-\{U_{S,i}-\overline U_S\}\{W_{S,i}-\overline W_S\},
-\\
-\widehat{\operatorname{Var}}_S(U)
-&\triangleq\widehat{\operatorname{Cov}}_S(U,U).
-\end{align*}
+For \(S\in\{R,O\}\), let \(m_S\triangleq n_S^{\mathrm{tune}}\geq2\).
+Conditional on the fixed nuisance fits, \(\widehat{\operatorname{Cov}}_S\)
+and \(\widehat{\operatorname{Var}}_S\) denote the usual unbiased
+tuning-sample covariance and variance with denominator \(m_S-1\).
 The factor \(n/N\) below uses the evaluation-sample sizes whose variance is
 optimized.
 
@@ -609,22 +594,41 @@ Here \(z_{1-\alpha/2}\) is the \((1-\alpha/2)\)-quantile of the standard normal 
 
 \begin{proposition}[Exact variance estimation after honest selection]
 \label{prop:ate-honest-variance-active}
-Under Theorem~\ref{thm:ate-variance}, let \((\widehat\lambda,\widehat\omega)\)
-be selected without the evaluation samples, as required by
-Assumption~\ref{ass:honest-separation}, and suppose \(n,N\geq2\). The selected
-estimator is unbiased and
+Assume RCT consistency and conditional randomization, a known trial propensity
+\(e_0\) satisfying strict overlap, honest separation of
+nuisance fitting, coefficient tuning, and final evaluation, and either a
+common covariate marginal with \(r=r_0=1\) or exact transport with
+\(r=r_0=dP_R^X/dP_O^X\). Let \((\widehat\lambda,\widehat\omega)\) be selected
+without the evaluation samples. Suppose the RCT and OBS evaluation samples
+are mutually independent, retain their respective product laws, and are
+independent of all nuisance, ratio, tuning, and selection objects. Suppose
+\(n,N\geq2\), \(\psi_R\in L_2(P_R)\), and \(\psi_O\in L_2(P_O)\). Under the
+manuscript's convention that conditioning on the fixed learned objects is
+suppressed, the selected estimator has conditional mean \(\theta\) and
 \begin{align*}
 \mathbb E(\widehat V)
 &=
 \operatorname{Var}\{\widehat\theta_r(\widehat\lambda,\widehat\omega)\}.
 \end{align*}
+These identities also hold unconditionally because the conditional mean is
+the nonrandom target \(\theta\).
 \end{proposition}
 
 \begin{theorem}[Normal approximation after honest evaluation]
 \label{thm:ate-honest-clt-active}
-In addition to Proposition~\ref{prop:ate-honest-variance-active}, suppose
-the evaluation regularity conditions stated in
-Appendix~\ref{app:ate-evaluation-regularity} hold. Then
+Assume RCT consistency and conditional randomization, a known trial propensity
+\(e_0\) satisfying strict overlap, honest separation of
+nuisance fitting, coefficient tuning, and final evaluation, and either a
+common covariate marginal with \(r=r_0=1\) or exact transport with
+\(r=r_0=dP_R^X/dP_O^X\). Conditional on the fitted objects, suppose the RCT
+and OBS evaluation observations are independent and retain their product
+laws, \(n,N\to\infty\), \(n/N\to\kappa\in[0,\infty)\), and the centered
+evaluation scores have uniformly bounded conditional \((2+\delta)\)-moments
+for some \(\delta>0\). Under the manuscript's suppressed conditioning
+convention, define
+\(V_n\triangleq\operatorname{Var}\{\widehat\theta_r\}\) and assume
+\(nV_n\to_p\sigma^2\in(0,\infty)\) and
+\(\widehat V/V_n\to_p 1\). Then
 \begin{align*}
 \frac{\widehat\theta_r-\theta}{\sqrt{\widehat V}}
 &\rightsquigarrow N(0,1),
@@ -713,7 +717,6 @@ sampling-prior correction in Equation~\eqref{eq:ratio-classifier-estimator},
 and then fixes that ratio before coefficient tuning. It learns \(r_0\)
 indirectly through source prediction.
 
-The classifier route learns the ratio indirectly through source prediction.
 The following equally available route learns the Riesz representer directly.
 
 \begin{definition}[Empirical Riesz ratio learner]
@@ -884,10 +887,21 @@ direct ATE error into population drift and evaluation fluctuation.
 
 \begin{proposition}[Mean preservation with an estimated ratio]
 \label{cor:estimated-ratio-mean-preservation}
-Suppose the nuisance, ratio, and coefficient fits are independent of the final
-evaluation observations and all displayed expectations are finite. Under the
-decomposition in Proposition~\ref{prop:estimated-ratio-decomposition}, the ratio
-correction has zero conditional mean if
+Assume RCT consistency and conditional randomization, a known trial propensity
+\(e_0\) satisfying strict overlap, and either a common covariate marginal with
+\(r_0=1\) or exact transport with \(r_0=dP_R^X/dP_O^X\). Suppose the nuisance,
+ratio, and coefficient fits are independent of the final evaluation
+observations, \(g\in L_1(P_R)\), and
+\(r_0g,\widehat r g\in L_1(P_O)\). Define
+\(\delta_{\widehat r}(X)\triangleq\{\widehat r(X)-r_0(X)\}g(X)\) and
+\(b_{\widehat r}\triangleq\widehat\omega P_O\delta_{\widehat r}\).
+Under the manuscript's suppressed conditioning convention,
+\begin{align*}
+\mathbb E\{\widehat\theta_{\widehat r}\}
+&=\theta+b_{\widehat r}.
+\end{align*}
+Thus the ratio correction has zero conditional mean exactly when
+\(b_{\widehat r}=0\). In particular, the sufficient condition
 \begin{align}
 P_O\delta_{\widehat r}=0
 \quad\Longleftrightarrow\quad
@@ -895,7 +909,9 @@ P_O\delta_{\widehat r}=0
 \label{eq:estimated-ratio-mean-preservation}
 \end{align}
 Honest fitting fixes \(\widehat r\) during evaluation, but does not by itself
-imply Equation~\eqref{eq:estimated-ratio-mean-preservation}.
+imply Equation~\eqref{eq:estimated-ratio-mean-preservation}; when
+\(\widehat\omega=0\), mean preservation also holds even if
+\(P_O\delta_{\widehat r}\neq0\).
 \end{proposition}
 
 \begin{theorem}[First-order equivalence under estimated transport]
@@ -905,13 +921,23 @@ either Assumption~\ref{ass:common-marginal} holds with \(r_0=1\), or
 Assumption~\ref{ass:exact-transport} holds with
 \(r_0=dP_R^X/dP_O^X\). Suppose the displayed scores have finite second moments
 and \(\widehat r\) is fitted only on the nuisance samples and is therefore
-independent of the tuning and evaluation observations. Assume
-\(n/N\to\kappa\in[0,\infty)\), every tuning moment computed with
+independent of the tuning and evaluation observations. Assume the RCT and OBS
+evaluation samples are mutually independent and retain their respective
+product laws, \(n,N\to\infty\), and
+\(n/N\to\kappa\in[0,\infty)\). For some \(\delta>0\), assume the centered
+evaluation scores have uniformly bounded conditional \((2+\delta)\)-moments.
+Under the manuscript's suppressed conditioning convention, define
+\(V_n^{r_0}\triangleq
+\operatorname{Var}\{\widehat\theta_{r_0}(\widehat\lambda,
+\widehat\omega)\}\), and let \(\widehat V_{r_0}\) be the evaluation
+sample-variance estimator computed with \(r_0\). Assume
+\(nV_n^{r_0}\to_p\sigma^2\in(0,\infty)\) and
+\(\widehat V_{r_0}/V_n^{r_0}\to_p 1\).
+Assume every tuning moment computed with
 \(\widehat r\) converges in probability to its exact-ratio counterpart, and
 the selected coefficients converge in probability to a deterministic
-exact-ratio pair \((\lambda^\circ,\omega^\circ)\). Also suppose the probability of invoking any denominator
-or determinant fallback tends to zero, and the evaluation conditions of
-Theorem~\ref{thm:ate-honest-clt-active} hold. If
+exact-ratio pair \((\lambda^\circ,\omega^\circ)\). Also suppose the probability
+of invoking any denominator or determinant fallback tends to zero. If
 \begin{align}
 \sqrt n\,\widehat\omega P_O\delta_{\widehat r}
 &=o_p(1),

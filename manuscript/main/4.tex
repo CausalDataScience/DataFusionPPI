@@ -53,7 +53,9 @@ valid without requiring either fitted outcome regression to be correct.
 
 \begin{proposition}[RCT DR loss and target]
 \label{prop:cate-rct-risk}
-Under the same assumptions, for fixed \(\lambda\in[0,1]\),
+Assume RCT consistency and conditional randomization, a known trial propensity
+with strict overlap, and nuisance fits fixed independently of the
+loss-evaluation observations. For fixed \(\lambda\in[0,1]\),
 \(Z_\lambda\in L^2(P_R)\), and \(\zeta\in\mathcal Z\), define
 \begin{align*}
 \mathcal L_{\mathrm{DR}}(\zeta;\lambda)
@@ -174,7 +176,10 @@ multiplies the transported OBS loss correction, whose mean is zero when
 Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation}, suppose
 either Assumption~\ref{ass:common-marginal} holds and \(r_0=1\), or
 Assumption~\ref{ass:exact-transport} holds and
-\(r_0=dP_R^X/dP_O^X\). Use \(r=r_0\). Then
+\(r_0=dP_R^X/dP_O^X\). Use \(r=r_0\). For fixed
+\(\lambda,\omega,\zeta\), suppose \(Z_\lambda\in L_2(P_R)\),
+\(\zeta\in L_2(P_R^X)\), \(G_\zeta\in L_1(P_R)\), and
+\(r_0G_\zeta\in L_1(P_O)\). Then
 \begin{align}
 \mathbb E\{\widehat L_{\mathrm{DRF}}(\zeta;\lambda,\omega,r_0)\}
 &=\mathcal L_{\mathrm{DR}}(\zeta;\lambda)
@@ -182,7 +187,8 @@ Assumption~\ref{ass:exact-transport} holds and
 &=Q_{\mathrm{DR}}(\lambda)+\mathcal R(\zeta).
 \label{eq:cate-target}
 \end{align}
-Thus the population minimizers over any fixed class \(\mathcal Z\) are the
+Thus, whenever the minimum is attained, the population minimizers over any
+fixed class \(\mathcal Z\) are the
 \(L_2(P_R^X)\) projections of \(\tau\). Under the common covariate marginal,
 \(r_0=1\). The expected loss is flat in \(\omega\).
 \end{proposition}
@@ -221,7 +227,14 @@ subtraction matches the R-loss curvature. The correction has mean zero under
 exact transport.
 \begin{theorem}[Exact RF target]
 \label{thm:rf-target}
-Under the assumptions of Proposition~\ref{prop:cate-target},
+Assume RCT consistency and conditional randomization, a known trial propensity
+with strict overlap, and nuisance fits fixed independently of the fitting
+observations. Suppose either \(P_R^X=P_O^X\) with \(r_0=1\), or
+\(P_R^X\ll P_O^X\) with exact \(r_0=dP_R^X/dP_O^X\). For fixed
+\(m,\zeta,\omega\), suppose \(\zeta,\tau\in L^2(P_R^X)\), the scaled RCT
+R-loss is in \(L_1(P_R)\), \(G_\zeta\in L_1(P_R)\), and
+\(r_0G_\zeta\in L_1(P_O)\). Suppose also that the minimum over the
+prespecified function class is attained whenever a minimizer is invoked. Then
 \begin{align}
 \mathbb E\{\widehat L_{\mathrm{RF}}(\zeta;m,\omega,r_0)\}
 &=\mathcal L_R(\zeta;m)
@@ -464,7 +477,10 @@ Assume RCT consistency and conditional randomization, a known propensity
 \(e_0\) satisfying strict overlap, and honest nuisance fitting.  Suppose either
 \(P_R^X=P_O^X\) and \(r_0=1\), or \(P_R^X\ll P_O^X\) and the exact ratio
 \(r_0=dP_R^X/dP_O^X\) is used.  Suppose the displayed losses are finite and
-the learner satisfies the preceding global approximate-ERM condition. Then
+\(\widehat J_j\) is bounded below and has a measurable global
+\(\epsilon_{\mathrm{opt}}\)-approximate minimizer \(\widehat\zeta_j\), meaning
+\(\widehat J_j(\widehat\zeta_j)\leq
+\inf_{\zeta\in\mathcal Z}\widehat J_j(\zeta)+\epsilon_{\mathrm{opt}}\). Then
 \begin{align}
 \mathcal R(\widehat\zeta_j)-\mathcal R(\zeta_j^\circ)
 &\leq-\mathbb Z_j(\widehat\zeta_j)
@@ -562,13 +578,25 @@ for the \(\widehat r\)-weighted empirical loss.  Define the fitting drift
 \label{prop:cate-general-estimated-r}
 Assume RCT consistency and conditional randomization, a known strict-overlap
 propensity, honest nuisance fitting, independent RCT and OBS fitting samples,
-and an independent ratio-training sample. Condition on that ratio-training
-sample. Assume the actual \(\widehat r\)-weighted penalized objective is
+and an independent ratio-training sample. Suppose either
+\(P_R^X=P_O^X\) with \(r_0=1\), or \(P_R^X\ll P_O^X\) with
+\(r_0=dP_R^X/dP_O^X\). Condition on the ratio-training sample. Assume the
+actual \(\widehat r\)-weighted penalized objective is
 bounded below and has a measurable global approximate minimizer, and that its
-measurable localized classes satisfy the finite-envelope, sourcewise-modulus,
-tail, and full-modulus sub-root conditions stated above. Form the fixed point
-from the actual \(\widehat r\)-weighted loss. If the localization
-argument closes at a level \(\bar u\), then, with the same probability order,
+measurable localized classes have finite envelopes and sourcewise
+high-probability modulus bounds. For every fixed \(\delta\), assume their full
+RCT-plus-OBS modulus \(\Phi(u;\delta)\) is nondecreasing and
+\(\Phi(u;\delta)/\sqrt u\) is nonincreasing for \(u>0\), including the stated
+tail terms. Form the fixed point from the actual \(\widehat r\)-weighted loss.
+Assume the localization closes at \(\bar u\) in the explicit sense that
+\begin{align*}
+C_1\{u_{j,n_f,N_f}^\star(\widehat r;\delta)
++\Delta_j^{\mathrm{fit}}(\bar u;\widehat r)
++\operatorname{Pen}(\zeta_j^\circ)+\epsilon_{\mathrm{opt}}\}
+&\leq\bar u.
+\end{align*}
+Then, with probability at least \(1-2\delta\) conditional on the
+ratio-training sample,
 \begin{align*}
 \mathcal R(\widehat\zeta_j^{\widehat r})-
 \mathcal R(\zeta_j^\circ)
@@ -983,9 +1011,7 @@ propensity, honest nuisance fitting, independent RCT and OBS fitting samples,
 and final RCT and OBS validation samples independent of all candidate fitting.
 Suppose either the covariate marginals agree and \(r_0=1\), or exact transport
 holds with \(r_0=dP_R^X/dP_O^X\). Allow independently trained ratios in fitting
-and validation, condition on them, and assume the candidate loss classes obey
-the measurable localized-modulus, tail, curvature, and global approximate-ERM
-conditions above. For candidate \(k\), let
+and validation and condition on them. For candidate \(k\), let
 \(\zeta_k^\circ\) be its best-in-class target, let
 \(u_k^\star\triangleq
 u_{k,n_f,N_f}^\star(\widehat r_k;\delta_f/M)\), and define
@@ -995,14 +1021,24 @@ B_k
 +C_k\{u_k^\star+\Delta_k^{\mathrm{fit}}
 +\operatorname{Pen}_k(\zeta_k^\circ)+\epsilon_{\mathrm{opt},k}\}.
 \end{align*}
-Assume the candidate-specific fitting bounds hold simultaneously with
-probability at least \(1-\delta_f\), as obtained by a finite union bound.
+Assume directly that
+\(\mathcal R(\widehat\tau_k)\leq B_k\) for every
+\(k=1,\ldots,M\) simultaneously with probability at least
+\(1-\delta_f\).
 Let \(\widehat k\) be the deterministically tie-broken index selected by the
 common-reference criterion in Equation~\eqref{eq:common-reference-validation}.
 Let \(\widehat\varepsilon_{\mathrm{val}}(\delta_v)\) and
 \(\Delta_r^{\mathrm{val}}\triangleq\Delta_r\) be the validation concentration
 radius and validation ratio drift in
-Equation~\eqref{eq:validation-drift-bounds}, respectively. Then, with probability at least
+Equation~\eqref{eq:validation-drift-bounds}, respectively. Assume the
+validation-selection event
+\begin{align*}
+\mathcal R(\widehat\tau_{\widehat k})
+&\leq \min_{1\leq k\leq M}\mathcal R(\widehat\tau_k)
++2\widehat\varepsilon_{\mathrm{val}}(\delta_v)
++2\Delta_r^{\mathrm{val}}
+\end{align*}
+holds with probability at least \(1-\delta_v\). Then, with probability at least
 \(1-\delta_f-\delta_v\),
 \begin{align}
 \mathcal R(\widehat\tau_{\widehat k})
@@ -1240,8 +1276,9 @@ for the leading risk requires a separate fixed-dimensional asymptotic result.
 \begin{proposition}[Fixed-dimensional leading expected risk]
 \label{prop:cate-fixed-p-leading-risk}
 Assume RCT consistency and conditional randomization, known strict-overlap
-\(e_0\), exact \(r_0\), honest fixed nuisances and basis, fixed
-\((j,\lambda,\omega,p)\), and independent RCT and OBS fitting samples with
+\(e_0\), honest fixed nuisances and basis, and either a common covariate
+marginal with \(r_0=1\) or \(P_R^X\ll P_O^X\) with exact
+\(r_0=dP_R^X/dP_O^X\). Fix \((j,\lambda,\omega,p)\), and suppose the RCT and OBS fitting samples are independent with
 \(n_f,N_f\to\infty\) at a stable sample-size ratio. Assume finite
 \((2+\delta)\)-moments, \(\Gamma_R\succ0\), Gram convergence, and first-order
 negligible ridge. Define the linearization remainder
@@ -1280,11 +1317,17 @@ finite-sample identity.
 
 \begin{corollary}[First-order RCT versus fusion comparison]
 \label{cor:cate-rct-fusion-leading-risk}
-Assume the conditions in
-Proposition~\ref{prop:cate-fixed-p-leading-risk} hold for a fixed fusion rule
-\((\lambda,\omega)\) and the strict RCT-only comparator
-\((\lambda,\omega)=(0,0)\). The two rules use the same basis, penalty, RCT
-nuisance, and sample split. Their difference in first-order expected excess
+Assume RCT consistency and conditional randomization, known strict-overlap
+\(e_0\), honest fixed nuisances and basis, and either a common covariate
+marginal with \(r_0=1\) or \(P_R^X\ll P_O^X\) with exact
+\(r_0=dP_R^X/dP_O^X\). Assume independent RCT
+and OBS fitting samples with \(n_f,N_f\to\infty\) at a stable sample-size
+ratio. Consider a fixed fusion rule \((\lambda,\omega)\) and the strict
+RCT-only comparator \((\lambda,\omega)=(0,0)\). The two rules use the same basis, penalty, RCT
+nuisance, and sample split. Assume finite \((2+\delta)\)-moments,
+\(\Gamma_R\succ0\), Gram convergence, first-order negligible ridge, and for
+each rule the mean-square linearization remainder is
+\(o(n_f^{-1}+N_f^{-1})\). Their difference in first-order expected excess
 risk is
 \begin{align}
 \mathcal V_{\mathrm{FUS}}^{(1)}-\mathcal V_{\mathrm{RCT}}^{(1)}
