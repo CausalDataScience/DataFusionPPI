@@ -32,46 +32,54 @@ At the coefficient origin,
 so the family contains the RCT-only AIPW estimator from
 Definition~\ref{def:rct-only-aipw} exactly.
 
+The estimator depends on three learned components: the outcome-regression
+blend inside \(Z_\lambda\), the OBS prediction \(\widehat g\), and the density
+ratio \(r\). Before studying its sampling error, we record which small
+perturbations can change its population mean to first order.
+
 \begin{proposition}[ATE target preservation and nuisance sensitivity]
 \label{prop:ate-nuisance-sensitivity}
 Under Assumptions~\ref{ass:trial}, \ref{ass:honest-separation}, and either
 Assumption~\ref{ass:common-marginal} with \(r_0=1\) or
 Assumption~\ref{ass:exact-transport} with exact \(r=r_0\), suppose the
 displayed expectations are finite. For fixed \((\lambda,\omega)\), arbitrary
-fixed outcome regressions preserve the RCT conditional target because the
-trial propensity \(e_0\) is known. In particular, for every admissible pair
-direction \(h_q=(h_{q,0},h_{q,1})\),
+fixed outcome regressions preserve the RCT conditional target, and exact
+transport centers perturbations of \(\widehat g\). Thus, for admissible
+directions \(h_q\) and \(u\),
 \begin{align*}
 D_q\,\mathbb E\{\widehat\theta_{r_0}(\lambda,\omega)\}[h_q]
-&=D_q\,P_R\{\varphi(V;q)\}[h_q]=0.
-\end{align*}
-Holding \(q_\lambda,r_0,\lambda,\omega\)
-fixed, the derivative in a fitted-prediction direction \(u\) is zero:
-\begin{align*}
+&=0,
+&
 D_{\widehat g}\,\mathbb E\{\widehat\theta_{r_0}(\lambda,\omega)\}[u]
 &=\omega\{\mathbb E_O(r_0u)-\mathbb E_R(u)\}=0.
 \end{align*}
-For normalized ratio paths, define
-\begin{align*}
-\mathcal T_r
-&\triangleq
-\{h\in L_2(P_O^X):P_Oh=0\},
-\end{align*}
-restricted to directions for which \(r_0+\varepsilon h\) is an admissible
-nonnegative ratio for sufficiently small \(|\varepsilon|\). Holding
-\(q_\lambda,\widehat g,\lambda,\omega\) fixed, the ratio derivative is
+In contrast, for a direction \(h\) such that
+\(r_0+\varepsilon h\) remains an admissible ratio for sufficiently small
+\(|\varepsilon|\),
 \begin{align}
 D_r\,\mathbb E\{\widehat\theta_r(\lambda,\omega)\}[h]
 &=\omega\mathbb E_O\{h(X)\widehat g(X)\}.
 \label{eq:ate-ratio-gateaux}
 \end{align}
-Thus exact transport makes the \(\widehat g\) channel target-preserving,
-whereas the ratio derivative is generally nonzero even along normalized
-admissible directions. It vanishes, in particular, when \(\omega=0\), or when
-\(\widehat g\) is constant \(P_O^X\)-almost surely. The Gateaux derivative is defined
-in Equation~\eqref{eq:gateaux-derivative}.
+This derivative is generally nonzero because exact transport does not require
+\(\mathbb E_O(h\widehat g)=0\). It may nevertheless vanish for particular
+directions or coefficients. The Gateaux derivative is defined in
+Equation~\eqref{eq:gateaux-derivative}.
 \end{proposition}
 The first term averages an RCT-valid pseudo-outcome. Under Assumption~\ref{ass:exact-transport}, the expression in braces is a mean-zero control variate; under Assumption~\ref{ass:common-marginal}, this is the special case \(r=1\). Thus, the RCT identifies the target, \(\lambda\) changes within-covariate score noise, and \(\omega\) uses the large OBS covariate sample to remove predictable between-covariate variation.
+
+For fixed \((\lambda,\omega)\) and exact \(r=r_0\), the sample error has the
+exact decomposition
+\begin{align}
+\widehat\theta_{r_0}(\lambda,\omega)-\theta
+&=
+(\mathbb P_{R,n}-P_R)\{Z_\lambda-\omega g\}
++\omega(\mathbb P_{O,N}-P_O)(r_0g).
+\label{eq:ate-fixed-error-decomposition}
+\end{align}
+It is the sum of independent RCT and OBS empirical fluctuations. This identity
+gives the finite-sample mean and variance below; estimated-ratio drift is
+treated separately in Section~\ref{sec:ratio-estimation}.
 
 \begin{theorem}[Exact mean and variance under honest evaluation]
 \label{thm:ate-variance}
@@ -200,13 +208,13 @@ Define the coefficient-dependent part of the scaled variance by
 &\triangleq
 2\boldsymbol\ell^\top\boldsymbol\beta
 +\boldsymbol\beta^\top\mathbf H_{\mathrm{ATE}}\boldsymbol\beta
-\\
-&=
+=
 2C\lambda-2D\omega
 +A\lambda^2-2E\lambda\omega+B\omega^2.
 \end{align*}
-For every nonempty feasible set \(\Theta\subseteq\mathbb R^2\), the two
-argmin sets, possibly empty when the infimum is not attained, satisfy
+Because Equation~\eqref{eq:ate-quadratic} differs from
+\(\mathcal J_{\mathrm{ATE}}/n\) only by a coefficient-independent constant,
+every nonempty feasible set \(\Theta\subseteq\mathbb R^2\) satisfies
 \begin{align*}
 \operatorname*{arg\,min}_{\boldsymbol\beta\in\Theta}
 \operatorname{Var}\{\widehat\theta_r(\boldsymbol\beta)\}
@@ -214,6 +222,7 @@ argmin sets, possibly empty when the infimum is not attained, satisfy
 \operatorname*{arg\,min}_{\boldsymbol\beta\in\Theta}
 \mathcal J_{\mathrm{ATE}}(\boldsymbol\beta).
 \end{align*}
+Either argmin set may be empty when its infimum is not attained.
 \end{proposition}
 
 \begin{theorem}[Joint and ridge population oracles]
@@ -567,30 +576,18 @@ Z_{\widehat\lambda}(V_{R,i}^{\mathrm{eval}})-\widehat\omega g(X_{R,i}^{\mathrm{e
 &\triangleq
 \widehat\omega r(X_{O,j}^{\mathrm{eval}})g(X_{O,j}^{\mathrm{eval}}),
 \end{align*}
-and let \(\widehat{\operatorname{Var}}_{R,\mathrm{eval}}\) and
+Let \(\widehat{\operatorname{Var}}_{R,\mathrm{eval}}\) and
 \(\widehat{\operatorname{Var}}_{O,\mathrm{eval}}\) be the usual unbiased
-sample variances with denominators \(n-1\) and \(N-1\), respectively. For
-\(n,N\geq2\), the fixed-selected-coefficient variance estimator and
-normal-approximation confidence interval are
-\begin{align*}
+sample variances with denominators \(n-1\) and \(N-1\), respectively. Define
+the fixed-selected-coefficient variance estimator by
+\begin{align}
 \widehat V
 &\triangleq
 \frac{\widehat{\operatorname{Var}}_{R,\mathrm{eval}}(\psi_R)}{n}
 +
-\frac{\widehat{\operatorname{Var}}_{O,\mathrm{eval}}(\psi_O)}{N},
-\\
-\widehat\theta_r
-&\mathbin{\pm}
-z_{1-\alpha/2}\sqrt{\widehat V}.
-\end{align*}
-Unbiasedness of \(\widehat V\) follows from
-Assumption~\ref{ass:honest-separation}. Confidence-interval coverage additionally
-requires the regularity conditions stated precisely in Appendix~\ref{app:proofs}.
-In plain terms, the two evaluation scores must have sufficiently light tails,
-the RCT and OBS sample sizes must grow at a stable relative rate, and the
-limiting variance must not collapse to zero. This is an asymptotic, not a
-finite-sample, coverage statement.
-Here \(z_{1-\alpha/2}\) is the \((1-\alpha/2)\)-quantile of the standard normal distribution; for \(\alpha=0.05\), it is approximately \(1.96\).
+\frac{\widehat{\operatorname{Var}}_{O,\mathrm{eval}}(\psi_O)}{N}.
+\label{eq:ate-evaluation-variance}
+\end{align}
 
 \begin{proposition}[Exact variance estimation after honest selection]
 \label{prop:ate-honest-variance-active}
@@ -601,17 +598,19 @@ common covariate marginal with \(r=r_0=1\) or exact transport with
 \(r=r_0=dP_R^X/dP_O^X\). Let \((\widehat\lambda,\widehat\omega)\) be selected
 without the evaluation samples. Suppose the RCT and OBS evaluation samples
 are mutually independent, retain their respective product laws, and are
-independent of all nuisance, ratio, tuning, and selection objects. Suppose
-\(n,N\geq2\), \(\psi_R\in L_2(P_R)\), and \(\psi_O\in L_2(P_O)\). Under the
+independent of all fitted and selected objects. Suppose \(n,N\geq2\),
+\(\psi_R\in L_2(P_R)\), and \(\psi_O\in L_2(P_O)\). Under the
 manuscript's convention that conditioning on the fixed learned objects is
-suppressed, the selected estimator has conditional mean \(\theta\) and
+suppressed,
 \begin{align*}
+\mathbb E(\widehat\theta_r)&=\theta,
+&
 \mathbb E(\widehat V)
 &=
 \operatorname{Var}\{\widehat\theta_r(\widehat\lambda,\widehat\omega)\}.
 \end{align*}
-These identities also hold unconditionally because the conditional mean is
-the nonrandom target \(\theta\).
+The same identities hold unconditionally because the conditional mean is the
+nonrandom target \(\theta\).
 \end{proposition}
 
 \begin{theorem}[Normal approximation after honest evaluation]
@@ -633,9 +632,13 @@ convention, define
 \frac{\widehat\theta_r-\theta}{\sqrt{\widehat V}}
 &\rightsquigarrow N(0,1),
 \end{align*}
-and the displayed normal-approximation interval has asymptotic coverage
-\(1-\alpha\). Variance unbiasedness alone does not imply this coverage
-statement.
+and
+\begin{align*}
+\widehat\theta_r
+&\mathbin{\pm}z_{1-\alpha/2}\sqrt{\widehat V}
+\end{align*}
+has asymptotic coverage \(1-\alpha\), where \(z_{1-\alpha/2}\) is the standard
+normal quantile. Variance unbiasedness alone does not imply this coverage.
 \end{theorem}
 
 \subsubsection{Estimating the density ratio}
@@ -676,48 +679,7 @@ whereas Equation~\eqref{eq:ratio-riesz-population} motivates direct
 representer learning.
 \end{proposition}
 
-\begin{definition}[Classifier density-ratio estimator]
-\label{def:classifier-density-ratio}
-Pool the nuisance-sample covariates and label their source by \(S=1\) for RCT
-and \(S=0\) for OBS. Define
-\begin{align*}
-\pi
-&\triangleq P(S=1),
-&
-s_0(x)
-&\triangleq P(S=1\mid X=x).
-\end{align*}
-When \(0<\pi<1\), Bayes' rule gives
-\begin{align}
-r_0(x)
-&=
-\frac{1-\pi}{\pi}\frac{s_0(x)}{1-s_0(x)}.
-\label{eq:ratio-classifier-bayes}
-\end{align}
-For a fitted domain probability \(\widehat s\), define
-\begin{align}
-\widehat r_{\mathrm{CLS}}(x)
-&\triangleq
-\frac{1-\widehat\pi}{\widehat\pi}
-\frac{\widehat s(x)}{1-\widehat s(x)}.
-\label{eq:ratio-classifier-estimator}
-\end{align}
-For an unweighted pooled classifier,
-\(\widehat\pi\triangleq
-n_R^{\mathrm{nuis}}/(n_R^{\mathrm{nuis}}+n_O^{\mathrm{nuis}})\). Class
-weighting or resampling changes the effective training prior, so the prior-odds
-factor must be corrected accordingly. The odds require
-\(0<\widehat s(x)<1\) on the region where the ratio is used. Probability clipping can
-stabilize the estimate, but it changes the exact density-ratio target.
-\end{definition}
-
-Thus the classifier route first estimates the source probability
-\(P(S=1\mid X=x)\), converts its fitted odds to a density ratio using the
-sampling-prior correction in Equation~\eqref{eq:ratio-classifier-estimator},
-and then fixes that ratio before coefficient tuning. It learns \(r_0\)
-indirectly through source prediction.
-
-The following equally available route learns the Riesz representer directly.
+The first route learns the Riesz representer directly.
 
 \begin{definition}[Empirical Riesz ratio learner]
 \label{def:empirical-riesz-ratio}
@@ -796,9 +758,99 @@ population error, but consistency of the empirical criterion requires an
 empirical-process argument or further sample separation.
 \end{remark}
 
+The classifier is an alternative route that learns the ratio indirectly
+through source prediction.
+\begin{definition}[Classifier density-ratio estimator]
+\label{def:classifier-density-ratio}
+Pool the nuisance-sample covariates and label their source by \(S=1\) for RCT
+and \(S=0\) for OBS. Define
+\begin{align*}
+\pi
+&\triangleq P(S=1),
+&
+s_0(x)
+&\triangleq P(S=1\mid X=x).
+\end{align*}
+When \(0<\pi<1\), Bayes' rule gives
+\begin{align}
+r_0(x)
+&=
+\frac{1-\pi}{\pi}\frac{s_0(x)}{1-s_0(x)}.
+\label{eq:ratio-classifier-bayes}
+\end{align}
+For a fitted domain probability \(\widehat s\), define
+\begin{align}
+\widehat r_{\mathrm{CLS}}(x)
+&\triangleq
+\frac{1-\widehat\pi}{\widehat\pi}
+\frac{\widehat s(x)}{1-\widehat s(x)}.
+\label{eq:ratio-classifier-estimator}
+\end{align}
+For an unweighted pooled classifier,
+\(\widehat\pi\triangleq
+n_R^{\mathrm{nuis}}/(n_R^{\mathrm{nuis}}+n_O^{\mathrm{nuis}})\). Class
+weighting or resampling changes the effective training prior, so the prior-odds
+factor must be corrected accordingly. The odds require
+\(0<\widehat s(x)<1\) where the ratio is used. Probability clipping can
+stabilize the estimate, but it changes the exact density-ratio target.
+\end{definition}
+
 The classifier and Riesz learners are the two primary ratio-estimation routes.
-We next quantify how the ratio error propagates before introducing optional
-calibration.
+After either route has been fitted, one may optionally calibrate its positive
+ratio to selected ATE features. This is not an average of the two routes.
+
+\begin{definition}[Calibrated automatic-balancing ratio]
+\label{def:classifier-calibrated-balance}
+Let \(\widehat r_{\mathrm{base}}>0\) come from either the classifier or Riesz
+route. Let \(\phi:\mathcal X\to\mathbb R^p\) be prespecified with no intercept.
+Whenever the displayed argmin set is nonempty, choose a deterministically
+tie-broken minimizer
+\begin{align}
+\widehat\xi
+&\in\operatorname*{arg\,min}_{\xi\in\mathbb R^p}
+\left[
+\log\mathbb P_O^{\mathrm{nuis}}
+\{\widehat r_{\mathrm{base}}(X)e^{\xi^\top\phi(X)}\}
+-\xi^\top\mathbb P_R^{\mathrm{nuis}}\{\phi(X)\}
+\right],
+\label{eq:ratio-calibration-objective}
+\\
+\widehat r_{\mathrm{BAL}}(x)
+&\triangleq
+\frac{\widehat r_{\mathrm{base}}(x)e^{\widehat\xi^\top\phi(x)}}
+{\mathbb P_O^{\mathrm{nuis}}
+\{\widehat r_{\mathrm{base}}(X)e^{\widehat\xi^\top\phi(X)}\}}.
+\label{eq:ratio-calibrated-estimator}
+\end{align}
+Normalization already balances the constant, so an intercept would be
+nonidentified. The minimal ATE feature is
+\(\phi_{\mathrm{ATE}}(X)\triangleq\widehat g(X)\); a richer finite map can add
+\(\widehat g^2\), fitted regressions, or a small spline or frozen-neural basis.
+This exponential tilt follows the calibration principle behind entropy
+balancing \citep{hainmueller2012entropy}.
+\end{definition}
+
+\begin{proposition}[Automatic balance]
+\label{prop:automatic-ratio-balance}
+If the objective in Definition~\ref{def:classifier-calibrated-balance} has an
+interior minimizer, then \(\widehat r_{\mathrm{BAL}}>0\),
+\(\mathbb P_O^{\mathrm{nuis}}(\widehat r_{\mathrm{BAL}})=1\), and
+\begin{align}
+\mathbb P_O^{\mathrm{nuis}}
+\{\widehat r_{\mathrm{BAL}}(X)\phi(X)\}
+&=\mathbb P_R^{\mathrm{nuis}}\{\phi(X)\}.
+\label{eq:ratio-calibration-balance}
+\end{align}
+These are \(p\) finite moment equations, not pointwise balance. They are
+analogous to covariate-balancing propensity scores, which concern treatment
+rather than source assignment \citep{imai2014covariate}. Exact feasibility
+requires the RCT feature mean to lie in the relative interior of the convex
+hull of the positively weighted OBS feature vectors; otherwise a prespecified
+approximate-balance rule is required.
+\end{proposition}
+
+With the construction routes now defined, we quantify how ratio error
+propagates to coefficient selection and the final ATE estimator.
 
 Before quantifying propagation, recall from
 Equation~\eqref{eq:obs-effect-prediction} that \(\widehat g\) is the fitted OBS
@@ -956,60 +1008,6 @@ provided that, for each feasible rule being compared, its
 population-oracle pair in that theorem.
 This does not imply universal finite-sample dominance.
 \end{theorem}
-
-After either primary route has been fitted, one may optionally calibrate its
-positive ratio to selected ATE features. This is not an average of the two
-routes.
-
-\begin{definition}[Calibrated automatic-balancing ratio]
-\label{def:classifier-calibrated-balance}
-Let \(\widehat r_{\mathrm{base}}>0\) come from either the classifier or Riesz
-route. Let \(\phi:\mathcal X\to\mathbb R^p\) be prespecified with no intercept.
-Whenever the displayed argmin set is nonempty, choose a deterministically
-tie-broken minimizer
-\begin{align}
-\widehat\xi
-&\in\operatorname*{arg\,min}_{\xi\in\mathbb R^p}
-\left[
-\log\mathbb P_O^{\mathrm{nuis}}
-\{\widehat r_{\mathrm{base}}(X)e^{\xi^\top\phi(X)}\}
--\xi^\top\mathbb P_R^{\mathrm{nuis}}\{\phi(X)\}
-\right],
-\label{eq:ratio-calibration-objective}
-\\
-\widehat r_{\mathrm{BAL}}(x)
-&\triangleq
-\frac{\widehat r_{\mathrm{base}}(x)e^{\widehat\xi^\top\phi(x)}}
-{\mathbb P_O^{\mathrm{nuis}}
-\{\widehat r_{\mathrm{base}}(X)e^{\widehat\xi^\top\phi(X)}\}}.
-\label{eq:ratio-calibrated-estimator}
-\end{align}
-Normalization already balances the constant, so an intercept would be
-nonidentified. The minimal ATE feature is
-\(\phi_{\mathrm{ATE}}(X)\triangleq\widehat g(X)\); a richer finite map can add
-\(\widehat g^2\), fitted regressions, or a small spline or frozen-neural basis.
-This exponential tilt follows the calibration principle behind entropy
-balancing \citep{hainmueller2012entropy}.
-\end{definition}
-
-\begin{proposition}[Automatic balance]
-\label{prop:automatic-ratio-balance}
-If the objective in Definition~\ref{def:classifier-calibrated-balance} has an
-interior minimizer, then \(\widehat r_{\mathrm{BAL}}>0\),
-\(\mathbb P_O^{\mathrm{nuis}}(\widehat r_{\mathrm{BAL}})=1\), and
-\begin{align}
-\mathbb P_O^{\mathrm{nuis}}
-\{\widehat r_{\mathrm{BAL}}(X)\phi(X)\}
-&=\mathbb P_R^{\mathrm{nuis}}\{\phi(X)\}.
-\label{eq:ratio-calibration-balance}
-\end{align}
-These are \(p\) finite moment equations, not pointwise balance. They are
-analogous to covariate-balancing propensity scores, which concern treatment
-rather than source assignment \citep{imai2014covariate}. Exact feasibility
-requires the RCT feature mean to lie in the relative interior of the convex
-hull of the positively weighted OBS feature vectors; otherwise a prespecified
-approximate-balance rule is required.
-\end{proposition}
 
 \subsubsection{Diagnostics}
 

@@ -57,7 +57,7 @@ regression does not change \(\mathbb E_R(Z_\lambda\mid X)=\tau(X)\). For a fitte
 \right|_{\varepsilon=0}
 &=\omega\{P_O(r_0u)-P_R(u)\}=0.
 \end{align*}
-For a ratio path \(r_\varepsilon=r_0+\varepsilon h\), differentiation under
+For an admissible ratio path \(r_\varepsilon=r_0+\varepsilon h\), differentiation under
 the finite expectation gives
 \begin{align*}
 \left.\frac{d}{d\varepsilon}
@@ -65,9 +65,9 @@ the finite expectation gives
 &=\omega P_O(h\widehat g),
 \end{align*}
 which proves Equation~\eqref{eq:ate-ratio-gateaux}. This derivative is generally
-nonzero on admissible normalized paths. It is zero when \(\omega=0\). It is
-also zero when \(\widehat g\) is constant \(P_O^X\)-almost surely because every
-\(h\in\mathcal T_r\) satisfies \(P_Oh=0\).
+nonzero because exact transport imposes no general restriction forcing
+\(P_O(h\widehat g)=0\); particular directions or coefficients can still make
+it vanish.
 
 \subsection{Proof of Theorem~\ref{thm:ate-variance}}
 
@@ -83,6 +83,8 @@ the centered estimator as
 (\mathbb P_{R,n}-P_R)\{Z_\lambda-\omega g\}
 +(\mathbb P_{O,N}-P_O)\{\omega rg\}.
 \end{align}
+This is Equation~\eqref{eq:ate-fixed-error-decomposition} with the fixed
+coefficient \(\omega\) moved inside the second empirical process.
 The two summands are independent because \(D_R^{\mathrm{eval}}\) and
 \(D_O^{\mathrm{eval}}\) are
 independent. The variance of
@@ -738,25 +740,6 @@ two separate squares gives the joint oracle \((-C/A,D/B)\) and variance
 \subsection{Density-ratio characterizations and estimated-ratio inheritance}
 \label{app:estimated-ratio-inheritance}
 
-\paragraph{Classifier odds.}
-Let \(p_R\) and \(p_O\) be densities with respect to a common dominating
-measure. In the pooled nuisance population,
-\begin{align*}
-s_0(x)
-&=
-\frac{\pi p_R(x)}{\pi p_R(x)+(1-\pi)p_O(x)}.
-\end{align*}
-Solving for \(p_R(x)/p_O(x)\) gives
-\begin{align*}
-r_0(x)
-&=
-\frac{1-\pi}{\pi}\frac{s_0(x)}{1-s_0(x)},
-\end{align*}
-which proves Equation~\eqref{eq:ratio-classifier-bayes} in
-Definition~\ref{def:classifier-density-ratio}. The same algebra with a fitted
-domain probability and the effective training prior yields
-\(\widehat r_{\mathrm{CLS}}\).
-
 \paragraph{Proof of Proposition~\ref{prop:ratio-characterizations}.}
 The defining property of the Radon--Nikodym derivative gives
 \begin{align*}
@@ -807,6 +790,25 @@ For Equation~\eqref{eq:ratio-targeted-population}, transport identity
 \mathbb E_O\{g^2(a-r_0)^2\}-\mathbb E_O(g^2r_0^2),
 \end{align*}
 which proves the claimed weighted excess-risk identity.
+
+\paragraph{Classifier odds.}
+Let \(p_R\) and \(p_O\) be densities with respect to a common dominating
+measure. In the pooled nuisance population,
+\begin{align*}
+s_0(x)
+&=
+\frac{\pi p_R(x)}{\pi p_R(x)+(1-\pi)p_O(x)}.
+\end{align*}
+Solving for \(p_R(x)/p_O(x)\) gives
+\begin{align*}
+r_0(x)
+&=
+\frac{1-\pi}{\pi}\frac{s_0(x)}{1-s_0(x)},
+\end{align*}
+which proves Equation~\eqref{eq:ratio-classifier-bayes} in
+Definition~\ref{def:classifier-density-ratio}. The same algebra with a fitted
+domain probability and the effective training prior yields
+\(\widehat r_{\mathrm{CLS}}\).
 
 \paragraph{Proof of Proposition~\ref{prop:automatic-ratio-balance}.}
 The log of a positive weighted exponential sum is convex in \(\xi\). At an
