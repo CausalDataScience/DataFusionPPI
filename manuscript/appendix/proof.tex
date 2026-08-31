@@ -357,7 +357,7 @@ Substitution into Equations~\eqref{eq:dr-fusion-loss} and
 \(\omega\in\Omega\).  Each objective is therefore constant on the nonempty
 set \(\Omega\), and its minimizer set is all of \(\Omega\).
 
-For Equation~\eqref{eq:common-reference-identity}, condition on the fitted
+For Proposition~\ref{prop:cate-validation-identity}, condition on the fitted
 grid function at each \((\lambda,\omega)\in\mathcal G_j\).  Conditional
 pseudo-outcome validity gives
 \begin{align*}
@@ -468,11 +468,17 @@ For Theorem~\ref{thm:cate-finite-validation}, Hoeffding's inequality and a union
 bound over the \(M=|\mathcal G_j|\) grid pairs gives the uniform deviation
 \(\varepsilon_{\mathrm{val}}\). Comparing the selected score with the
 grid-oracle score and cancelling the common \(Q_{\mathrm{DR}}(0)\) gives the
-factor two. With an approximate ratio, direct expansion perturbs the
-expectation at each grid pair by
+factor two.
+
+For Corollary~\ref{cor:cate-estimated-r-validation}, direct expansion with
+the evaluation-independent approximate ratio perturbs the expectation at
+each grid pair by
 \(\omega\mathbb E_O[(\widehat r-r_0)G_{j,\lambda,\omega}]\).
 The main-text quantity \(\Delta_r\) bounds these perturbations uniformly, so
-the comparison adds \(2\Delta_r\).
+the same selector comparison adds \(2\Delta_r\).  Hoeffding's inequality
+applied to the actual scores gives
+\(2\widehat\varepsilon_{\mathrm{val}}(\delta)\), proving both displayed
+bounds.
 
 For Theorem~\ref{thm:cate-sieve-identity}, the first-order condition is
 \((\widehat H_j+\rho P)\widehat\beta_j=\widehat h_j\). Subtracting its value at
