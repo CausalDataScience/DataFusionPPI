@@ -1,10 +1,10 @@
 \section{Prediction-Powered Fusion for the ATE}
 \label{sec:ate}
 
-\subsection{Estimator and exact variance}
+\subsection{Estimator, exact variance, and population oracles}
 
 \begin{definition}[ATE fusion estimator and its components]
-For fixed \((\lambda,\omega)\), define
+For fixed $(\lambda,\omega)$, define
 \begin{align}
 \widehat\theta_r(\lambda,\omega)
 &\triangleq
@@ -18,9 +18,9 @@ For fixed \((\lambda,\omega)\), define
 \label{eq:ate-estimator}
 \end{align}
 \begin{itemize}
-\item \textbf{Target.} \(\theta\triangleq\mathbb E_R\{\tau(X)\}\), anchored by the RCT-valid score \(Z_\lambda\).
-\item \textbf{Nuisances.} Fixed \(\widehat\mu_R,\widehat\mu_O,\widehat g,r\); exact results use \(r=r_0\), and \(\widehat g\) need not be causal.
-\item \textbf{Tuning.} \(\lambda\) blends outcome regressions inside \(Z_\lambda\), while \(\omega\) scales the transported control variate.
+\item \textbf{Target.} $\theta\triangleq\mathbb E_R\{\tau(X)\}$, anchored by the RCT-valid score $Z_\lambda$.
+\item \textbf{Nuisances.} Fixed $\widehat\mu_R,\widehat\mu_O,\widehat g,r$; exact results use $r=r_0$, and $\widehat g$ need not be causal.
+\item \textbf{Tuning.} $\lambda$ blends outcome regressions inside $Z_\lambda$, while $\omega$ scales the transported control variate.
 \end{itemize}
 \end{definition}
 At the coefficient origin,
@@ -33,119 +33,82 @@ so the family contains the RCT-only AIPW estimator from
 Definition~\ref{def:rct-only-aipw} exactly.
 
 The estimator depends on three learned components: the outcome-regression
-blend inside \(Z_\lambda\), the OBS prediction \(\widehat g\), and the density
-ratio \(r\). Before studying its sampling error, we record which small
-perturbations can change its population mean to first order.
+blend inside $Z_\lambda$, the OBS prediction $g=\widehat g$, and the
+density ratio $r$. The next result states exactly which components can
+change its population mean.
 
-\begin{proposition}[ATE target preservation and nuisance sensitivity]
+\begin{proposition}[Exact target preservation and density-ratio drift]
 \label{prop:ate-nuisance-sensitivity}
-Under Assumptions~\ref{ass:trial}, \ref{ass:honest-separation}, and either
-Assumption~\ref{ass:common-marginal} with \(r_0=1\) or
-Assumption~\ref{ass:exact-transport} with exact \(r=r_0\), suppose the
-displayed expectations are finite. For fixed \((\lambda,\omega)\), arbitrary
-fixed outcome regressions preserve the RCT conditional target, and exact
-transport centers perturbations of \(\widehat g\). Thus, for admissible
-directions \(h_q\) and \(u\),
-\begin{align*}
-D_q\,\mathbb E\{\widehat\theta_{r_0}(\lambda,\omega)\}[h_q]
-&=0,
-&
-D_{\widehat g}\,\mathbb E\{\widehat\theta_{r_0}(\lambda,\omega)\}[u]
-&=\omega\{\mathbb E_O(r_0u)-\mathbb E_R(u)\}=0.
-\end{align*}
-In contrast, for a direction \(h\) such that
-\(r_0+\varepsilon h\) remains an admissible ratio for sufficiently small
-\(|\varepsilon|\),
+Suppose consistency, RCT conditional randomization, and a known propensity
+$e(X)\in(\epsilon,1-\epsilon)$ hold. Suppose the nuisance, tuning, and
+evaluation samples are mutually independent and all fitted functions are fixed
+before evaluation. Suppose either
+$P_R^X=P_O^X$ with $r_0=1$, or $P_R^X\ll P_O^X$ with
+$r_0=dP_R^X/dP_O^X$. If $n,N>0$ and the displayed expectations are finite,
+arbitrary fixed outcome-regression fits and fixed $g$ satisfy
 \begin{align}
-D_r\,\mathbb E\{\widehat\theta_r(\lambda,\omega)\}[h]
-&=\omega\mathbb E_O\{h(X)\widehat g(X)\}.
-\label{eq:ate-ratio-gateaux}
+\mathbb E\{\widehat\theta_{r_0}(\lambda,\omega)\}
+&=\theta.
+\label{eq:ate-exact-target}
 \end{align}
-This derivative is generally nonzero because exact transport does not require
-\(\mathbb E_O(h\widehat g)=0\). It may nevertheless vanish for particular
-directions or coefficients. The Gateaux derivative is defined in
-Equation~\eqref{eq:gateaux-derivative}.
+For any fixed candidate ratio $\widetilde r$, its exact mean drift is
+\begin{align}
+\mathbb E\{\widehat\theta_{\widetilde r}(\lambda,\omega)\}-\theta
+&=\omega\mathbb E_O\left[\{\widetilde r(X)-r_0(X)\}g(X)\right].
+\label{eq:ate-ratio-drift}
+\end{align}
+Thus exact transport makes the mean invariant to the outcome-regression fits
+and to $g$, whereas ratio error creates the displayed drift.
 \end{proposition}
-The first term averages an RCT-valid pseudo-outcome. Under Assumption~\ref{ass:exact-transport}, the expression in braces is a mean-zero control variate; under Assumption~\ref{ass:common-marginal}, this is the special case \(r=1\). Thus, the RCT identifies the target, \(\lambda\) changes within-covariate score noise, and \(\omega\) uses the large OBS covariate sample to remove predictable between-covariate variation.
-
-For fixed \((\lambda,\omega)\) and exact \(r=r_0\), the sample error has the
-exact decomposition
-\begin{align}
-\widehat\theta_{r_0}(\lambda,\omega)-\theta
-&=
-(\mathbb P_{R,n}-P_R)\{Z_\lambda-\omega g\}
-+\omega(\mathbb P_{O,N}-P_O)(r_0g).
-\label{eq:ate-fixed-error-decomposition}
-\end{align}
-It is the sum of independent RCT and OBS empirical fluctuations. This identity
-gives the finite-sample mean and variance below; estimated-ratio drift is
-treated separately in Section~\ref{sec:ratio-estimation}.
 
 \begin{theorem}[Exact mean and variance under honest evaluation]
 \label{thm:ate-variance}
 \label{thm:ate-exact-r}
-Under Assumptions~\ref{ass:trial}, \ref{ass:exact-transport}, and
-\ref{ass:honest-separation}, set \(r=r_0\), suppose \(n,N>0\), and suppose the displayed scores are
-square-integrable. Every fixed \((\lambda,\omega)\) then satisfies
+Suppose consistency, RCT conditional randomization, and a known propensity
+$e(X)\in(\epsilon,1-\epsilon)$ hold. Suppose the nuisance, tuning, and
+evaluation samples are mutually independent and all fitted functions are fixed
+before evaluation. Suppose either $P_R^X=P_O^X$ with $r_0=1$, or
+$P_R^X\ll P_O^X$ with exact $r_0=dP_R^X/dP_O^X$. If $n,N>0$ and the
+displayed scores are square-integrable, every fixed $(\lambda,\omega)$
+satisfies
 \begin{align}
-\mathbb E\{\widehat\theta_r(\lambda,\omega)\}
+\mathbb E\{\widehat\theta_{r_0}(\lambda,\omega)\}
 &=\theta,
 \\
-\operatorname{Var}\{\widehat\theta_r(\lambda,\omega)\}
+\operatorname{Var}\{\widehat\theta_{r_0}(\lambda,\omega)\}
 &=
 \frac1n\operatorname{Var}_R\{Z_\lambda-\omega g(X)\}
 +
-\frac{\omega^2}{N}\operatorname{Var}_O\{r(X)g(X)\}.
+\frac{\omega^2}{N}\operatorname{Var}_O\{r_0(X)g(X)\}.
 \label{eq:ate-variance}
-\end{align}
-Equivalently, the law of total variance gives the within-/between-covariate decomposition
-\begin{align}
-\operatorname{Var}\{\widehat\theta_r(\lambda,\omega)\}
-&=
-\frac1n\mathbb E_R\{\operatorname{Var}_R(Z_\lambda\mid X)\}
-+\frac1n\operatorname{Var}_R\{\tau(X)-\omega g(X)\}
-+\frac{\omega^2}{N}\operatorname{Var}_O\{r(X)g(X)\}.
-\label{eq:ate-within-between}
 \end{align}
 \end{theorem}
 
-The mean follows from \(\mathbb E_R(Z_\lambda)=\theta\) and \(\mathbb E_O(rg)=\mathbb E_R(g)\). The variance follows after rewriting Equation~\eqref{eq:ate-estimator} as the sum of independent RCT and OBS empirical means.
+We next minimize the exact variance in Equation~\eqref{eq:ate-variance} over
+the two fusion coefficients.
 
-\begin{corollary}[Common-marginal specialization]
-\label{cor:ate-common-active}
-Under Assumptions~\ref{ass:trial}, \ref{ass:common-marginal}, and
-\ref{ass:honest-separation}, set \(r=r_0=1\), suppose \(n,N>0\), and suppose
-the displayed scores are square-integrable. Then
-Equation~\eqref{eq:ate-estimator} is exactly unbiased, and its OBS variance term is
-\(\omega^2\operatorname{Var}_R\{g(X)\}/N\).
-\end{corollary}
-
-\subsection{Joint and separable population oracles}
-
-Throughout this subsection, Assumption~\ref{ass:honest-separation} remains in
-force, \(n\) and \(N\) are positive, and the displayed random variables have
-finite second moments.
-
-\begin{definition}[ATE variance-quadratic objects]
+\begin{definition}[ATE variance coefficients]
 \label{def:ate-variance-objects}
-Define the five population moments
+Recall that $Z_0=\varphi(V;\widehat\mu_R)$ and
+$\Delta=Z_1-Z_0$ are defined in Definition~\ref{def:fusion-score}, and
+$g=\widehat g$ is the OBS prediction in
+Equation~\eqref{eq:obs-effect-prediction}. Define
 \begin{align}
 A&\triangleq\operatorname{Var}_R(\Delta),
 &
-B&\triangleq\operatorname{Var}_R(\widehat g)+\frac nN\operatorname{Var}_O(r\widehat g),
-\\
+B&\triangleq\operatorname{Var}_R(g)+\frac nN\operatorname{Var}_O(r_0g),
+\notag\\
 C&\triangleq\operatorname{Cov}_R(Z_0,\Delta),
 &
-D&\triangleq\operatorname{Cov}_R(Z_0,\widehat g),
-&
-E&\triangleq\operatorname{Cov}_R(\Delta,\widehat g).
+D&\triangleq\operatorname{Cov}_R(Z_0,g).
 \label{eq:ate-moments}
 \end{align}
-Collect these moments and coefficients as
-\begin{align}
+Here $A$ and $B$ are the quadratic costs of changing $\lambda$ and
+$\omega$, while $C$ and $D$ determine their linear slopes. Also define
+\begin{align*}
 \mathbf H_{\mathrm{ATE}}
 &\triangleq
-\begin{pmatrix}A&-E\\-E&B\end{pmatrix},
+\begin{pmatrix}A&0\\0&B\end{pmatrix},
 &
 \boldsymbol\ell
 &\triangleq
@@ -153,171 +116,78 @@ Collect these moments and coefficients as
 &
 \boldsymbol\beta
 &\triangleq
-\begin{pmatrix}\lambda\\\omega\end{pmatrix},
-\end{align}
+\begin{pmatrix}\lambda\\\omega\end{pmatrix}.
+\end{align*}
 \end{definition}
 
-The moment \(A\) is the curvature cost of changing the outcome-regression blend
-\(\lambda\). The moment \(B\) is the curvature cost of the control-variate
-scale \(\omega\), including the RCT subtraction and scaled OBS addition. The
-moments \(C\) and \(D\) are the baseline covariances that determine the linear
-slopes in the \(\lambda\) and \(\omega\) directions. The interaction moment
-\(E\) couples the coefficients through \(-2E\lambda\omega\).
-
-\begin{proposition}[ATE variance quadratic and positive-semidefinite curvature]
-\label{prop:ate-variance-quadratic}
-Under Assumptions~\ref{ass:trial}, \ref{ass:honest-separation}, and either
-Assumption~\ref{ass:common-marginal} with \(r=r_0=1\) or
-Assumption~\ref{ass:exact-transport} with exact \(r=r_0\), suppose
-\(n,N>0\) and the displayed scores have finite second moments. The compact variance in
-Equation~\eqref{eq:ate-variance} is
+The missing interaction is an exact population identity. Because $g$ is a
+fixed function of $X$ and $\mathbb E_R(\Delta\mid X)=0$,
 \begin{align}
-\operatorname{Var}\{\widehat\theta_r(\boldsymbol\beta)\}
+\operatorname{Cov}_R(\Delta,g)
+&=
+\mathbb E_R\left[
+\{g-\mathbb E_R(g)\}\mathbb E_R(\Delta\mid X)
+\right]
+=0,
+\notag\\
+D
+&=\operatorname{Cov}_R(Z_0,g)
+=\operatorname{Cov}_R\{\tau(X),g(X)\}.
+\label{eq:ate-population-separation}
+\end{align}
+
+\renewcommand*{\theHtheoremcorollary}{\theHtheorem.\arabic{theoremcorollary}}
+\begin{theoremcorollary}[Separated ATE variance quadratic]
+\label{prop:ate-variance-quadratic}
+Suppose consistency, RCT conditional randomization, and a known propensity
+$e(X)\in(\epsilon,1-\epsilon)$ hold. Suppose the nuisance, tuning, and
+evaluation samples are mutually independent and all fitted functions are fixed
+before evaluation. Suppose either $P_R^X=P_O^X$ with $r_0=1$, or
+$P_R^X\ll P_O^X$ with exact
+$r_0=dP_R^X/dP_O^X$. If $n,N>0$ and the displayed scores have finite
+second moments, then
+\begin{align}
+\operatorname{Var}\{\widehat\theta_{r_0}(\lambda,\omega)\}
 &=
 \frac1n\left\{
-\operatorname{Var}_R(Z_0)+2\boldsymbol\ell^\top\boldsymbol\beta
-+\boldsymbol\beta^\top\mathbf H_{\mathrm{ATE}}\boldsymbol\beta
+\operatorname{Var}_R(Z_0)+2C\lambda-2D\omega
++A\lambda^2+B\omega^2
 \right\}.
 \label{eq:ate-quadratic}
 \end{align}
-Moreover, \(\mathbf H_{\mathrm{ATE}}\) is positive semidefinite because, for
-every \((u,v)\in\mathbb R^2\),
-\begin{align}
-\begin{pmatrix}u&v\end{pmatrix}
-\mathbf H_{\mathrm{ATE}}
-\begin{pmatrix}u\\v\end{pmatrix}
-&=
-\operatorname{Var}_R(u\Delta-vg)
-+\frac nN v^2\operatorname{Var}_O(rg)
-\geq0.
-\end{align}
-\end{proposition}
+Its curvature matrix $\mathbf H_{\mathrm{ATE}}$ is positive semidefinite.
+\end{theoremcorollary}
 
-The variance in Equation~\eqref{eq:ate-quadratic} contains the RCT-only
-baseline \(\operatorname{Var}_R(Z_0)/n\), which no coefficient can change.
-Coefficient selection can therefore focus on the remaining quadratic. Its
-positive-semidefinite curvature guarantees that this reduced objective cannot
-decrease without bound.
-
-\begin{proposition}[ATE coefficient objective and equivalent oracle objectives]
+\begin{proposition}[Equivalent ATE coefficient objective]
 \label{def:ate-coefficient-objective}
 \label{prop:ate-argmin-equivalence}
-Define the coefficient-dependent part of the scaled variance by
+Define
 \begin{align*}
-\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta)
+\mathcal J_{\mathrm{ATE}}(\lambda,\omega)
 &\triangleq
-2\boldsymbol\ell^\top\boldsymbol\beta
-+\boldsymbol\beta^\top\mathbf H_{\mathrm{ATE}}\boldsymbol\beta
-=
-2C\lambda-2D\omega
-+A\lambda^2-2E\lambda\omega+B\omega^2.
+2C\lambda-2D\omega+A\lambda^2+B\omega^2.
 \end{align*}
-Because Equation~\eqref{eq:ate-quadratic} differs from
-\(\mathcal J_{\mathrm{ATE}}/n\) only by a coefficient-independent constant,
-every nonempty feasible set \(\Theta\subseteq\mathbb R^2\) satisfies
+For every nonempty compact $\Theta\subseteq\mathbb R^2$,
 \begin{align*}
-\operatorname*{arg\,min}_{\boldsymbol\beta\in\Theta}
-\operatorname{Var}\{\widehat\theta_r(\boldsymbol\beta)\}
+\operatorname*{arg\,min}_{(\lambda,\omega)\in\Theta}
+\operatorname{Var}\{\widehat\theta_{r_0}(\lambda,\omega)\}
 &=
-\operatorname*{arg\,min}_{\boldsymbol\beta\in\Theta}
-\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta).
+\operatorname*{arg\,min}_{(\lambda,\omega)\in\Theta}
+\mathcal J_{\mathrm{ATE}}(\lambda,\omega).
 \end{align*}
-Either argmin set may be empty when its infimum is not attained.
 \end{proposition}
 
-\begin{theorem}[Joint and ridge population oracles]
+\begin{theorem}[Population and ridge oracles]
 \label{def:ate-joint-ridge-oracles}
 \label{thm:joint-oracle}
-Under Assumptions~\ref{ass:trial}, \ref{ass:honest-separation}, and either
-Assumption~\ref{ass:common-marginal} with \(r=r_0=1\) or
-Assumption~\ref{ass:exact-transport} with exact \(r=r_0\), suppose \(n,N>0\),
-and suppose the displayed scores have finite second moments. When
-\(AB-E^2>0\), define the unrestricted joint oracle by
-\begin{align*}
-\boldsymbol\beta_{\mathrm{joint}}^\star
-&\triangleq
-\operatorname*{arg\,min}_{\boldsymbol\beta\in\mathbb R^2}
-\operatorname{Var}\{\widehat\theta_r(\boldsymbol\beta)\}
-=
-\operatorname*{arg\,min}_{\boldsymbol\beta\in\mathbb R^2}
-\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta).
-\end{align*}
-The equality of the two argmin sets follows from
-Proposition~\ref{prop:ate-argmin-equivalence}.
-For a prespecified \(\rho>0\), define the ridge-stabilized population oracle by
-\begin{align*}
-\boldsymbol\beta_\rho^\star
-&\triangleq
-\operatorname*{arg\,min}_{\boldsymbol\beta\in\mathbb R^2}
-\left\{\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta)
-+\rho\lVert\boldsymbol\beta\rVert_2^2\right\}.
-\end{align*}
-Let \(I_2\) denote the \(2\times2\) identity matrix.
-Because \(\mathbf H_{\mathrm{ATE}}\) is positive semidefinite,
-\(AB-E^2>0\) is exactly the condition that it is positive definite. Under this
-condition, the joint oracle is unique and
-\begin{align}
-\boldsymbol\beta_{\mathrm{joint}}^\star
-&=
-\begin{pmatrix}
-\lambda_{\mathrm{joint}}^\star\\
-\omega_{\mathrm{joint}}^\star
-\end{pmatrix}
-=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell
-=
-\begin{pmatrix}
-(ED-BC)/(AB-E^2)\\
-(AD-EC)/(AB-E^2)
-\end{pmatrix}.
-\label{eq:joint-oracle}
-\end{align}
-For every \(\rho>0\), whether or not \(\mathbf H_{\mathrm{ATE}}\) is singular,
-the ridge oracle is unique and
-\begin{align}
-\boldsymbol\beta_\rho^\star
-&=-(\mathbf H_{\mathrm{ATE}}+\rho I_2)^{-1}\boldsymbol\ell.
-\label{eq:ridge-oracle}
-\end{align}
-\end{theorem}
-
-Theorem~\ref{thm:joint-oracle} locates the joint minimum of the two-coefficient
-variance quadratic. Corollary~\ref{cor:joint-oracle-variance} answers the
-distinct comparison question: it evaluates the quadratic at that minimum and
-quantifies the improvement relative to the RCT-only origin
-\(\boldsymbol\beta=0\). The general interaction \(E\) is retained here because
-its empirical analogue \(\widehat E\) need not vanish, even though the exact
-population model later implies \(E=0\).
-
-\begin{theoremcorollary}[Joint and separable variance gains]
-\label{cor:joint-oracle-variance}
-\label{cor:ate-separable-oracle}
-Under Assumptions~\ref{ass:trial}, \ref{ass:honest-separation}, and either
-Assumption~\ref{ass:common-marginal} with \(r=r_0=1\) or
-Assumption~\ref{ass:exact-transport} with exact \(r=r_0\), suppose \(n,N>0\),
-the displayed scores have finite second moments, and \(AB-E^2>0\). Let
-\(\sigma_0^2=\operatorname{Var}_R(Z_0)\) and
-\(\mathcal V_0=\sigma_0^2/n\) be the variance at
-\((\lambda,\omega)=(0,0)\). The unrestricted joint oracle has
-\begin{align*}
-V_{\min}
-&=
-\mathcal V_0-
-\frac1n
-\frac{BC^2-2ECD+AD^2}{AB-E^2},
-\\
-\mathcal V_0-V_{\min}
-&=
-\frac1n\boldsymbol\ell^\top\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell.
-\end{align*}
-The reduction is nonnegative and is strictly positive exactly when
-\(\boldsymbol\ell\neq0\), equivalently when \((C,D)\neq(0,0)\). This is a
-variance gain within the estimator family in Equation~\eqref{eq:ate-estimator},
-not a claim of semiparametric efficiency.
-
-For either the common-marginal regime \(r=r_0=1\) or the shifted regime with
-exact \(r=r_0=dP_R^X/dP_O^X\), suppose also \(A,B>0\). Then
-\(\mathbb E_R(\Delta\mid X)=0\), so \(E=0\), and the separable population
-oracle coefficients are
+Suppose consistency, RCT conditional randomization, and a known propensity
+$e(X)\in(\epsilon,1-\epsilon)$ hold. Suppose the nuisance, tuning, and
+evaluation samples are mutually independent and all fitted functions are fixed
+before evaluation. Suppose either $P_R^X=P_O^X$ with $r_0=1$, or
+$P_R^X\ll P_O^X$ with exact
+$r_0=dP_R^X/dP_O^X$. If $n,N>0$, the displayed scores have finite second
+moments, and $A,B>0$, the exact population variance has the unique minimizer
+over $\mathbb R^2$ given by
 \begin{align}
 \lambda^\star
 &\triangleq-\frac CA,
@@ -326,34 +196,67 @@ oracle coefficients are
 &\triangleq\frac DB.
 \label{eq:axis-oracle}
 \end{align}
-The resulting minimum variance is
+For every prespecified $\rho>0$, the ridge oracle minimizing
+$\mathcal J_{\mathrm{ATE}}(\lambda,\omega)+
+\rho(\lambda^2+\omega^2)$ is
 \begin{align}
-V_{\min}^{\mathrm{sep}}
+\lambda_\rho^\star
+&\triangleq-\frac{C}{A+\rho},
+&
+\omega_\rho^\star
+&\triangleq\frac{D}{B+\rho}.
+\label{eq:ridge-oracle}
+\end{align}
+\end{theorem}
+
+\begin{theoremcorollary}[Minimum population variance]
+\label{cor:joint-oracle-variance}
+\label{cor:ate-separable-oracle}
+Suppose consistency, RCT conditional randomization, and a known propensity
+$e(X)\in(\epsilon,1-\epsilon)$ hold. Suppose the nuisance, tuning, and
+evaluation samples are mutually independent and all fitted functions are fixed
+before evaluation. Suppose either $P_R^X=P_O^X$ with $r_0=1$, or
+$P_R^X\ll P_O^X$ with exact
+$r_0=dP_R^X/dP_O^X$. If $n,N>0$, the displayed scores have finite second
+moments, and $A,B>0$, define
+\begin{align}
+\mathcal V^\star
 &\triangleq
+\min_{(\lambda,\omega)\in\mathbb R^2}
+\operatorname{Var}\{\widehat\theta_{r_0}(\lambda,\omega)\}.
+\label{eq:ate-minimum-definition}
+\end{align}
+Let $\mathcal V_0\triangleq\operatorname{Var}_R(Z_0)/n$. Then
+\begin{align}
+\mathcal V^\star
+&=
 \mathcal V_0-
-\frac1n\left(\frac{C^2}{A}+\frac{D^2}{B}\right).
+\frac1n\left(\frac{C^2}{A}+\frac{D^2}{B}\right),
+&
+\mathcal V_0-\mathcal V^\star
+&=
+\frac1n\left(\frac{C^2}{A}+\frac{D^2}{B}\right)\geq0.
 \label{eq:ate-separable-minimum}
 \end{align}
-This second reduction is likewise a variance comparison within the same
-estimator family.
 \end{theoremcorollary}
 
-The preceding corollary compares the joint and separable minima with the
-RCT-only origin. The next theorem adds the intermediate member that uses only
-the PPI++-style scale.
+The next theorem separates the two sources of this oracle variance reduction.
 
 \begin{theorem}[Exact-ratio oracle variance comparison]
 \label{thm:ate-three-way-comparison}
-Under Assumptions~\ref{ass:trial}, \ref{ass:honest-separation}, and either
-Assumption~\ref{ass:common-marginal} with \(r=r_0=1\), or
-Assumption~\ref{ass:exact-transport} with the exact ratio \(r=r_0\), suppose
-the scores in Equation~\eqref{eq:ate-variance} have finite second moments and
-\(A,B>0\). Define
-\(\widetilde{\mathcal V}(\lambda,\omega)
-\triangleq n\operatorname{Var}\{\widehat\theta_r(\lambda,\omega)\}\) and
-\(\sigma_0^2\triangleq\operatorname{Var}_R(Z_0)\). Here ``PPI++-only'' means
-the member of our family that fixes \(\lambda=0\) and optimally selects
-\(\omega\), not every procedure called PPI++. Then
+Suppose consistency, RCT conditional randomization, and a known propensity
+$e(X)\in(\epsilon,1-\epsilon)$ hold. Suppose the nuisance, tuning, and
+evaluation samples are mutually independent and all fitted functions are fixed
+before evaluation. Suppose either $P_R^X=P_O^X$ with $r_0=1$, or
+$P_R^X\ll P_O^X$ with exact
+$r_0=dP_R^X/dP_O^X$. Suppose the scores in
+Equation~\eqref{eq:ate-variance} have finite second moments, $n,N>0$, and
+$A,B>0$. Define
+$\widetilde{\mathcal V}(\lambda,\omega)
+\triangleq n\operatorname{Var}\{\widehat\theta_{r_0}(\lambda,\omega)\}$ and
+$\sigma_0^2\triangleq\operatorname{Var}_R(Z_0)$. Here ``PPI++-only'' means
+the member of our family that fixes $\lambda=0$ and optimally selects
+$\omega$, not every procedure called PPI++. Then
 \begin{align}
 \widetilde{\mathcal V}_{\mathrm{RCT}}
 &\triangleq\widetilde{\mathcal V}(0,0)=\sigma_0^2,
@@ -368,49 +271,40 @@ the member of our family that fixes \(\lambda=0\) and optimally selects
 \label{eq:ate-three-way-variance}
 \end{align}
 Therefore
-\(\widetilde{\mathcal V}_{\mathrm{joint}}
+$\widetilde{\mathcal V}_{\mathrm{joint}}
 \leq\widetilde{\mathcal V}_{\mathrm{PPI++}}
-\leq\widetilde{\mathcal V}_{\mathrm{RCT}}\). The second inequality is strict
-exactly when \(D\neq0\), and the first is strict exactly when \(C\neq0\).
+\leq\widetilde{\mathcal V}_{\mathrm{RCT}}$. The second inequality is strict
+exactly when $D\neq0$, and the first is strict exactly when $C\neq0$.
 These are population-oracle variance comparisons within the stated estimator
 family.
 \end{theorem}
 
-\begin{remark}[Singular or constrained curvature]
-If \(\mathbf H_{\mathrm{ATE}}\) is singular, an unpenalized joint minimum can
-lie along a flat set rather than at a unique point. The Moore--Penrose and
-null-space characterization, as well as existence and uniqueness results under
-coefficient constraints, are recorded in Appendix~\ref{app:proofs}. The ridge
-oracle remains unique for every \(\rho>0\). In implementation we minimize the
-continuous quadratic over a prespecified compact rectangle, which guarantees
-at least one constrained solution.
+\begin{remark}[Flat directions]
+If $A=0$, changing $\lambda$ does not change the population variance. If
+$B=0$, changing $\omega$ does not change it. A positive ridge penalty or
+the compact coefficient rectangle below still yields a well-defined choice.
 \end{remark}
 
-Under the common covariate marginal,
-\begin{align*}
-B
-&=\left(1+\frac nN\right)\operatorname{Var}_R\{g(X)\}.
-\end{align*}
-Define the coefficient rectangle by
+\begin{definition}[Coefficient rectangle and interval projection]
+\label{def:interval-projection}
+Define the nonempty compact coefficient rectangle by
 \begin{align}
 \Theta_{\mathrm{rect}}
 &\triangleq
 [L_\lambda,U_\lambda]\times[L_\omega,U_\omega].
 \label{eq:ate-coefficient-rectangle}
 \end{align}
-\begin{definition}[Projection onto an interval]
-\label{def:interval-projection}
-For a closed interval \([L,U]\) with \(L\leq U\), define
+For a closed interval $[L,U]$ with $L\leq U$, define
 \begin{align}
 \operatorname{Proj}_{[L,U]}(u)
 &\triangleq
 \min\{U,\max(L,u)\}.
 \label{eq:interval-projection}
 \end{align}
-This operator returns \(u\) when it lies in the interval and otherwise returns
+This operator returns $u$ when it lies in the interval and otherwise returns
 the nearest endpoint.
 \end{definition}
-For positive \(A,B\), the separated objective gives the
+For positive $A,B$, the separated objective gives the
 coordinatewise projection
 \begin{align*}
 \lambda_{\Theta_{\mathrm{rect}}}^\star
@@ -419,17 +313,19 @@ coordinatewise projection
 \omega_{\Theta_{\mathrm{rect}}}^\star
 &=\operatorname{Proj}_{[L_\omega,U_\omega]}(D/B).
 \end{align*}
-For a coupled constraint or a nonzero interaction, the original quadratic must be minimized directly. The population oracle weakly improves the variance objective whenever \((0,0)\) is feasible. Estimated coefficients have no universal finite-sample no-harm guarantee.
+The population oracle weakly improves the variance objective whenever
+$(0,0)$ is feasible. Estimated coefficients have no universal finite-sample
+no-harm guarantee.
 
 \subsection{Estimable honest algorithm}
 
 \subsubsection{Coefficient estimation and honest evaluation}
 
-For \(S\in\{R,O\}\), let \(m_S\triangleq n_S^{\mathrm{tune}}\geq2\).
-Conditional on the fixed nuisance fits, \(\widehat{\operatorname{Cov}}_S\)
-and \(\widehat{\operatorname{Var}}_S\) denote the usual unbiased
-tuning-sample covariance and variance with denominator \(m_S-1\).
-The factor \(n/N\) below uses the evaluation-sample sizes whose variance is
+For $S\in\{R,O\}$, let $m_S\triangleq n_S^{\mathrm{tune}}\geq2$.
+Conditional on the fixed nuisance fits, $\widehat{\operatorname{Cov}}_S$
+and $\widehat{\operatorname{Var}}_S$ denote the usual unbiased
+tuning-sample covariance and variance with denominator $m_S-1$.
+The factor $n/N$ below uses the evaluation-sample sizes whose variance is
 optimized.
 
 Using the tuning samples, compute
@@ -463,14 +359,14 @@ Define
 \widehat A\widehat B-\widehat E^2.
 \end{align*}
 Before observing the tuning outcomes, prespecify the bounds defining the
-nonempty compact rectangle \(\Theta_{\mathrm{rect}}\), require it to contain
-the origin, and choose positive thresholds \(t_A,t_B,t_{\det}\).
+nonempty compact rectangle $\Theta_{\mathrm{rect}}$, require it to contain
+the origin, and choose positive thresholds $t_A,t_B,t_{\det}$.
 
-Recall that \(\widehat\mu_R=(\widehat\mu_{R,0},\widehat\mu_{R,1})\) and
-\(\widehat\mu_O=(\widehat\mu_{O,0},\widehat\mu_{O,1})\) are outcome-regression
+Recall that $\widehat\mu_R=(\widehat\mu_{R,0},\widehat\mu_{R,1})$ and
+$\widehat\mu_O=(\widehat\mu_{O,0},\widehat\mu_{O,1})$ are outcome-regression
 predictors fitted on the RCT and OBS nuisance samples, respectively, and
-\(g\triangleq\widehat\mu_{O,1}-\widehat\mu_{O,0}\). No correctness assumption
-is imposed on these fitted regressions, and \(g\) is not assumed to be a causal
+$g\triangleq\widehat\mu_{O,1}-\widehat\mu_{O,0}$. No correctness assumption
+is imposed on these fitted regressions, and $g$ is not assumed to be a causal
 effect. Algorithm~\ref{alg:honest-ate} states the independent-sample
 implementation covered by the exact finite-sample results. The nuisance,
 tuning, and evaluation samples may be supplied directly or obtained by an
@@ -480,26 +376,28 @@ honest prespecified split.
 \caption{ATE estimation with honest evaluation}
 \label{alg:honest-ate}
 \DontPrintSemicolon
-\KwIn{Nuisance samples \(D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}\), tuning
-samples \(D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}\), evaluation samples
-\(D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}\), the rectangle
-\(\Theta_{\mathrm{rect}}\), and denominator thresholds.}
-Fit \(\widehat\mu_R\), \(\widehat\mu_O\), \(g\), and any ratio model on \(D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}\). The exact theorem uses the true \(r\); replacing it by \(\widehat r\) invokes the drift conditions below.\;
-Compute the five moments on \(D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}\), and
+\KwIn{Nuisance samples $D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}$, tuning
+samples $D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}$, evaluation samples
+$D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}$, the rectangle
+$\Theta_{\mathrm{rect}}$, and denominator thresholds.}
+Fit $\widehat\mu_R$, $\widehat\mu_O$, $g$, and any ratio model on $D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}$. The exact theorem uses the true $r$; replacing it by $\widehat r$ invokes the drift conditions below.\;
+Compute the five moments on $D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}$, and
 select the coefficients using the axis, unrestricted joint, or constrained
 quadratic rule.\;
 Evaluate Equation~\eqref{eq:ate-estimator} on
-\(D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}\). Set
-\(\psi_R\triangleq Z_{\widehat\lambda}-\widehat\omega g\) and
-\(\psi_O\triangleq\widehat\omega rg\), and compute
-\(\widehat V\triangleq
+$D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}$. Set
+$\psi_R\triangleq Z_{\widehat\lambda}-\widehat\omega g$ and
+$\psi_O\triangleq\widehat\omega rg$, and compute
+$\widehat V\triangleq
 \widehat{\operatorname{Var}}_{R,\mathrm{eval}}(\psi_R)/n+
-\widehat{\operatorname{Var}}_{O,\mathrm{eval}}(\psi_O)/N\).\;
-\KwOut{\(\widehat\theta_r\) and \(\widehat V\).}
+\widehat{\operatorname{Var}}_{O,\mathrm{eval}}(\psi_O)/N$.\;
+\KwOut{$\widehat\theta_r$ and $\widehat V$.}
 \end{algorithm}
 
 \paragraph{How Algorithm~\ref{alg:honest-ate} selects the coefficients.}
-The axis rule imposes the population restriction \(E=0\):
+The axis plug-in applies the population identity in
+Equation~\eqref{eq:ate-population-separation} by setting $\widehat E=0$ before
+minimizing:
 \begin{align*}
 \widehat\lambda_{\mathrm{axis}}
 &\triangleq
@@ -515,8 +413,9 @@ The axis rule imposes the population restriction \(E=0\):
 0,&\widehat B\leq t_B.
 \end{cases}
 \end{align*}
-When \(\widehat A>t_A\), \(\widehat B>t_B\), and
-\(\widehat d>t_{\det}\), the unrestricted empirical joint rule is
+When $\widehat A>t_A$, $\widehat B>t_B$, and
+$\widehat d>t_{\det}$, the unrestricted empirical joint rule instead retains
+$\widehat E$ and minimizes the empirical quadratic over $\mathbb R^2$:
 \begin{align*}
 \widehat\lambda_{\mathrm{joint}}
 &\triangleq
@@ -526,7 +425,8 @@ When \(\widehat A>t_A\), \(\widehat B>t_B\), and
 &\triangleq
 \frac{\widehat A\widehat D-\widehat E\widehat C}{\widehat d}.
 \end{align*}
-The boundary-correct empirical rule is
+The constrained empirical rule retains the same $\widehat E$ but minimizes
+over the prespecified rectangle:
 \begin{align*}
 \widehat{\boldsymbol\beta}_{\Theta_{\mathrm{rect}}}
 &\in
@@ -537,34 +437,29 @@ The boundary-correct empirical rule is
 \boldsymbol\beta
 \right\}.
 \end{align*}
-If the unrestricted joint rule lies outside \(\Theta_{\mathrm{rect}}\), this
-quadratic program must be solved rather than clipping its coordinates
-separately. Coordinatewise clipping is exact only after imposing
-\(\widehat E=0\). If a required threshold fails or the quadratic solver is
-numerically unstable, the prespecified joint-rule fallback is \((0,0)\); the
-axis rule uses its coordinate-specific threshold definitions above.
+Under the same positive-determinant threshold, the unrestricted and constrained
+rules coincide when the unrestricted minimizer lies in
+$\Theta_{\mathrm{rect}}$. Otherwise, the constrained minimizer lies on the
+rectangle boundary and must be obtained from the displayed quadratic program.
+Separate coordinate clipping is exact only for the axis plug-in. If a required
+threshold fails or the quadratic solver is numerically unstable, the
+prespecified joint-rule fallback is $(0,0)$; the axis rule uses its
+coordinate-specific threshold definitions above.
 
 \paragraph{Analysis.}
-The restriction-based plug-in imposes \(\widehat E=0\) and uses
-\((-\widehat C/\widehat A,\widehat D/\widehat B)\). The empirical joint
-minimizer retains \(\widehat E\) and applies Equation~\eqref{eq:joint-oracle}.
-The two rules differ because the realized tuning covariance \(\widehat E\) is
-generally nonzero.
+The axis plug-in uses
+$(-\widehat C/\widehat A,\widehat D/\widehat B)$. The empirical joint rules
+retain $\widehat E$. Although the population covariance
+$\operatorname{Cov}_R(\Delta,g)$ is zero by
+Equation~\eqref{eq:ate-population-separation}, its tuning-sample estimate
+$\widehat E$ is generally nonzero because of sampling noise.
 
 Each sample covariance is conditionally unbiased for its corresponding
 fixed-score population moment given the nuisance fits, but the ratios defining
-\(\widehat\lambda\) and \(\widehat\omega\) are nonlinear and are not generally
+$\widehat\lambda$ and $\widehat\omega$ are nonlinear and are not generally
 unbiased for the population oracle coefficients. The thresholds and feasible
 rectangle control instability; they do not turn these selected coefficients
 into finite-sample oracle estimates.
-
-The displayed analytic ratios apply only when their corresponding denominator
-thresholds pass. Imposing \(\widehat E=0\) applies the proven population
-restriction before solving the sample problem; it does not assert that the
-realized tuning covariance vanishes. Retaining
-\(\widehat E=\widehat{\operatorname{Cov}}_R(\Delta,g)\)
-instead minimizes the realized empirical quadratic, whose interaction term is
-generally nonzero because of tuning-sample noise.
 
 For explicit evaluation notation, define
 \begin{align*}
@@ -576,9 +471,9 @@ Z_{\widehat\lambda}(V_{R,i}^{\mathrm{eval}})-\widehat\omega g(X_{R,i}^{\mathrm{e
 &\triangleq
 \widehat\omega r(X_{O,j}^{\mathrm{eval}})g(X_{O,j}^{\mathrm{eval}}),
 \end{align*}
-Let \(\widehat{\operatorname{Var}}_{R,\mathrm{eval}}\) and
-\(\widehat{\operatorname{Var}}_{O,\mathrm{eval}}\) be the usual unbiased
-sample variances with denominators \(n-1\) and \(N-1\), respectively. Define
+Let $\widehat{\operatorname{Var}}_{R,\mathrm{eval}}$ and
+$\widehat{\operatorname{Var}}_{O,\mathrm{eval}}$ be the usual unbiased
+sample variances with denominators $n-1$ and $N-1$, respectively. Define
 the fixed-selected-coefficient variance estimator by
 \begin{align}
 \widehat V
@@ -592,14 +487,14 @@ the fixed-selected-coefficient variance estimator by
 \begin{proposition}[Exact variance estimation after honest selection]
 \label{prop:ate-honest-variance-active}
 Assume RCT consistency and conditional randomization, a known trial propensity
-\(e_0\) satisfying strict overlap, honest separation of
+$e_0$ satisfying strict overlap, honest separation of
 nuisance fitting, coefficient tuning, and final evaluation, and either a
-common covariate marginal with \(r=r_0=1\) or exact transport with
-\(r=r_0=dP_R^X/dP_O^X\). Let \((\widehat\lambda,\widehat\omega)\) be selected
+common covariate marginal with $r=r_0=1$ or exact transport with
+$r=r_0=dP_R^X/dP_O^X$. Let $(\widehat\lambda,\widehat\omega)$ be selected
 without the evaluation samples. Suppose the RCT and OBS evaluation samples
 are mutually independent, retain their respective product laws, and are
-independent of all fitted and selected objects. Suppose \(n,N\geq2\),
-\(\psi_R\in L_2(P_R)\), and \(\psi_O\in L_2(P_O)\). Under the
+independent of all fitted and selected objects. Suppose $n,N\geq2$,
+$\psi_R\in L_2(P_R)$, and $\psi_O\in L_2(P_O)$. Under the
 manuscript's convention that conditioning on the fixed learned objects is
 suppressed,
 \begin{align*}
@@ -610,24 +505,24 @@ suppressed,
 \operatorname{Var}\{\widehat\theta_r(\widehat\lambda,\widehat\omega)\}.
 \end{align*}
 The same identities hold unconditionally because the conditional mean is the
-nonrandom target \(\theta\).
+nonrandom target $\theta$.
 \end{proposition}
 
 \begin{theorem}[Normal approximation after honest evaluation]
 \label{thm:ate-honest-clt-active}
 Assume RCT consistency and conditional randomization, a known trial propensity
-\(e_0\) satisfying strict overlap, honest separation of
+$e_0$ satisfying strict overlap, honest separation of
 nuisance fitting, coefficient tuning, and final evaluation, and either a
-common covariate marginal with \(r=r_0=1\) or exact transport with
-\(r=r_0=dP_R^X/dP_O^X\). Conditional on the fitted objects, suppose the RCT
+common covariate marginal with $r=r_0=1$ or exact transport with
+$r=r_0=dP_R^X/dP_O^X$. Conditional on the fitted objects, suppose the RCT
 and OBS evaluation observations are independent and retain their product
-laws, \(n,N\to\infty\), \(n/N\to\kappa\in[0,\infty)\), and the centered
-evaluation scores have uniformly bounded conditional \((2+\delta)\)-moments
-for some \(\delta>0\). Under the manuscript's suppressed conditioning
+laws, $n,N\to\infty$, $n/N\to\kappa\in[0,\infty)$, and the centered
+evaluation scores have uniformly bounded conditional $(2+\delta)$-moments
+for some $\delta>0$. Under the manuscript's suppressed conditioning
 convention, define
-\(V_n\triangleq\operatorname{Var}\{\widehat\theta_r\}\) and assume
-\(nV_n\to_p\sigma^2\in(0,\infty)\) and
-\(\widehat V/V_n\to_p 1\). Then
+$V_n\triangleq\operatorname{Var}\{\widehat\theta_r\}$ and assume
+$nV_n\to_p\sigma^2\in(0,\infty)$ and
+$\widehat V/V_n\to_p 1$. Then
 \begin{align*}
 \frac{\widehat\theta_r-\theta}{\sqrt{\widehat V}}
 &\rightsquigarrow N(0,1),
@@ -637,7 +532,7 @@ and
 \widehat\theta_r
 &\mathbin{\pm}z_{1-\alpha/2}\sqrt{\widehat V}
 \end{align*}
-has asymptotic coverage \(1-\alpha\), where \(z_{1-\alpha/2}\) is the standard
+has asymptotic coverage $1-\alpha$, where $z_{1-\alpha/2}$ is the standard
 normal quantile. Variance unbiasedness alone does not imply this coverage.
 \end{theorem}
 
@@ -646,29 +541,29 @@ normal quantile. Variance unbiasedness alone does not imply this coverage.
 
 All ratio estimators below use only the nuisance samples and are fixed before
 coefficient tuning and final evaluation. Let
-\(\mathbb P_R^{\mathrm{nuis}}\) and \(\mathbb P_O^{\mathrm{nuis}}\) denote their
+$\mathbb P_R^{\mathrm{nuis}}$ and $\mathbb P_O^{\mathrm{nuis}}$ denote their
 empirical averages.
 
-This subsection follows the path from the target ratio \(r_0\), through a
-learned ratio \(\widehat r\), to the tuning moment
-\(\widehat B_{\widehat r}\), the selected coefficient
-\(\widehat\omega_{\widehat r}\), and the final ATE estimator.
+This subsection follows the path from the target ratio $r_0$, through a
+learned ratio $\widehat r$, to the tuning moment
+$\widehat B_{\widehat r}$, the selected coefficient
+$\widehat\omega_{\widehat r}$, and the final ATE estimator.
 
 \begin{proposition}[Transport and Riesz characterizations]
 \label{prop:ratio-characterizations}
 Under either Assumption~\ref{ass:common-marginal} or
-Assumption~\ref{ass:exact-transport}, every \(h\in L_1(P_R^X)\) satisfies
+Assumption~\ref{ass:exact-transport}, every $h\in L_1(P_R^X)$ satisfies
 \begin{align}
 \mathbb E_O\{r_0(X)h(X)\}
 &=\mathbb E_R\{h(X)\}.
 \label{eq:ratio-transport-characterization}
 \end{align}
-Conversely, if \(\widetilde r\geq0\), \(\mathbb E_O(\widetilde r)=1\), and
+Conversely, if $\widetilde r\geq0$, $\mathbb E_O(\widetilde r)=1$, and
 Equation~\eqref{eq:ratio-transport-characterization} holds with
-\(\widetilde r\) in place of \(r_0\) for every bounded measurable \(h\), then
-\(\widetilde r=r_0\) \(P_O^X\)-almost surely. If
-\(r_0\in L_2(P_O^X)\), it is also the unique minimizer over
-\(L_2(P_O^X)\) of
+$\widetilde r$ in place of $r_0$ for every bounded measurable $h$, then
+$\widetilde r=r_0$ $P_O^X$-almost surely. If
+$r_0\in L_2(P_O^X)$, it is also the unique minimizer over
+$L_2(P_O^X)$ of
 \begin{align}
 \mathcal R(a)
 &\triangleq\mathbb E_O\{a(X)^2\}-2\mathbb E_R\{a(X)\}.
@@ -683,8 +578,8 @@ The first route learns the Riesz representer directly.
 
 \begin{definition}[Empirical Riesz ratio learner]
 \label{def:empirical-riesz-ratio}
-For a prespecified function class \(\mathcal A\), penalty
-\(\operatorname{Pen}\), and \(\rho\geq0\), use a prespecified deterministic
+For a prespecified function class $\mathcal A$, penalty
+$\operatorname{Pen}$, and $\rho\geq0$, use a prespecified deterministic
 rule to break ties among minimizers. Whenever the displayed argmin set is
 nonempty, choose
 \begin{align}
@@ -708,10 +603,10 @@ average them.
 
 \begin{lemma}[Linear Riesz solution]
 \label{lem:linear-riesz-ratio}
-Let \(a_\gamma(x)\triangleq\phi(x)^\top\gamma\), where
-\(\phi:\mathcal X\to\mathbb R^p\), and let
-\(\operatorname{Pen}(a_\gamma)\triangleq\|\gamma\|_2^2\). If \(\rho>0\), or
-if the empirical Gram matrix is nonsingular when \(\rho=0\), then
+Let $a_\gamma(x)\triangleq\phi(x)^\top\gamma$, where
+$\phi:\mathcal X\to\mathbb R^p$, and let
+$\operatorname{Pen}(a_\gamma)\triangleq\|\gamma\|_2^2$. If $\rho>0$, or
+if the empirical Gram matrix is nonsingular when $\rho=0$, then
 \begin{align}
 \widehat\gamma_\rho
 &\triangleq
@@ -722,15 +617,15 @@ if the empirical Gram matrix is nonsingular when \(\rho=0\), then
 \label{eq:ratio-riesz-linear}
 \end{align}
 Additive splines give a finite linear example, and a frozen neural
-representation can provide the coordinates of \(\phi\). End-to-end neural
+representation can provide the coordinates of $\phi$. End-to-end neural
 optimization of Equation~\eqref{eq:ratio-riesz-empirical} is generally
 nonconvex. An unconstrained Riesz fit need not be positive; positivity may be
 imposed by a positive parameterization, followed by empirical normalization.
 \end{lemma}
 
 \begin{remark}[ATE-targeted Riesz loss]
-Recall that \(g\) is the OBS treatment-effect predictor defined in Section~2.
-For a general ratio candidate \(a\) and an estimated ratio \(\widehat r\), define
+Recall that $g$ is the OBS treatment-effect predictor defined in Section~2.
+For a general ratio candidate $a$ and an estimated ratio $\widehat r$, define
 \begin{align}
 \delta_a(X)
 &\triangleq\{a(X)-r_0(X)\}\widehat g(X),
@@ -762,8 +657,8 @@ The classifier is an alternative route that learns the ratio indirectly
 through source prediction.
 \begin{definition}[Classifier density-ratio estimator]
 \label{def:classifier-density-ratio}
-Pool the nuisance-sample covariates and label their source by \(S=1\) for RCT
-and \(S=0\) for OBS. Define
+Pool the nuisance-sample covariates and label their source by $S=1$ for RCT
+and $S=0$ for OBS. Define
 \begin{align*}
 \pi
 &\triangleq P(S=1),
@@ -771,14 +666,14 @@ and \(S=0\) for OBS. Define
 s_0(x)
 &\triangleq P(S=1\mid X=x).
 \end{align*}
-When \(0<\pi<1\), Bayes' rule gives
+When $0<\pi<1$, Bayes' rule gives
 \begin{align}
 r_0(x)
 &=
 \frac{1-\pi}{\pi}\frac{s_0(x)}{1-s_0(x)}.
 \label{eq:ratio-classifier-bayes}
 \end{align}
-For a fitted domain probability \(\widehat s\), define
+For a fitted domain probability $\widehat s$, define
 \begin{align}
 \widehat r_{\mathrm{CLS}}(x)
 &\triangleq
@@ -787,11 +682,11 @@ For a fitted domain probability \(\widehat s\), define
 \label{eq:ratio-classifier-estimator}
 \end{align}
 For an unweighted pooled classifier,
-\(\widehat\pi\triangleq
-n_R^{\mathrm{nuis}}/(n_R^{\mathrm{nuis}}+n_O^{\mathrm{nuis}})\). Class
+$\widehat\pi\triangleq
+n_R^{\mathrm{nuis}}/(n_R^{\mathrm{nuis}}+n_O^{\mathrm{nuis}})$. Class
 weighting or resampling changes the effective training prior, so the prior-odds
 factor must be corrected accordingly. The odds require
-\(0<\widehat s(x)<1\) where the ratio is used. Probability clipping can
+$0<\widehat s(x)<1$ where the ratio is used. Probability clipping can
 stabilize the estimate, but it changes the exact density-ratio target.
 \end{definition}
 
@@ -801,8 +696,8 @@ ratio to selected ATE features. This is not an average of the two routes.
 
 \begin{definition}[Calibrated automatic-balancing ratio]
 \label{def:classifier-calibrated-balance}
-Let \(\widehat r_{\mathrm{base}}>0\) come from either the classifier or Riesz
-route. Let \(\phi:\mathcal X\to\mathbb R^p\) be prespecified with no intercept.
+Let $\widehat r_{\mathrm{base}}>0$ come from either the classifier or Riesz
+route. Let $\phi:\mathcal X\to\mathbb R^p$ be prespecified with no intercept.
 Whenever the displayed argmin set is nonempty, choose a deterministically
 tie-broken minimizer
 \begin{align}
@@ -824,8 +719,8 @@ tie-broken minimizer
 \end{align}
 Normalization already balances the constant, so an intercept would be
 nonidentified. The minimal ATE feature is
-\(\phi_{\mathrm{ATE}}(X)\triangleq\widehat g(X)\); a richer finite map can add
-\(\widehat g^2\), fitted regressions, or a small spline or frozen-neural basis.
+$\phi_{\mathrm{ATE}}(X)\triangleq\widehat g(X)$; a richer finite map can add
+$\widehat g^2$, fitted regressions, or a small spline or frozen-neural basis.
 This exponential tilt follows the calibration principle behind entropy
 balancing \citep{hainmueller2012entropy}.
 \end{definition}
@@ -833,15 +728,15 @@ balancing \citep{hainmueller2012entropy}.
 \begin{proposition}[Automatic balance]
 \label{prop:automatic-ratio-balance}
 If the objective in Definition~\ref{def:classifier-calibrated-balance} has an
-interior minimizer, then \(\widehat r_{\mathrm{BAL}}>0\),
-\(\mathbb P_O^{\mathrm{nuis}}(\widehat r_{\mathrm{BAL}})=1\), and
+interior minimizer, then $\widehat r_{\mathrm{BAL}}>0$,
+$\mathbb P_O^{\mathrm{nuis}}(\widehat r_{\mathrm{BAL}})=1$, and
 \begin{align}
 \mathbb P_O^{\mathrm{nuis}}
 \{\widehat r_{\mathrm{BAL}}(X)\phi(X)\}
 &=\mathbb P_R^{\mathrm{nuis}}\{\phi(X)\}.
 \label{eq:ratio-calibration-balance}
 \end{align}
-These are \(p\) finite moment equations, not pointwise balance. They are
+These are $p$ finite moment equations, not pointwise balance. They are
 analogous to covariate-balancing propensity scores, which concern treatment
 rather than source assignment \citep{imai2014covariate}. Exact feasibility
 requires the RCT feature mean to lie in the relative interior of the convex
@@ -853,16 +748,16 @@ With the construction routes now defined, we quantify how ratio error
 propagates to coefficient selection and the final ATE estimator.
 
 Before quantifying propagation, recall from
-Equation~\eqref{eq:obs-effect-prediction} that \(\widehat g\) is the fitted OBS
+Equation~\eqref{eq:obs-effect-prediction} that $\widehat g$ is the fitted OBS
 treatment-effect prediction and Equation~\eqref{eq:ratio-error-score} defines
-its ratio-weighted error \(\delta_{\widehat r}\).
+its ratio-weighted error $\delta_{\widehat r}$.
 
 \begin{proposition}[How ratio error changes coefficient selection]
 \label{lem:ratio-error-coefficients}
-This result isolates how replacing \(r_0\) by \(\widehat r\) changes the
-curvature used to choose \(\omega\), and therefore can also change \(\lambda\)
+This result isolates how replacing $r_0$ by $\widehat r$ changes the
+curvature used to choose $\omega$, and therefore can also change $\lambda$
 under joint tuning.
-For a candidate ratio \(\widetilde r\), write
+For a candidate ratio $\widetilde r$, write
 \begin{align}
 \widehat B_{\widetilde r}
 &\triangleq
@@ -878,7 +773,7 @@ define
 \frac{\widehat D}{\widehat B_{\widetilde r}}.
 \label{eq:ratio-dependent-omega}
 \end{align}
-With \(\delta_{\widehat r}\) from Equation~\eqref{eq:ratio-error-score},
+With $\delta_{\widehat r}$ from Equation~\eqref{eq:ratio-error-score},
 \begin{align}
 \widehat B_{\widehat r}-\widehat B_{r_0}
 &=
@@ -898,7 +793,7 @@ When the axis-rule thresholds are inactive,
 \label{eq:ratio-omega-error}
 \end{align}
 For the joint rule, Equation~\eqref{eq:ratio-B-error} changes the lower-right
-entry of \(\widehat{\mathbf H}_{\mathrm{ATE}}\), so both selected coefficients
+entry of $\widehat{\mathbf H}_{\mathrm{ATE}}$, so both selected coefficients
 may change.
 \end{proposition}
 
@@ -908,7 +803,7 @@ proposition isolates its additional, direct effect on the final ATE estimator.
 
 \begin{proposition}[Exact estimated-ratio decomposition]
 \label{prop:estimated-ratio-decomposition}
-Let \((\widehat\lambda,\widehat\omega)\) be selected without the evaluation
+Let $(\widehat\lambda,\widehat\omega)$ be selected without the evaluation
 observations. Define the scalar population drift and centered evaluation
 fluctuation by
 \begin{align*}
@@ -940,55 +835,55 @@ direct ATE error into population drift and evaluation fluctuation.
 \begin{proposition}[Mean preservation with an estimated ratio]
 \label{cor:estimated-ratio-mean-preservation}
 Assume RCT consistency and conditional randomization, a known trial propensity
-\(e_0\) satisfying strict overlap, and either a common covariate marginal with
-\(r_0=1\) or exact transport with \(r_0=dP_R^X/dP_O^X\). Suppose the nuisance,
+$e_0$ satisfying strict overlap, and either a common covariate marginal with
+$r_0=1$ or exact transport with $r_0=dP_R^X/dP_O^X$. Suppose the nuisance,
 ratio, and coefficient fits are independent of the final evaluation
-observations, \(g\in L_1(P_R)\), and
-\(r_0g,\widehat r g\in L_1(P_O)\). Define
-\(\delta_{\widehat r}(X)\triangleq\{\widehat r(X)-r_0(X)\}g(X)\) and
-\(b_{\widehat r}\triangleq\widehat\omega P_O\delta_{\widehat r}\).
+observations, $g\in L_1(P_R)$, and
+$r_0g,\widehat r g\in L_1(P_O)$. Define
+$\delta_{\widehat r}(X)\triangleq\{\widehat r(X)-r_0(X)\}g(X)$ and
+$b_{\widehat r}\triangleq\widehat\omega P_O\delta_{\widehat r}$.
 Under the manuscript's suppressed conditioning convention,
 \begin{align*}
 \mathbb E\{\widehat\theta_{\widehat r}\}
 &=\theta+b_{\widehat r}.
 \end{align*}
 Thus the ratio correction has zero conditional mean exactly when
-\(b_{\widehat r}=0\). In particular, the sufficient condition
+$b_{\widehat r}=0$. In particular, the sufficient condition
 \begin{align}
 P_O\delta_{\widehat r}=0
 \quad\Longleftrightarrow\quad
 \mathbb E_O\{\widehat r(X)g(X)\}=\mathbb E_R\{g(X)\}.
 \label{eq:estimated-ratio-mean-preservation}
 \end{align}
-Honest fitting fixes \(\widehat r\) during evaluation, but does not by itself
+Honest fitting fixes $\widehat r$ during evaluation, but does not by itself
 imply Equation~\eqref{eq:estimated-ratio-mean-preservation}; when
-\(\widehat\omega=0\), mean preservation also holds even if
-\(P_O\delta_{\widehat r}\neq0\).
+$\widehat\omega=0$, mean preservation also holds even if
+$P_O\delta_{\widehat r}\neq0$.
 \end{proposition}
 
 \begin{theorem}[First-order equivalence under estimated transport]
 \label{cor:estimated-ratio-inheritance}
 Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation}, suppose
-either Assumption~\ref{ass:common-marginal} holds with \(r_0=1\), or
+either Assumption~\ref{ass:common-marginal} holds with $r_0=1$, or
 Assumption~\ref{ass:exact-transport} holds with
-\(r_0=dP_R^X/dP_O^X\). Suppose the displayed scores have finite second moments
-and \(\widehat r\) is fitted only on the nuisance samples and is therefore
+$r_0=dP_R^X/dP_O^X$. Suppose the displayed scores have finite second moments
+and $\widehat r$ is fitted only on the nuisance samples and is therefore
 independent of the tuning and evaluation observations. Assume the RCT and OBS
 evaluation samples are mutually independent and retain their respective
-product laws, \(n,N\to\infty\), and
-\(n/N\to\kappa\in[0,\infty)\). For some \(\delta>0\), assume the centered
-evaluation scores have uniformly bounded conditional \((2+\delta)\)-moments.
+product laws, $n,N\to\infty$, and
+$n/N\to\kappa\in[0,\infty)$. For some $\delta>0$, assume the centered
+evaluation scores have uniformly bounded conditional $(2+\delta)$-moments.
 Under the manuscript's suppressed conditioning convention, define
-\(V_n^{r_0}\triangleq
+$V_n^{r_0}\triangleq
 \operatorname{Var}\{\widehat\theta_{r_0}(\widehat\lambda,
-\widehat\omega)\}\), and let \(\widehat V_{r_0}\) be the evaluation
-sample-variance estimator computed with \(r_0\). Assume
-\(nV_n^{r_0}\to_p\sigma^2\in(0,\infty)\) and
-\(\widehat V_{r_0}/V_n^{r_0}\to_p 1\).
+\widehat\omega)\}$, and let $\widehat V_{r_0}$ be the evaluation
+sample-variance estimator computed with $r_0$. Assume
+$nV_n^{r_0}\to_p\sigma^2\in(0,\infty)$ and
+$\widehat V_{r_0}/V_n^{r_0}\to_p 1$.
 Assume every tuning moment computed with
-\(\widehat r\) converges in probability to its exact-ratio counterpart, and
+$\widehat r$ converges in probability to its exact-ratio counterpart, and
 the selected coefficients converge in probability to a deterministic
-exact-ratio pair \((\lambda^\circ,\omega^\circ)\). Also suppose the probability
+exact-ratio pair $(\lambda^\circ,\omega^\circ)$. Also suppose the probability
 of invoking any denominator or determinant fallback tends to zero. If
 \begin{align}
 \sqrt n\,\widehat\omega P_O\delta_{\widehat r}
@@ -1004,11 +899,11 @@ then the feasible and exact-ratio estimators are first-order equivalent. Hence
 the normal limit in Theorem~\ref{thm:ate-honest-clt-active} and the first-order
 variance ordering in Theorem~\ref{thm:ate-three-way-comparison} are inherited,
 provided that, for each feasible rule being compared, its
-\((\lambda^\circ,\omega^\circ)\) equals the corresponding exact-ratio
+$(\lambda^\circ,\omega^\circ)$ equals the corresponding exact-ratio
 population-oracle pair in that theorem.
 This does not imply universal finite-sample dominance.
 \end{theorem}
 
 \subsubsection{Diagnostics}
 
-An implementation should report split assignments, propensity bounds, candidate boxes, all denominator and determinant thresholds, coefficient fallbacks, ratio overlap and clipping, and the selected RCT-only comparator. Near-zero \(\widehat A\), \(\widehat B\), or \(\widehat d\) must trigger the prespecified rule rather than an unstable analytic ratio.
+An implementation should report split assignments, propensity bounds, candidate boxes, all denominator and determinant thresholds, coefficient fallbacks, ratio overlap and clipping, and the selected RCT-only comparator. Near-zero $\widehat A$, $\widehat B$, or $\widehat d$ must trigger the prespecified rule rather than an unstable analytic ratio.

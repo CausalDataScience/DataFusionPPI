@@ -1,13 +1,18 @@
 \section{Cross-Fitted Estimation, Tuning, and Validation}
 \label{sec:estimation}
 
-The exact propositions condition on nuisance functions trained independently of the evaluation samples. A practical implementation can preserve observation-level honesty with cross-fitting, but ordinary overlapping \(K\)-fold cross-fitting does not reproduce the independent-split theorem exactly. Models fitted for different folds share training observations, so foldwise scores are dependent even though each observation receives an out-of-fold prediction.
+The exact propositions condition on nuisance functions trained independently of the evaluation samples. A practical implementation can preserve observation-level honesty with cross-fitting, but ordinary overlapping $K$-fold cross-fitting does not reproduce the independent-split theorem exactly. Models fitted for different folds share training observations, so foldwise scores are dependent even though each observation receives an out-of-fold prediction.
 
 \subsection{Population, axis plug-in, and empirical joint coefficients}
 
-The ATE theory distinguishes three coefficient objects. The population oracle uses \((A,B,C,D,E)\) from \eqref{eq:ate-moments} and satisfies \(E=0\) by \eqref{eq:ate-population-orthogonality}. A population-orthogonality plug-in estimates \((A,B,C,D)\) but imposes \(\widehat E=0\). An empirical joint minimizer estimates all five moments, including the generally nonzero sample covariance \(\widehat E\).
+The ATE theory distinguishes three coefficient objects. The population oracle
+uses the four moments $(A,B,C,D)$ from Equation~\eqref{eq:ate-moments}; the
+exact separation in Equation~\eqref{eq:ate-population-separation} removes the
+population interaction. The axis plug-in applies this separation directly,
+whereas the empirical joint rule additionally estimates the tuning-sample
+covariance $\widehat E$, which may be nonzero because of sampling noise.
 
-Let independent RCT and OBS tuning samples have sizes \(m_R,m_O\geq2\). For source \(S\in\{R,O\}\), define
+Let independent RCT and OBS tuning samples have sizes $m_R,m_O\geq2$. For source $S\in\{R,O\}$, define
 \begin{align}
 s_{S,\mathrm{tu}}(h_1,h_2)
 &=
@@ -20,7 +25,7 @@ s_{S,\mathrm{tu}}^2(h)
 &=
 s_{S,\mathrm{tu}}(h,h).
 \end{align}
-For final evaluation sizes \((n,N)\), the plug-in moments are
+For final evaluation sizes $(n,N)$, the plug-in moments are
 \begin{align}
 \widehat A
 &=
@@ -45,7 +50,7 @@ s_{R,\mathrm{tu}}(Z_0,g),
 s_{R,\mathrm{tu}}(\Delta,g).
 \label{eq:plugin-moments}
 \end{align}
-In particular, \(\widehat D\) is observable and targets \(D=\operatorname{Cov}_R\{\tau(X),g(X)\}\) without observing \(\tau(X)\).
+In particular, $\widehat D$ is observable and targets $D=\operatorname{Cov}_R\{\tau(X),g(X)\}$ without observing $\tau(X)$.
 
 When the denominators are stable, the population-orthogonality axis plug-in is
 \begin{align}
@@ -64,7 +69,7 @@ The empirical joint minimizer sets
 &=
 \widehat A\widehat B-\widehat E^2
 \end{align}
-and, when \(\widehat d>0\), uses
+and, when $\widehat d>0$, uses
 \begin{align}
 \widehat\lambda_{\mathrm{joint}}
 &=
@@ -79,9 +84,9 @@ and, when \(\widehat d>0\), uses
 }{\widehat d}.
 \label{eq:joint-plugin}
 \end{align}
-Equations~\eqref{eq:axis-plugin} and \eqref{eq:joint-plugin} differ in finite samples because population orthogonality does not make \(\widehat E\) exactly zero. The sample moments are unbiased for the corresponding fixed-score moments, but the nonlinear coefficient ratios are not unbiased estimators of the oracle coefficients.
+Equations~\eqref{eq:axis-plugin} and \eqref{eq:joint-plugin} differ in finite samples because population orthogonality does not make $\widehat E$ exactly zero. The sample moments are unbiased for the corresponding fixed-score moments, but the nonlinear coefficient ratios are not unbiased estimators of the oracle coefficients.
 
-Prespecify a compact feasible set \(\mathcal C\) and thresholds \(t_A,t_B,t_d>0\). If \(\widehat A\leq t_A\), set \(\widehat\lambda=0\). If \(\widehat B\leq t_B\), set \(\widehat\omega=0\). If \(\widehat d\leq t_d\), do not divide by \(\widehat d\); use the declared axis fallback or solve the constrained quadratic program
+Prespecify a compact feasible set $\mathcal C$ and thresholds $t_A,t_B,t_d>0$. If $\widehat A\leq t_A$, set $\widehat\lambda=0$. If $\widehat B\leq t_B$, set $\widehat\omega=0$. If $\widehat d\leq t_d$, do not divide by $\widehat d$; use the declared axis fallback or solve the constrained quadratic program
 \begin{align}
 \widehat\beta
 &\in
@@ -108,14 +113,14 @@ where
 \widehat C\\-\widehat D
 \end{pmatrix}.
 \end{align}
-The axis version replaces \(\widehat E\) by zero. Coordinatewise clipping has a closed form only for that diagonal version and a rectangular \(\mathcal C\).
+The axis version replaces $\widehat E$ by zero. Coordinatewise clipping has a closed form only for that diagonal version and a rectangular $\mathcal C$.
 
 \subsection{Exact three-way honest ATE algorithm}
 
 The exact adaptive algorithm uses mutually independent nuisance-training, coefficient-tuning, and final-evaluation blocks from both sources.
 
 \begin{enumerate}[label=\arabic*.]
-\item Fit \(\widehat\mu_R,\widehat\mu_O,g\) using only the nuisance-training blocks. Under unequal covariate marginals, the exact algorithm uses the true \(r\); a separately fitted \(\widehat r\) belongs to the approximate regime described below.
+\item Fit $\widehat\mu_R,\widehat\mu_O,g$ using only the nuisance-training blocks. Under unequal covariate marginals, the exact algorithm uses the true $r$; a separately fitted $\widehat r$ belongs to the approximate regime described below.
 \item Score the independent tuning blocks, compute \eqref{eq:plugin-moments}, apply the prespecified thresholds, and select either \eqref{eq:axis-plugin}, \eqref{eq:joint-plugin}, or \eqref{eq:plugin-qp}.
 \item Hold every fitted function and selected coefficient fixed. On the untouched final blocks, report
 \begin{align}
@@ -165,7 +170,7 @@ and define
 
 \begin{proposition}[Exact fixed-selected-coefficient variance estimation]
 \label{prop:honest-variance}
-Under the conditions of Theorem~\ref{thm:ate-exact-r}, assume \(n,N\geq2\). Conditional on the nuisance-training and coefficient-tuning blocks, the selected coefficients are fixed, the final estimator is exactly unbiased, and
+Under the conditions of Theorem~\ref{thm:ate-exact-r}, assume $n,N\geq2$. Conditional on the nuisance-training and coefficient-tuning blocks, the selected coefficients are fixed, the final estimator is exactly unbiased, and
 \begin{align}
 \mathbb E(\widehat V_{\mathrm{ev}}\mid\mathcal F)
 &=
@@ -176,7 +181,7 @@ Under the conditions of Theorem~\ref{thm:ate-exact-r}, assume \(n,N\geq2\). Cond
 
 \begin{theorem}[Conditional central limit theorem and Wald inference]
 \label{thm:honest-inference}
-Under Proposition~\ref{prop:honest-variance}, suppose additionally that \(n,N\to\infty\), \(n/N\to\kappa\in[0,\infty)\), the centered final-score arrays satisfy a conditional Lindeberg condition. A sufficient condition is a uniform conditional \((2+\delta)\)-moment bound for some \(\delta>0\). Assume also that
+Under Proposition~\ref{prop:honest-variance}, suppose additionally that $n,N\to\infty$, $n/N\to\kappa\in[0,\infty)$, the centered final-score arrays satisfy a conditional Lindeberg condition. A sufficient condition is a uniform conditional $(2+\delta)$-moment bound for some $\delta>0$. Assume also that
 \begin{align}
 n\operatorname{Var}(\widehat\theta_r\mid\mathcal F)
 &\to
@@ -196,27 +201,27 @@ and
 z_{1-\alpha/2}\sqrt{\widehat V_{\mathrm{ev}}}
 \label{eq:honest-wald}
 \end{align}
-has asymptotic coverage \(1-\alpha\).
+has asymptotic coverage $1-\alpha$.
 \end{theorem}
 
 Proposition~\ref{prop:honest-variance} is a finite-sample variance statement. Theorem~\ref{thm:honest-inference} is a separate coverage statement and uses the conditional Lindeberg--Feller theorem plus consistency of the two sample variances. Variance unbiasedness alone does not imply coverage.
 
 \subsection{Estimated density ratio}
 
-Replacing \(r\) by an independently trained \(\widehat r\) creates the exact conditional drift
+Replacing $r$ by an independently trained $\widehat r$ creates the exact conditional drift
 \begin{align}
 b_{\mathcal F}
 &=
 \mathbb E_O[\{\widehat r(X)-r(X)\}g(X)],
 \label{eq:ratio-drift}
 \end{align}
-Let \(h_n=(\widehat r-r)g\). Then
+Let $h_n=(\widehat r-r)g$. Then
 \begin{align}
 \mathbb E(\widehat\theta_{\widehat r}\mid\mathcal F)
 &=
 \theta+\widehat\omega b_{\mathcal F}.
 \end{align}
-Exact conditional unbiasedness therefore requires \(\widehat\omega b_{\mathcal F}=0\). In a negligible-drift regime, an evaluation-only first-order variance calculation is valid if
+Exact conditional unbiasedness therefore requires $\widehat\omega b_{\mathcal F}=0$. In a negligible-drift regime, an evaluation-only first-order variance calculation is valid if
 \begin{align}
 \sqrt n\,\widehat\omega b_{\mathcal F}
 &=o_p(1),
@@ -227,7 +232,7 @@ Exact conditional unbiasedness therefore requires \(\widehat\omega b_{\mathcal F
 &=o_p(1).
 \label{eq:ratio-negligible}
 \end{align}
-If \(n/N=O(1)\), the second condition follows from \(|\widehat\omega|\|h_n\|_{L_2(P_O)}=o_p(1)\).
+If $n/N=O(1)$, the second condition follows from $|\widehat\omega|\|h_n\|_{L_2(P_O)}=o_p(1)$.
 If ratio estimation has a first-order influence-function expansion, its contribution and its covariance with the evaluation scores must be included in the asymptotic variance. The evaluation-only estimator \eqref{eq:honest-variance-estimator} is insufficient in that regime.
 
 \subsection{Cross-fitted reuse is outside the present theory}
@@ -240,7 +245,7 @@ or influence-function analysis that accounts for dependence across folds.
 
 \subsection{Out-of-fold nuisance construction}
 
-Partition the trial indices into folds \(I_{R,1},\ldots,I_{R,K}\) and the observational indices into folds \(I_{O,1},\ldots,I_{O,K}\). For fold \(k\), fit \(\widehat\mu_R^{(-k)}\) without \(I_{R,k}\) and fit \(\widehat\mu_O^{(-k)}\) without \(I_{O,k}\). Use the same observation-trained function
+Partition the trial indices into folds $I_{R,1},\ldots,I_{R,K}$ and the observational indices into folds $I_{O,1},\ldots,I_{O,K}$. For fold $k$, fit $\widehat\mu_R^{(-k)}$ without $I_{R,k}$ and fit $\widehat\mu_O^{(-k)}$ without $I_{O,k}$. Use the same observation-trained function
 \begin{align}
 g^{(-k)}(x)
 &=
@@ -248,7 +253,7 @@ g^{(-k)}(x)
 -
 \widehat\mu_{O,0}^{(-k)}(x)
 \end{align}
-on both the held-out trial covariates \(I_{R,k}\) and the held-out observational covariates \(I_{O,k}\). On the trial fold, construct
+on both the held-out trial covariates $I_{R,k}$ and the held-out observational covariates $I_{O,k}$. On the trial fold, construct
 \begin{align}
 Z_{0,i}^{(-k)}
 &=
@@ -269,13 +274,13 @@ This construction prevents an observation's own outcome from being used to gener
 
 \subsection{Nested candidate fitting}
 
-Let \(\mathcal G\) be a prespecified finite set of candidate tuning pairs. For each \((\lambda,\omega)\in\mathcal G\), train a candidate CATE learner \(t_{\lambda,\omega}\) using only the candidate-training portion of the data. If \(\omega\in[0,1)\) and the learner is linear in its fitted values or sieve coefficients, the completed representation \eqref{eq:completed-loss} may be used. For \(\omega=1\), for \(\omega\notin[0,1]\), or for a constrained or penalized learner, optimize and record the original quadratic \eqref{eq:dr-fusion-loss}.
+Let $\mathcal G$ be a prespecified finite set of candidate tuning pairs. For each $(\lambda,\omega)\in\mathcal G$, train a candidate CATE learner $t_{\lambda,\omega}$ using only the candidate-training portion of the data. If $\omega\in[0,1)$ and the learner is linear in its fitted values or sieve coefficients, a completed-square representation of Equation~\eqref{eq:dr-fusion-loss} may be used. For $\omega=1$, for $\omega\notin[0,1]$, or for a constrained or penalized learner, optimize and record the original quadratic \eqref{eq:dr-fusion-loss}.
 
 Tuning requires an outer validation split that is not used to fit the candidate, its nuisance functions, or its tuning-dependent preprocessing. Reusing the same outcomes to construct a candidate and rank that candidate invalidates the held-out risk identity.
 
 \subsection{A common-reference validation score}
 
-Let \(c\) index a candidate function \(t_c\). Choose one reference coefficient \(\lambda_{\mathrm{ref}}\) and one shared set of nuisance functions before comparing candidates. On an independent validation sample, define
+Let $c$ index a candidate function $t_c$. Choose one reference coefficient $\lambda_{\mathrm{ref}}$ and one shared set of nuisance functions before comparing candidates. On an independent validation sample, define
 \begin{align}
 \widehat R_c
 &=
@@ -299,7 +304,7 @@ Let \(c\) index a candidate function \(t_c\). Choose one reference coefficient \
 
 \begin{proposition}[Common-noise validation identity]
 \label{prop:validation}
-Suppose every \(t_c\) is fixed independently of the validation samples, and all candidates share the same \(\lambda_{\mathrm{ref}}\) and the same validation nuisance functions. Then
+Suppose every $t_c$ is fixed independently of the validation samples, and all candidates share the same $\lambda_{\mathrm{ref}}$ and the same validation nuisance functions. Then
 \begin{align}
 \mathbb E(\widehat R_c)
 &=
@@ -316,10 +321,10 @@ Q(\lambda_{\mathrm{ref}}).
 Assumption~\ref{ass:covariate} cancels the last two expectations in \eqref{eq:validation-score}. Proposition~\ref{prop:cate-target}, applied with the shared reference pseudo-outcome, gives \eqref{eq:validation-identity}.
 \end{proof}
 
-The additive noise term in \eqref{eq:validation-identity} is common across candidates only when \(\lambda_{\mathrm{ref}}\) and the nuisance functions are shared. If each candidate is scored with its own reference coefficient or candidate-specific nuisance fit, the additive term can change with \(c\), and score differences need not equal CATE-risk differences.
+The additive noise term in \eqref{eq:validation-identity} is common across candidates only when $\lambda_{\mathrm{ref}}$ and the nuisance functions are shared. If each candidate is scored with its own reference coefficient or candidate-specific nuisance fit, the additive term can change with $c$, and score differences need not equal CATE-risk differences.
 
 \subsection{Diagnostics and reporting}
 
-A reproducible implementation should report the trial and observational fold assignments, the propensity bounds, the candidate grid, the function class, the penalty and its scaling, and every denominator used in an oracle-inspired coefficient. Near-zero estimates of \(\operatorname{Var}(\Delta)\), \(\operatorname{Var}\{g(X)\}\), or \(\operatorname{Var}(G_t)\) require a prespecified fallback such as \(\lambda=0\) or \(\omega=0\). Values of \(\omega\) outside \([0,1]\) require an explicit curvature check of the original empirical quadratic.
+A reproducible implementation should report the trial and observational fold assignments, the propensity bounds, the candidate grid, the function class, the penalty and its scaling, and every denominator used in an oracle-inspired coefficient. Near-zero estimates of $\operatorname{Var}(\Delta)$, $\operatorname{Var}\{g(X)\}$, or $\operatorname{Var}(G_t)$ require a prespecified fallback such as $\lambda=0$ or $\omega=0$. Values of $\omega$ outside $[0,1]$ require an explicit curvature check of the original empirical quadratic.
 
 Validation should report both the selected candidate and the randomized-trial-only comparator. This comparison is empirical rather than guaranteed. The exact honest-split propositions explain the intended signal and noise channels; extending them to overlapping cross-fitted reuse is outside the present theory.

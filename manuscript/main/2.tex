@@ -4,131 +4,114 @@
 \subsection{Prediction-powered inference and PPI++}
 \label{sec:ppi-background}
 
-Let \((X_i,Y_i)\), \(i=1,\ldots,n\), be labeled pairs and let \(\widetilde X_j\), \(j=1,\ldots,N\), be unlabeled covariates. Suppose a fixed predictor supplies \(f(X_i)\) and \(f(\widetilde X_j)\). For \(\omega\in\mathbb R\), the PPI++ estimator \citep{angelopoulos2024ppipp} of the labeled-population mean is
+Let $(X_i,Y_i)$, $i=1,\ldots,n$, be labeled pairs and let $\widetilde X_j$, $j=1,\ldots,N$, be unlabeled covariates. Let $f$ denote the predictor function, which yields $\{f(X_i): i=1,\cdots,n\}$ and $\{f(\widetilde X_j): j =1,\cdots,N\}$. For $\omega\in\mathbb R$, the [(PPI++) - (make ++ small)] estimator \citep{angelopoulos2024ppipp} of the labeled-population mean is
 \begin{align}
-\widehat\mu_{\mathrm{PPI++}}(\omega)
-&\triangleq
-\frac1n\sum_{i=1}^nY_i
-+\omega\left\{
-\frac1N\sum_{j=1}^N f(\widetilde X_j)
--\frac1n\sum_{i=1}^n f(X_i)
-\right\}.
+	\widehat\mu_{\mathrm{PPI++}}(\omega)
+	&\triangleq
+	\frac1n\sum_{i=1}^nY_i
+	+\omega\left\{
+	\frac1N\sum_{j=1}^N f(\widetilde X_j)
+	-\frac1n\sum_{i=1}^n f(X_i)
+	\right\}.
 \end{align}
-When labeled and unlabeled covariates share a marginal law and the two samples are independent, the expression in braces has mean zero for every fixed predictor \(f\). PPI++ selects \(\omega\) to control how strongly this mean-zero prediction difference enters the estimator. Our construction retains this control-variate role and introduces a separate outcome-regression blending coefficient only after defining the RCT-valid score.
-When the predictions are informative, this adaptive control variate can reduce
-variance relative to the labeled-only estimator. The gain is not universal:
-an uninformative prediction or an unstable estimated coefficient can provide no
-improvement and can be worse in a realized finite sample.
+[(Under the assumption that the labeled pairs and unlabeled pairs are independent, $\widehat\mu_{\mathrm{PPI++}}(\omega)$ is an unbiased estimates for $\mathbb{E}[Y]$.) - (polish)] PPI++ selects $\omega$ to control how strongly this mean-zero prediction difference enters the estimator. [(Our construction retains this control-variate role and introduces a separate outcome-regression blending coefficient only after defining the RCT-valid score.) - (delete)] [(When the predictions using the unlabeled covariates $f(\widetilde X_j)$ are informative, the PPI estimator can reduce variance relative to the labeled-only estimator. ) - (polish)][(The gain is not universal: an uninformative prediction or an unstable estimated coefficient can provide no improvement and can be worse in a realized finite sample.) - (delete)]
 
 \subsection{RCT--OBS problem setting and notation}
 \label{sec:rct-obs-setting}
 
-Let \(\mathcal K\triangleq\{\mathrm{eval},\mathrm{nuis},\mathrm{tune}\}\). For
-each source \(S\in\{R,O\}\) and role \(k\in\mathcal K\), observe
+Let $\mathcal K\triangleq\{\mathrm{eval},\mathrm{nuis},\mathrm{tune}\}$ [(denote the set of the role of the samples) - (polish)]. For each source $S\in\{R,O\}$ [((where $R,O$ stands for the observational and randomized samples, respectively)) - (I added this. Check)] and role $k\in\mathcal K$, we define
 \begin{align}
-D_S^k
-&\triangleq
-\{V_{S,i}^k=(X_{S,i}^k,A_{S,i}^k,Y_{S,i}^k):i=1,\ldots,n_S^k\}
-\sim P_S^{\otimes n_S^k}.
-\label{eq:role-indexed-samples}
+	D_S^k &\triangleq
+	\{V_{S,i}^k=(X_{S,i}^k,A_{S,i}^k,Y_{S,i}^k):i=1,\ldots,n_S^k\}
+	\sim P_S^{\otimes n_S^k},
+	\label{eq:role-indexed-samples}
 \end{align}
-Here \(X\) takes values in the covariate space \(\mathcal X\),
-\(A\in\{0,1\}\) is treatment, and \(Y\) is the observed outcome. For each
-\(S\in\{R,O\}\), the datasets \(D_S^{\mathrm{eval}}\),
-\(D_S^{\mathrm{nuis}}\), and \(D_S^{\mathrm{tune}}\) are used for final
-evaluation, nuisance and density-ratio fitting, and coefficient or candidate
-tuning, respectively. Set \(n\triangleq n_R^{\mathrm{eval}}\) and
-\(N\triangleq n_O^{\mathrm{eval}}\), and define
-\(\mathbb P_{R,n}h\triangleq n^{-1}\sum_i h(V_{R,i}^{\mathrm{eval}})\) and
-\(\mathbb P_{O,N}h\triangleq N^{-1}\sum_j h(V_{O,j}^{\mathrm{eval}})\).
-Every displayed moment is finite; square-integrability and stronger moment
-conditions are stated locally when variance estimation or normal-approximation inference
-requires them.
+[(as the observational/interventional samples with the role $k$) - (I added this)]. Here $X$ takes values in the covariate space $\mathcal X$, $A\in\{0,1\}$ is treatment, and $Y$ is the observed outcome. For each $S\in\{R,O\}$, the datasets $D_S^{\mathrm{eval}}$, $D_S^{\mathrm{nuis}}$, and $D_S^{\mathrm{tune}}$ are used for final evaluation, nuisance and density-ratio fitting, and coefficient or candidate tuning, respectively. 
 
-Let \(Y(1)\) and \(Y(0)\) denote potential outcomes. The RCT-population conditional and average treatment effects are
+Set $n\triangleq n_R^{\mathrm{eval}}$ and $N\triangleq n_O^{\mathrm{eval}}$, and define $\mathbb P_{R,n}h\triangleq n^{-1}\sum_i h(V_{R,i}^{\mathrm{eval}})$ and $\mathbb P_{O,N}h\triangleq N^{-1}\sum_j h(V_{O,j}^{\mathrm{eval}})$. Every displayed moment is finite; square-integrability and stronger moment conditions are stated locally when variance estimation or normal-approximation inference requires them.
+
+Let $Y(1)$ and $Y(0)$ denote potential outcomes. The RCT-population conditional and average treatment effects are
 \begin{align}
-\tau(x)
-&\triangleq\mathbb E_R\{Y(1)-Y(0)\mid X=x\},
-&
-\theta
-&\triangleq\mathbb E_R\{\tau(X)\}.
+	\tau(x) &\triangleq\mathbb E_R\{Y(1)-Y(0)\mid X=x\},
+	\\ 
+	\theta &\triangleq\mathbb E_R\{\tau(X)\}.
 \end{align}
 
 \begin{assumption}[Trial identification]
 \label{ass:trial}
-Consistency holds, \(\{Y(0),Y(1)\}\perp A\mid X\) under \(P_R\), and the known trial propensity \(e(x)\triangleq P_R(A=1\mid X=x)\) satisfies \(\epsilon<e(X)<1-\epsilon\) almost surely for a constant \(\epsilon>0\).
+	The following assumptions hold: 
+	\begin{enumerate}
+		\item Consistency holds; $Y = Y(A)$;
+		\item $\{Y(0),Y(1)\}\perp A\mid X$ under the interventional distribution $P_R$; 
+		\item The trial propensity $e(x)\triangleq P_R(A=1\mid X=x)$ is known and satisfies the positivity: $\epsilon<e(X)<1-\epsilon$ almost surely for a constant $\epsilon>0$.
+	\end{enumerate}
 \end{assumption}
-
-We study both the common-covariate regime \(P_R^X=P_O^X\), formalized in Assumption~\ref{ass:common-marginal}, and the more general covariate-shift regime \(P_R^X\neq P_O^X\), formalized in Assumption~\ref{ass:exact-transport}.
+We study both the common-covariate regime $P_R^X=P_O^X$, formalized in Assumption~\ref{ass:common-marginal}, and the more general covariate-shift regime $P_R^X\neq P_O^X$, formalized in Assumption~\ref{ass:exact-transport}.
 
 \begin{definition}[Target-to-source density ratio]
 \label{def:true-density-ratio}
-Whenever \(P_R^X\ll P_O^X\), define the target-to-source density ratio by
-\begin{align*}
-r_0(x)
-&\triangleq
-\frac{dP_R^X}{dP_O^X}(x).
-\end{align*}
-It is the Radon--Nikodym derivative that transports an OBS covariate expectation
-to the RCT covariate population.
+	Whenever $P_R^X\ll P_O^X$, define the target-to-source density ratio by
+	\begin{align*}
+		r_0(x) &\triangleq \frac{dP_R^X}{dP_O^X}(x).
+	\end{align*}
+	It is the Radon--Nikodym derivative that transports an OBS covariate expectation
+	to the RCT covariate population.
 \end{definition}
 
 \enlargethispage{\baselineskip}
 \Needspace{5\baselineskip}
 \begin{assumption}[Common covariate marginal]
-\label{ass:common-marginal}
-\label{ass:covariate}
-The trial and observational covariates have the same marginal law, \(P_R^X=P_O^X\). This assumption does not equate the treatment or outcome mechanisms across sources, and the observational treatment contrast may remain confounded.
-In this regime, Definition~\ref{def:true-density-ratio} gives
-\(r_0(x)=1\) for \(P_O^X\)-almost every \(x\).
+	\label{ass:common-marginal}
+	\label{ass:covariate}
+	The trial and observational covariates have the same marginal law, $P_R^X=P_O^X$. This assumption does not equate the treatment or outcome mechanisms across sources, and the observational treatment contrast may remain confounded. In this regime, Definition~\ref{def:true-density-ratio} gives $r_0(x)=1$ for $P_O^X$-almost every $x$.
 \end{assumption}
 
 \begin{assumption}[Covariate shift and support overlap]
 \label{ass:exact-transport}
-Under covariate shift, \(P_R^X\ll P_O^X\), so the RCT covariate population has
-no support outside the OBS covariate population. Definition~\ref{def:true-density-ratio}
-therefore defines \(r_0\). This assumption establishes existence of the ratio;
-it does not assert that \(r_0\) is known or exactly estimated.
+	Under covariate shift, $P_R^X\ll P_O^X$, so the RCT covariate population has
+	no support outside the OBS covariate population. Definition~\ref{def:true-density-ratio}
+	therefore defines $r_0$. This assumption establishes existence of the ratio;
+	it does not assert that $r_0$ is known or exactly estimated.
 \end{assumption}
 
-Assumptions~\ref{ass:common-marginal} and \ref{ass:exact-transport} describe alternative covariate regimes, not cumulative restrictions. Under Assumption~\ref{ass:common-marginal}, no transport weighting is needed and we set \(r\triangleq1\). When the covariate marginals differ, Assumption~\ref{ass:exact-transport} is needed to convert OBS covariate expectations into expectations under the RCT population. Neither regime assumes that the OBS treatment contrast is causal.
-Exact-oracle results below use \(r\triangleq r_0\). Feasible results may replace
-\(r_0\) by an evaluation-independent estimate \(\widehat r\) under the
+Assumptions~\ref{ass:common-marginal} and \ref{ass:exact-transport} describe alternative covariate regimes, not cumulative restrictions. Under Assumption~\ref{ass:common-marginal}, no transport weighting is needed and we set $r\triangleq1$. When the covariate marginals differ, Assumption~\ref{ass:exact-transport} is needed to convert OBS covariate expectations into expectations under the RCT population. Neither regime assumes that the OBS treatment contrast is causal.
+Exact-oracle results below use $r\triangleq r_0$. Feasible results may replace
+$r_0$ by an evaluation-independent estimate $\widehat r$ under the
 conditions in Section~\ref{sec:ratio-estimation}.
 
 \begin{assumption}[Honest sample separation]
 \label{ass:honest-separation}
-The nuisance samples \(D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}\), the tuning
-samples \(D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}\), and the evaluation samples
-\(D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}\) are mutually independent. Nuisance
+The nuisance samples $D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}$, the tuning
+samples $D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}$, and the evaluation samples
+$D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}$ are mutually independent. Nuisance
 and density-ratio estimators use only
-\(D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}\). Coefficients and candidate rules
-use only \(D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}\) after the nuisance objects
+$D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}$. Coefficients and candidate rules
+use only $D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}$ after the nuisance objects
 are fixed. If candidate fitting and validation both use tuning data, their
 assignments are prespecified and disjoint. Final point estimation, variance
 estimation, and normal-approximation inference use only
-\(D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}\), after every learned object and
+$D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}$, after every learned object and
 split assignment has been fixed.
 \end{assumption}
 
-Throughout, every \(P_R\)- or \(P_O\)-expectation, covariance, variance, and
+Throughout, every $P_R$- or $P_O$-expectation, covariance, variance, and
 exact variance result that involves a learned object is conditional on the
 realized nuisance and tuning datasets, split assignments, and pre-evaluation
 algorithmic randomness. These objects are held fixed, and only the evaluation
 observations remain random. We suppress this conditioning in the notation.
 
-For \(S\in\{R,O\}\) and \(a\in\{0,1\}\), define the population outcome-regression target \(\mu_{S,a}:\mathcal X\to\mathbb R\) by
+For $S\in\{R,O\}$ and $a\in\{0,1\}$, define the population outcome-regression target $\mu_{S,a}:\mathcal X\to\mathbb R$ by
 \begin{align*}
 \mu_{S,a}(x)
 &\triangleq
 \mathbb E_S[Y\mid X=x,A=a].
 \end{align*}
-For each \(S\in\{R,O\}\) and \(a\in\{0,1\}\), let
-\(\widehat\mu_{S,a}:\mathcal X\to\mathbb R\) denote a
+For each $S\in\{R,O\}$ and $a\in\{0,1\}$, let
+$\widehat\mu_{S,a}:\mathcal X\to\mathbb R$ denote a
 fixed pre-evaluation predictor of the corresponding
-population regression \(\mu_{S,a}\).  The RCT predictor is trained only on
-\(D_R^{\mathrm{nuis}}\), and the OBS predictor is trained only on
-\(D_O^{\mathrm{nuis}}\). No correctness assumption is imposed on either fitted
+population regression $\mu_{S,a}$.  The RCT predictor is trained only on
+$D_R^{\mathrm{nuis}}$, and the OBS predictor is trained only on
+$D_O^{\mathrm{nuis}}$. No correctness assumption is imposed on either fitted
 predictor. Define
 \begin{align*}
 \widehat\mu_R
@@ -145,12 +128,12 @@ Then define the fitted observational treatment-effect prediction
 &\triangleq\widehat\mu_{O,1}(x)-\widehat\mu_{O,0}(x),
 \label{eq:obs-effect-prediction}
 \end{align}
-For compact formulas below, write \(g\triangleq\widehat g\); this shorthand always
+For compact formulas below, write $g\triangleq\widehat g$; this shorthand always
 denotes the honestly fitted OBS prediction, not an identified causal effect.
 
-For a functional \(F\) of a function-valued argument \(u\), let \(h\) be an
-admissible direction such that \(u+\varepsilon h\) remains in the domain of
-\(F\) for all sufficiently small \(|\varepsilon|\). Whenever the derivative
+For a functional $F$ of a function-valued argument $u$, let $h$ be an
+admissible direction such that $u+\varepsilon h$ remains in the domain of
+$F$ for all sufficiently small $|\varepsilon|$. Whenever the derivative
 exists, define the Gateaux derivative by
 \begin{align}
 D_uF(u)[h]
@@ -161,54 +144,62 @@ D_uF(u)[h]
 
 \begin{definition}[RCT-valid AIPW score]
 \label{def:rct-aipw-score}
-Let \(q\triangleq(q_0,q_1)\) be a fixed pair of measurable functions from
-\(\mathcal X\) to \(\mathbb R\). Define
-\begin{align}
-\varphi(V;q)
-&\triangleq q_1(X)-q_0(X)
-+\frac{A}{e(X)}\{Y-q_1(X)\}
--\frac{1-A}{1-e(X)}\{Y-q_0(X)\}.
-\label{eq:aipw-score}
-\end{align}
+	Let $q\triangleq(q_0,q_1)$ be a fixed pair of measurable functions from
+	$\mathcal X$ to $\mathbb R$. Define
+	\begin{align}
+		\varphi(V;q)
+		&\triangleq q_1(X)-q_0(X)
+		+\frac{A}{e(X)}\{Y-q_1(X)\}
+		-\frac{1-A}{1-e(X)}\{Y-q_0(X)\}.
+		\label{eq:aipw-score}
+	\end{align}
 \end{definition}
+This score gives a valid causal estimate: 
 \begin{proposition}[RCT-validity for an arbitrary outcome regression]
-\label{prop:pseudo-validity-active}
-\label{prop:pseudo-validity}
-Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation}, every fixed
-\(q\) with finite first moments satisfies
-\begin{align}
-\mathbb E_R\{\varphi(V;q)\mid X\}
-&=\tau(X).
-\label{eq:pseudo-valid}
-\end{align}
+	\label{prop:pseudo-validity-active}
+	\label{prop:pseudo-validity}
+	Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation}, every fixed
+	$q$ with finite first moments satisfies
+	\begin{align}
+		\mathbb E_R\{\varphi(V;q)\mid X\}
+		&=\tau(X).
+		\label{eq:pseudo-valid}
+	\end{align}
 \end{proposition}
+
 \begin{definition}[Fusion score]
 \label{def:fusion-score}
-For \(\lambda\in\mathbb R\), define
-\begin{align}
-\widehat\mu_\lambda
-&\triangleq(1-\lambda)\widehat\mu_R+\lambda\widehat\mu_O,
-\notag\\
-Z_\lambda
-&\triangleq\varphi(V;\widehat\mu_\lambda)
-=Z_0+\lambda\Delta,
-\notag\\
-\Delta
-&\triangleq Z_1-Z_0.
-\end{align}
+	For $\lambda\in\mathbb R$, define
+	\begin{align}
+		\widehat{\mu}_{\lambda}
+		&\triangleq (1-\lambda)\widehat\mu_R+\lambda\widehat\mu_O,
+		\\
+		Z_0
+		&\triangleq \varphi(V;\widehat\mu_R),
+		\\
+		Z_1
+		&\triangleq \varphi(V;\widehat\mu_O),
+		\\
+		\Delta
+		&\triangleq Z_1-Z_0,
+		\\
+		Z_{\lambda}
+		&\triangleq \varphi(V;\widehat\mu_\lambda)
+		=Z_0+\lambda\Delta.
+	\end{align}
 \end{definition}
 Equation~\eqref{eq:pseudo-valid} implies
-\(\mathbb E_R(Z_\lambda\mid X)=\tau(X)\) and
-\(\mathbb E_R(\Delta\mid X)=0\). The observational contrast \(g\)
-is the shorthand for the fitted function \(\widehat g\) in
+$\mathbb E_R(Z_\lambda\mid X)=\tau(X)$ and
+$\mathbb E_R(\Delta\mid X)=0$. The observational contrast $g$
+is the shorthand for the fitted function $\widehat g$ in
 Equation~\eqref{eq:obs-effect-prediction}; it is used only as a prediction and
-need not equal \(\tau\).
+need not equal $\tau$.
 
 \begin{definition}[RCT-only AIPW estimator]
 \label{def:rct-only-aipw}
-Let \(\mu_R\triangleq(\mu_{R,0},\mu_{R,1})\). Setting \(q=\mu_R\) in
+Let $\mu_R\triangleq(\mu_{R,0},\mu_{R,1})$. Setting $q=\mu_R$ in
 Definition~\ref{def:rct-aipw-score} gives the oracle RCT AIPW score. Its
-nuisance-sample fitted counterpart is \(Z_0=\varphi(V;\widehat\mu_R)\). Define
+nuisance-sample fitted counterpart is $Z_0=\varphi(V;\widehat\mu_R)$. Define
 the RCT-only AIPW estimator on the evaluation sample by
 \begin{align*}
 \widehat\theta_{\mathrm{AIPW},R}
@@ -221,8 +212,8 @@ the RCT-only AIPW estimator on the evaluation sample by
 \begin{corollary}[RCT-only AIPW recovery]
 \label{cor:rct-only-aipw}
 Under Assumptions~\ref{ass:trial} and \ref{ass:honest-separation},
-\(\widehat\theta_{\mathrm{AIPW},R}\) is unbiased for \(\theta\) over
-\(D_R^{\mathrm{eval}}\).
+$\widehat\theta_{\mathrm{AIPW},R}$ is unbiased for $\theta$ over
+$D_R^{\mathrm{eval}}$.
 \end{corollary}
 
 \subsection{Existing data-fusion estimators}
@@ -251,8 +242,8 @@ real-world data for prespecified effect modifiers. The confounding-function
 approach of \citet{yang2025confounding} jointly models an HTE function and an
 observational confounding function under explicit identification conditions.
 
-Our construction differs at the fusion object. The coefficient \(\lambda\)
-changes the outcome regression inside an RCT-valid score, whereas \(\omega\)
+Our construction differs at the fusion object. The coefficient $\lambda$
+changes the outcome regression inside an RCT-valid score, whereas $\omega$
 scales a transported mean-zero control variate built from the fitted prediction
-\(\widehat g\). This PPI-style use of prediction does not combine two causal
+$\widehat g$. This PPI-style use of prediction does not combine two causal
 effect estimates and does not require the OBS contrast to equal the CATE.

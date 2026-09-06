@@ -7,8 +7,8 @@ independent RCT and OBS evaluation observations are used.
 
 \subsection{Conditional validity of the trial pseudo-outcome}
 
-Fix \(q=(q_0,q_1)\) without using the evaluation samples and condition on
-\(X\). Under trial randomization, consistency, and honest sample separation,
+Fix $q=(q_0,q_1)$ without using the evaluation samples and condition on
+$X$. Under trial randomization, consistency, and honest sample separation,
 \begin{align}
 \mathbb E_R\left[\frac{A}{e(X)}\{Y-q_1(X)\}\mid X\right]
 &=\mathbb E_R\{Y(1)-q_1(X)\mid X\},
@@ -16,10 +16,10 @@ Fix \(q=(q_0,q_1)\) without using the evaluation samples and condition on
 \mathbb E_R\left[\frac{1-A}{1-e(X)}\{Y-q_0(X)\}\mid X\right]
 &=\mathbb E_R\{Y(0)-q_0(X)\mid X\}.
 \end{align}
-Substituting these two equalities into the definition of \(\varphi\) cancels the
+Substituting these two equalities into the definition of $\varphi$ cancels the
 two fitted regressions and yields
-\(\mathbb E_R\{\varphi(V;q)\mid X\}=\tau(X)\).  Applying the identity to
-\(q=\widehat\mu_R\), \(q=\widehat\mu_O\), and their affine blend gives
+$\mathbb E_R\{\varphi(V;q)\mid X\}=\tau(X)$.  Applying the identity to
+$q=\widehat\mu_R$, $q=\widehat\mu_O$, and their affine blend gives
 \begin{align}
 \mathbb E_R(Z_\lambda\mid X)&=\tau(X),
 &
@@ -29,7 +29,7 @@ two fitted regressions and yields
 \subsection{Proof of Corollary~\ref{cor:rct-only-aipw}}
 
 Apply Equation~\eqref{eq:pseudo-valid} with the nuisance-sample fitted pair
-\(q=\widehat\mu_R\), average over \(D_R^{\mathrm{eval}}\), and use
+$q=\widehat\mu_R$, average over $D_R^{\mathrm{eval}}$, and use
 iterated expectation. This gives
 \begin{align*}
 \mathbb E\{\widehat\theta_{\mathrm{AIPW},R}\}
@@ -38,274 +38,146 @@ iterated expectation. This gives
 
 \subsection{Proof of Proposition~\ref{prop:ate-nuisance-sensitivity}}
 
-For a pair direction \(h_q=(h_{q,0},h_{q,1})\), direct differentiation gives
+Pseudo-outcome validity and exact transport give
 \begin{align*}
-D_qP_R\{\varphi(V;q)\}[h_q]
-&=P_R\left[
-h_{q,1}(X)-h_{q,0}(X)
--\frac{A}{e_0(X)}h_{q,1}(X)
-+\frac{1-A}{1-e_0(X)}h_{q,0}(X)
-\right]
-=0,
+P_R(Z_\lambda)&=\theta,
+&
+P_O(r_0g)&=P_R(g).
 \end{align*}
-because \(P_R(A\mid X)=e_0(X)\). Thus perturbing the fixed outcome
-regression does not change \(\mathbb E_R(Z_\lambda\mid X)=\tau(X)\). For a fitted-prediction path
-\(\widehat g_\varepsilon=\widehat g+\varepsilon u\), exact transport gives
+Substituting these identities into Equation~\eqref{eq:ate-estimator} proves
+Equation~\eqref{eq:ate-exact-target}. For any fixed $\widetilde r$,
 \begin{align*}
-\left.\frac{d}{d\varepsilon}
-\omega\{P_O(r_0\widehat g_\varepsilon)-P_R(\widehat g_\varepsilon)\}
-\right|_{\varepsilon=0}
-&=\omega\{P_O(r_0u)-P_R(u)\}=0.
+\mathbb E\{\widehat\theta_{\widetilde r}(\lambda,\omega)\}-\theta
+&=\omega\{P_O(\widetilde r g)-P_R(g)\}
+\\
+&=\omega P_O\{(\widetilde r-r_0)g\},
 \end{align*}
-For an admissible ratio path \(r_\varepsilon=r_0+\varepsilon h\), differentiation under
-the finite expectation gives
-\begin{align*}
-\left.\frac{d}{d\varepsilon}
-\omega P_O(r_\varepsilon\widehat g)\right|_{\varepsilon=0}
-&=\omega P_O(h\widehat g),
-\end{align*}
-which proves Equation~\eqref{eq:ate-ratio-gateaux}. This derivative is generally
-nonzero because exact transport imposes no general restriction forcing
-\(P_O(h\widehat g)=0\); particular directions or coefficients can still make
-it vanish.
+which proves Equation~\eqref{eq:ate-ratio-drift}.
 
 \subsection{Proof of Theorem~\ref{thm:ate-variance}}
 
-Using \(\mathbb E_R(Z_\lambda)=\theta\) and exact transport,
+Using $\mathbb E_R(Z_\lambda)=\theta$ and exact transport,
 \begin{align}
-\mathbb E_O\{r(X)g(X)\}=\mathbb E_R\{g(X)\},
+\mathbb E_O\{r_0(X)g(X)\}=\mathbb E_R\{g(X)\},
 \end{align}
-the evaluation-sample mean of Equation~\eqref{eq:ate-estimator} is \(\theta\). Rewrite
+the evaluation-sample mean of Equation~\eqref{eq:ate-estimator} is $\theta$. Rewrite
 the centered estimator as
 \begin{align}
-\widehat\theta_r(\lambda,\omega)-\theta
+\widehat\theta_{r_0}(\lambda,\omega)-\theta
 &=
 (\mathbb P_{R,n}-P_R)\{Z_\lambda-\omega g\}
-+(\mathbb P_{O,N}-P_O)\{\omega rg\}.
++(\mathbb P_{O,N}-P_O)\{\omega r_0g\}.
 \end{align}
-This is Equation~\eqref{eq:ate-fixed-error-decomposition} with the fixed
-coefficient \(\omega\) moved inside the second empirical process.
-The two summands are independent because \(D_R^{\mathrm{eval}}\) and
-\(D_O^{\mathrm{eval}}\) are
+The two summands are independent because $D_R^{\mathrm{eval}}$ and
+$D_O^{\mathrm{eval}}$ are
 independent. The variance of
-an empirical mean of \(m\) independent observations is the population variance
-divided by \(m\), which proves Equation~\eqref{eq:ate-variance}.  Unbiased sample
+an empirical mean of $m$ independent observations is the population variance
+divided by $m$, which proves Equation~\eqref{eq:ate-variance}.  Unbiased sample
 variances on the two independent evaluation blocks therefore give the displayed
 fixed-selected-coefficient variance estimator in Section~\ref{sec:ate}. Coverage
 of its Wald interval additionally uses the stated evaluation-sample Lindeberg and
 moment assumptions; variance unbiasedness alone is not a central limit theorem.
 
-Because \(g(X)\) is fixed given \(X\),
-\begin{align*}
-\mathbb E_R\{Z_\lambda-\omega g(X)\mid X\}
-&=\tau(X)-\omega g(X),
-&
-\operatorname{Var}_R\{Z_\lambda-\omega g(X)\mid X\}
-&=\operatorname{Var}_R(Z_\lambda\mid X).
-\end{align*}
-Applying the law of total variance proves Equation~\eqref{eq:ate-within-between}.
-
-\subsection{Proof of Proposition~\ref{prop:ate-variance-quadratic}}
+\subsection{Proof of Corollary~\ref{prop:ate-variance-quadratic}}
 
 Expand the first variance in Equation~\eqref{eq:ate-variance} using
-\(Z_\lambda=Z_0+\lambda\Delta\).  After collecting terms and multiplying by
-\(n\), the coefficient-dependent part is
-\begin{align}
-2C\lambda-2D\omega+A\lambda^2-2E\lambda\omega+B\omega^2,
-\end{align}
-which is \(\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta)\). This proves
-Equation~\eqref{eq:ate-quadratic}. The representation
-\begin{align}
-\begin{pmatrix}u&v\end{pmatrix}\mathbf H_{\mathrm{ATE}}\begin{pmatrix}u\\v\end{pmatrix}
-&=\operatorname{Var}_R(u\Delta-vg)
-+\frac nN v^2\operatorname{Var}_O(rg)
-\end{align}
-proves positive semidefiniteness.
+$Z_\lambda=Z_0+\lambda\Delta$. The interaction coefficient vanishes because
+\begin{align*}
+\operatorname{Cov}_R(\Delta,g)
+&=
+\mathbb E_R\left[
+\{g-\mathbb E_R(g)\}\mathbb E_R(\Delta\mid X)
+\right]
+=0.
+\end{align*}
+Also, since $g$ is a fixed function of $X$,
+\begin{align*}
+D
+&=\operatorname{Cov}_R(Z_0,g)
+=\operatorname{Cov}_R\{\mathbb E_R(Z_0\mid X),g\}
+=\operatorname{Cov}_R\{\tau(X),g(X)\}.
+\end{align*}
+Collecting the remaining terms and multiplying by $n$ gives
+$2C\lambda-2D\omega+A\lambda^2+B\omega^2$, which proves
+Equation~\eqref{eq:ate-quadratic}. Finally, for every $(u,v)$,
+\begin{align*}
+\begin{pmatrix}u&v\end{pmatrix}
+\mathbf H_{\mathrm{ATE}}
+\begin{pmatrix}u\\v\end{pmatrix}
+&=Au^2+Bv^2\geq0,
+\end{align*}
+so $\mathbf H_{\mathrm{ATE}}$ is positive semidefinite.
 
 \subsection{Proof of Proposition~\ref{prop:ate-argmin-equivalence}}
 
 Equation~\eqref{eq:ate-quadratic} is the positive affine transformation
 \begin{align*}
-\operatorname{Var}\{\widehat\theta_r(\boldsymbol\beta)\}
+\operatorname{Var}\{\widehat\theta_{r_0}(\lambda,\omega)\}
 &=\frac1n\operatorname{Var}_R(Z_0)
-+\frac1n\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta),
++\frac1n\mathcal J_{\mathrm{ATE}}(\lambda,\omega),
 \end{align*}
-where \(n>0\). Adding a constant and multiplying by a positive scalar preserve
+where $n>0$. Adding a constant and multiplying by a positive scalar preserve
 the complete argmin set over every feasible set.
 
 \subsection{Proof of Theorem~\ref{thm:joint-oracle}}
 
-If \(AB-E^2>0\), \(\mathbf H_{\mathrm{ATE}}\) is positive definite. The
-first-order condition for \(\mathcal J_{\mathrm{ATE}}\) is
-\(\mathbf H_{\mathrm{ATE}}\boldsymbol\beta=-\boldsymbol\ell\), which has the
-unique
-solution
+When $A,B>0$, the two first-order conditions are
 \begin{align*}
-\boldsymbol\beta_{\mathrm{joint}}^\star
-&=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell
-=
+2C+2A\lambda&=0,
+&
+-2D+2B\omega&=0.
+\end{align*}
+The separated quadratic is strictly convex, so their unique solution is
+$\lambda^\star=-C/A$ and $\omega^\star=D/B$.
+For $\rho>0$, the ridge objective has gradient
+\begin{align*}
 \begin{pmatrix}
-(ED-BC)/(AB-E^2)\\
-(AD-EC)/(AB-E^2)
+2C+2(A+\rho)\lambda\\
+-2D+2(B+\rho)\omega
 \end{pmatrix}.
 \end{align*}
-For \(\rho>0\), the ridge objective has gradient
-\begin{align*}
-\nabla_{\boldsymbol\beta}
-\left\{\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta)
-+\rho\lVert\boldsymbol\beta\rVert_2^2\right\}
-&=2\boldsymbol\ell
-+2(\mathbf H_{\mathrm{ATE}}+\rho I_2)\boldsymbol\beta.
-\end{align*}
-Positive semidefiniteness of \(\mathbf H_{\mathrm{ATE}}\) makes
-\(\mathbf H_{\mathrm{ATE}}+\rho I_2\) positive definite. Setting the gradient
-to zero proves Equation~\eqref{eq:ridge-oracle} and uniqueness.
+Since $A+\rho>0$ and $B+\rho>0$, setting the gradient to zero proves
+Equation~\eqref{eq:ridge-oracle} and uniqueness.
 
-\subsection{Singular and constrained extensions}
+\subsection{Flat directions and compact constraints}
 
-When \(\mathbf H_{\mathrm{ATE}}\) is singular, nonnegativity of the variance quadratic implies
-\(\boldsymbol\ell\in\operatorname{Range}(\mathbf H_{\mathrm{ATE}})\); otherwise a null-space direction
-would make the expression arbitrarily negative.  The complete minimizer set is
-therefore \(-\mathbf H_{\mathrm{ATE}}^+\boldsymbol\ell+\operatorname{Null}(\mathbf H_{\mathrm{ATE}})\).  Continuity of the
-quadratic proves attainment on every prespecified compact feasible set.
-
-For completeness, suppose \(\mathbf H_{\mathrm{ATE}}\) is positive definite and write
-\begin{align*}
-\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta)
-&=2\boldsymbol\ell^\top\boldsymbol\beta
-+\boldsymbol\beta^\top\mathbf H_{\mathrm{ATE}}\boldsymbol\beta,
-&
-\boldsymbol\beta_{\mathrm{joint}}^\star
-&=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell.
-\end{align*}
-Completing the square gives
-\begin{align*}
-\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta)
--\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta_{\mathrm{joint}}^\star)
-&=(\boldsymbol\beta-\boldsymbol\beta_{\mathrm{joint}}^\star)^\top
-\mathbf H_{\mathrm{ATE}}
-(\boldsymbol\beta-\boldsymbol\beta_{\mathrm{joint}}^\star).
-\end{align*}
-The norm induced by a positive-definite matrix is equivalent to the Euclidean
-norm.  Hence this distance is coercive and strictly convex.  On every nonempty
-closed convex feasible set, it therefore attains a unique minimum, namely the
-\(\mathbf H_{\mathrm{ATE}}\)-metric projection of
-\(\boldsymbol\beta_{\mathrm{joint}}^\star\).
-
-If \(A=\operatorname{Var}_R(\Delta)=0\), then \(\Delta\) is constant almost
-surely, and \(\mathbb E_R(\Delta\mid X)=0\) forces that constant to be zero.
+If $A=\operatorname{Var}_R(\Delta)=0$, then $\Delta$ is constant almost
+surely, and $\mathbb E_R(\Delta\mid X)=0$ forces that constant to be zero.
+Consequently $C=0$, and the objective is flat in $\lambda$.
 If
 \begin{align*}
 B
-&=\operatorname{Var}_R(g)+\frac nN\operatorname{Var}_O(rg)=0,
+&=\operatorname{Var}_R(g)+\frac nN\operatorname{Var}_O(r_0g)=0,
 \end{align*}
-then \(g\) is constant \(P_R\)-almost surely and \(rg\) is constant
-\(P_O\)-almost surely.  Exact transport gives
-\(P_O(rg)=P_R(g)\), so the two constants agree and
-\(\mathbb P_{O,N}(rg)-\mathbb P_{R,n}(g)=0\) for every evaluation sample.
+then $g$ is constant $P_R$-almost surely and $r_0g$ is constant
+$P_O$-almost surely.  Exact transport gives
+$P_O(r_0g)=P_R(g)$, so the two constants agree and
+$\mathbb P_{O,N}(r_0g)-\mathbb P_{R,n}(g)=0$ for every evaluation sample.
+Consequently $D=0$, and the objective is flat in $\omega$. Continuity of
+$\mathcal J_{\mathrm{ATE}}$ guarantees a minimizer on every nonempty compact
+rectangle. If the rectangle contains the origin, its minimum variance cannot
+exceed the RCT-only variance.
+
 \subsection{Proof of Corollary~\ref{cor:joint-oracle-variance}}
 
-Write the evaluation-sample variance as
+For $A,B>0$, complete the two scalar squares:
 \begin{align*}
-V(\boldsymbol\beta)
-&=
-\mathcal V_0+
-\frac1n
-\{2\boldsymbol\ell^\top\boldsymbol\beta
-+\boldsymbol\beta^\top\mathbf H_{\mathrm{ATE}}\boldsymbol\beta\},
-&
-\mathcal V_0
-&=
-\frac1n\operatorname{Var}_R(Z_0).
-\end{align*}
-When \(AB-E^2>0\), the matrix \(\mathbf H_{\mathrm{ATE}}\) is positive
-definite and the unique minimizer is
-\(\boldsymbol\beta_{\mathrm{joint}}^\star
-=-\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell\). Substitution gives
-\begin{align*}
-V(\boldsymbol\beta_{\mathrm{joint}}^\star)
-&=
-\mathcal V_0-
-\frac1n\boldsymbol\ell^\top\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell.
-\end{align*}
-For \(\mathbf H_{\mathrm{ATE}}=\left(\begin{smallmatrix}A&-E\\-E&B\end{smallmatrix}\right)\),
-\begin{align*}
-\mathbf H_{\mathrm{ATE}}^{-1}
-&=
-\frac1{AB-E^2}
-\begin{pmatrix}B&E\\E&A\end{pmatrix},
-\\
-\boldsymbol\ell^\top\mathbf H_{\mathrm{ATE}}^{-1}\boldsymbol\ell
-&=
-\frac{BC^2-2ECD+AD^2}{AB-E^2}.
-\end{align*}
-Positive definiteness makes this quadratic form nonnegative and makes it zero
-exactly when \(\boldsymbol\ell=0\).
-
-\paragraph{Singular variance reduction and compact constraints.}
-If \(\mathbf H_{\mathrm{ATE}}\) is singular, boundedness below of the variance objective implies \(\boldsymbol\ell\in\operatorname{Range}(\mathbf H_{\mathrm{ATE}})\). Evaluating at the minimum-norm solution \(-\mathbf H_{\mathrm{ATE}}^+\boldsymbol\ell\) gives
-\begin{align*}
-V_{\min}
-&=
-\mathcal V_0-
-\frac1n\boldsymbol\ell^\top\mathbf H_{\mathrm{ATE}}^+\boldsymbol\ell.
-\end{align*}
-The pseudoinverse is positive definite on
-\(\operatorname{Range}(\mathbf H_{\mathrm{ATE}})\), so the reduction is
-strictly positive exactly when \(\boldsymbol\ell\neq0\). Finally, continuity
-gives attainment on every nonempty compact feasible set \(\Theta\). If
-\(0\in\Theta\), the constrained minimum is at most
-\(V(0)=\mathcal V_0\), and it is strictly smaller exactly when some feasible
-\(\boldsymbol\beta\) makes
-\(2\boldsymbol\ell^\top\boldsymbol\beta
-+\boldsymbol\beta^\top\mathbf H_{\mathrm{ATE}}\boldsymbol\beta<0\).
-
-\paragraph{Separable specialization.}
-
-Equation~\eqref{eq:pseudo-valid} gives
-\(\mathbb E_R(Z_a\mid X)=\tau(X)\) for \(a\in\{0,1\}\). Subtracting the two
-equalities yields \(\mathbb E_R(\Delta\mid X)=0\). Since \(g\) is a fixed
-function of \(X\), iterated expectation gives
-\begin{align}
-E
-&=
-\mathbb E_R\left[
-\{g(X)-\mathbb E_Rg(X)\}\mathbb E_R(\Delta\mid X)
-\right]
-=0,
-\\
-D
-&=
-\operatorname{Cov}_R\{\mathbb E_R(Z_0\mid X),g(X)\}
-=
-\operatorname{Cov}_R\{\tau(X),g(X)\}.
-\label{eq:ate-population-orthogonality}
-\end{align}
-Substituting \(E=0\) into the coefficient objective and completing the two
-scalar squares gives
-\begin{align*}
-\mathcal J_{\mathrm{ATE}}(\boldsymbol\beta)
+\mathcal J_{\mathrm{ATE}}(\lambda,\omega)
 &=
 A\left(\lambda+\frac CA\right)^2
 +B\left(\omega-\frac DB\right)^2
 -\frac{C^2}{A}-\frac{D^2}{B}.
 \end{align*}
-The two minimizers are therefore \(-C/A\) and \(D/B\), proving
-Equation~\eqref{eq:axis-oracle}. Substitution into the variance in
-Equation~\eqref{eq:ate-quadratic} gives
-\begin{align*}
-V_{\min}^{\mathrm{sep}}
-&=
-\mathcal V_0-
-\frac1n\left(\frac{C^2}{A}+\frac{D^2}{B}\right),
-\end{align*}
-which proves Equation~\eqref{eq:ate-separable-minimum}.
+The squared terms vanish at the oracle coefficients in
+Equation~\eqref{eq:axis-oracle}. Substitution into
+Equation~\eqref{eq:ate-quadratic} proves
+Equation~\eqref{eq:ate-separable-minimum}.
 
 \subsection{Prediction-powered CATE losses and finite-sample theory}
 
-Fix \(t,\lambda,\omega,g,r_0\) before using the fitting sample. Conditional
-on \(X\), pseudo-outcome validity gives
-\(\mathbb E_R(Z_\lambda-\tau(X)\mid X)=0\), and hence
+Fix $t,\lambda,\omega,g,r_0$ before using the fitting sample. Conditional
+on $X$, pseudo-outcome validity gives
+$\mathbb E_R(Z_\lambda-\tau(X)\mid X)=0$, and hence
 \begin{align}
 \mathbb E_R\{Z_\lambda-t(X)\}^2
 &=
@@ -320,7 +192,7 @@ Exact transport also gives
 The correction in Equation~\eqref{eq:dr-fusion-loss} therefore has mean zero,
 which proves Proposition~\ref{prop:cate-target}.
 
-For the RF identity, expand conditionally on \(X\). Randomization
+For the RF identity, expand conditionally on $X$. Randomization
 implies
 \begin{align*}
 \mathbb E_R[(A-e_0)\{Y-m(X)\}\mid X]
@@ -333,7 +205,7 @@ It follows that
 \mathcal L_R(\zeta;m)
 &=Q_R(m)+\mathcal R(\zeta).
 \end{align*}
-Because \(\mathbb E_R(\kappa\mid X)=1\) and exact transport holds, the RF
+Because $\mathbb E_R(\kappa\mid X)=1$ and exact transport holds, the RF
 correction has mean zero. This proves Theorem~\ref{thm:rf-target}.
 
 \subsection{Proofs for general two-source learning}
@@ -353,25 +225,25 @@ The global approximate-ERM inequality gives
 \end{align*}
 Add and subtract the two population losses.  By the definition of the
 centered comparator process, the resulting stochastic term is exactly
-\(-\mathbb Z_j(\widehat\zeta_j)\).  This proves
+$-\mathbb Z_j(\widehat\zeta_j)$.  This proves
 Equation~\eqref{eq:cate-general-erm-exact}, including its sign and without an
 extra factor two.
 
 For Theorem~\ref{thm:cate-general-localized}, work on the intersection of the
 two sourcewise modulus events.  Independence and a union bound give probability
-at least \(1-2\delta\).  The exact ERM reduction shows that any approximate
+at least $1-2\delta$.  The exact ERM reduction shows that any approximate
 minimizer with excess risk in a peeling shell
-\(2^m u<\mathcal R(\zeta)-\mathcal R(\zeta_j^\circ)\leq2^{m+1}u\)
+$2^m u<\mathcal R(\zeta)-\mathcal R(\zeta_j^\circ)\leq2^{m+1}u$
 must satisfy an upper bound by the sum of the two source moduli, the penalty at
-the comparator, and \(\epsilon_{\mathrm{opt}}\).  Sub-root regularity and the
-definition of \(u_{j,n_f,N_f}^\star\) make that upper bound strictly smaller
-than the shell's lower endpoint once \(u\) is a sufficiently large universal
+the comparator, and $\epsilon_{\mathrm{opt}}$.  Sub-root regularity and the
+definition of $u_{j,n_f,N_f}^\star$ make that upper bound strictly smaller
+than the shell's lower endpoint once $u$ is a sufficiently large universal
 multiple of
-\(u_{j,n_f,N_f}^\star+\operatorname{Pen}(\zeta_j^\circ)
-+\epsilon_{\mathrm{opt}}\). For each fixed \(\delta\), the full-modulus
+$u_{j,n_f,N_f}^\star+\operatorname{Pen}(\zeta_j^\circ)
++\epsilon_{\mathrm{opt}}$. For each fixed $\delta$, the full-modulus
 sub-root condition gives
-\(\Phi_{j,n_f,N_f}(tu;\delta)\leq
-\sqrt{t}\,\Phi_{j,n_f,N_f}(u;\delta)\) for every \(t\geq1\).
+$\Phi_{j,n_f,N_f}(tu;\delta)\leq
+\sqrt{t}\,\Phi_{j,n_f,N_f}(u;\delta)$ for every $t\geq1$.
 Thus the stochastic upper bound grows only as the square root of the peeling
 level, whereas the shell's excess-risk lower endpoint grows linearly. Summing the
 geometric tail allocation over shells proves
@@ -381,11 +253,11 @@ argument is understood in outer probability.
 
 For Proposition~\ref{prop:cate-general-estimated-r}, condition on the
 ratio-training sample.  The preceding argument now uses the actual
-\(\widehat r\)-weighted source process, hence its fixed point is
-\(u_{j,n_f,N_f}^\star(\widehat r;\delta)\).  Add and subtract the exact-ratio
-population loss at \(\zeta\) and \(\zeta_j^\circ\).  Their increment is bounded
-by \(\Delta_j^{\mathrm{fit}}\), after which the same localization argument
-closes at \(\bar u\).  If the two stated \(L^2(P_O)\) bounds hold,
+$\widehat r$-weighted source process, hence its fixed point is
+$u_{j,n_f,N_f}^\star(\widehat r;\delta)$.  Add and subtract the exact-ratio
+population loss at $\zeta$ and $\zeta_j^\circ$.  Their increment is bounded
+by $\Delta_j^{\mathrm{fit}}$, after which the same localization argument
+closes at $\bar u$.  If the two stated $L^2(P_O)$ bounds hold,
 Cauchy--Schwarz gives
 \begin{align*}
 \Delta_j^{\mathrm{fit}}(u;\widehat r)
@@ -398,7 +270,7 @@ which proves the final claim.
 \subsection{Proofs for coefficient selection}
 
 For Proposition~\ref{prop:cate-noise-floor-lambda}, pseudo-outcome validity
-gives \(\mathbb E_R(\Delta\mid X)=0\).  Therefore
+gives $\mathbb E_R(\Delta\mid X)=0$.  Therefore
 \begin{align*}
 Q_{\mathrm{DR}}(\lambda)
 &=Q_{\mathrm{DR}}(0)
@@ -408,13 +280,13 @@ Q_{\mathrm{DR}}(\lambda)
 &=\mathbb E_R(Z_0\Delta).
 \end{align*}
 Completing the square gives Equation~\eqref{eq:cate-dr-noise-lambda} when
-\(\mathbb E_R(\Delta^2)>0\).  If \(\mathbb E_R(\Delta^2)=0\), then
-\(\Delta=0\) almost surely and the objective is flat.
+$\mathbb E_R(\Delta^2)>0$.  If $\mathbb E_R(\Delta^2)=0$, then
+$\Delta=0$ almost surely and the objective is flat.
 
 For the R loss, write
-\(s_0\triangleq e_0(1-e_0)\) and
-\(U_R\triangleq Y-m_R-(A-e_0)\tau\).  Since
-\(m_\lambda=m_R+\lambda d_m\),
+$s_0\triangleq e_0(1-e_0)$ and
+$U_R\triangleq Y-m_R-(A-e_0)\tau$.  Since
+$m_\lambda=m_R+\lambda d_m$,
 \begin{align*}
 Q_R(m_\lambda)
 &=Q_R(m_R)
@@ -424,11 +296,11 @@ Q_R(m_\lambda)
 &=\mathbb E_R[\{Y-m_R\}d_m/s_0].
 \end{align*}
 The second identity follows from
-\(\mathbb E_R(A-e_0\mid X)=0\).  Completing the square proves
+$\mathbb E_R(A-e_0\mid X)=0$.  Completing the square proves
 Equation~\eqref{eq:cate-r-noise-lambda}.  If
-\(\mathbb E_R(d_m^2/s_0)=0\), strict overlap implies \(d_m=0\) almost surely
+$\mathbb E_R(d_m^2/s_0)=0$, strict overlap implies $d_m=0$ almost surely
 and the objective is flat.  A convex
-quadratic minimized over \([0,1]\) is minimized by projecting its
+quadratic minimized over $[0,1]$ is minimized by projecting its
 unrestricted minimizer onto that interval.
 
 For Proposition~\ref{prop:cate-omega-flatness}, exact transport gives
@@ -436,7 +308,7 @@ For Proposition~\ref{prop:cate-omega-flatness}, exact transport gives
 \mathbb E_O(r_0G_\zeta)-\mathbb E_R(G_\zeta)=0.
 \end{align*}
 Moreover, conditional randomization and strict overlap give
-\(\mathbb E_R(\kappa\mid X)=1\), so
+$\mathbb E_R(\kappa\mid X)=1$, so
 \begin{align*}
 \mathbb E_R(\kappa G_\zeta)
 &=\mathbb E_R[\mathbb E_R(\kappa\mid X)G_\zeta]
@@ -446,13 +318,13 @@ Moreover, conditional randomization and strict overlap give
 \end{align*}
 Substitution into Equations~\eqref{eq:dr-fusion-loss} and
 \eqref{eq:rf-fusion-loss} leaves
-\(\mathcal L_{\mathrm{DR}}(\zeta;\lambda)\) and
-\(\mathcal L_R(\zeta;m_\lambda)\), respectively, for every
-\(\omega\in\Omega\).  Each objective is therefore constant on the nonempty
-set \(\Omega\), and its minimizer set is all of \(\Omega\).
+$\mathcal L_{\mathrm{DR}}(\zeta;\lambda)$ and
+$\mathcal L_R(\zeta;m_\lambda)$, respectively, for every
+$\omega\in\Omega$.  Each objective is therefore constant on the nonempty
+set $\Omega$, and its minimizer set is all of $\Omega$.
 
 For Proposition~\ref{prop:cate-validation-identity}, condition on the fitted
-grid function at each \((\lambda,\omega)\in\mathcal G_j\).  Conditional
+grid function at each $(\lambda,\omega)\in\mathcal G_j$.  Conditional
 pseudo-outcome validity gives
 \begin{align*}
 \mathbb E_R\{Z_0-\widehat\tau_j(X;\lambda,\omega)\}^2
@@ -460,24 +332,24 @@ pseudo-outcome validity gives
 +\mathcal R\{\widehat\tau_j(\cdot;\lambda,\omega)\}.
 \end{align*}
 Exact transport gives
-\(\mathbb E_O(r_0G_{j,\lambda,\omega})
-=\mathbb E_R(G_{j,\lambda,\omega})\), so the term multiplied by \(\omega\)
+$\mathbb E_O(r_0G_{j,\lambda,\omega})
+=\mathbb E_R(G_{j,\lambda,\omega})$, so the term multiplied by $\omega$
 has mean zero.  This proves Equation~\eqref{eq:common-reference-identity}.
 
 \subsection{Proofs for the orthogonality audit}
 
 Condition throughout on the auxiliary samples and algorithmic randomness, so
-all nuisances, \(\lambda\), and \(\omega\) are fixed before the independent
+all nuisances, $\lambda$, and $\omega$ are fixed before the independent
 loss observations are used. Assume strict trial overlap, exact transport for
-claims at \(r_0\), and sufficient integrability and domination to interchange
+claims at $r_0$, and sufficient integrability and domination to interchange
 Gateaux differentiation and expectation. Directions belong to the tangent
 sets stated in the main text.
 
 Differentiating Equations~\eqref{eq:dr-fusion-loss} and
-\eqref{eq:rf-fusion-loss} in the target direction \(v\) gives
+\eqref{eq:rf-fusion-loss} in the target direction $v$ gives
 Equations~\eqref{eq:drf-learning-equation} and
-\eqref{eq:rf-learning-equation}. For \(r=r_0\), exact transport gives
-\(\mathbb E_O(r_0f)=\mathbb E_R(f)\) for each integrable \(f(X)\). Also,
+\eqref{eq:rf-learning-equation}. For $r=r_0$, exact transport gives
+$\mathbb E_O(r_0f)=\mathbb E_R(f)$ for each integrable $f(X)$. Also,
 \begin{align*}
 \mathbb E_R(\kappa_0\mid X)
 &=\mathbb E_R(\kappa\mid X)
@@ -486,18 +358,18 @@ Equations~\eqref{eq:drf-learning-equation} and
 The two correction terms in each learning equation therefore cancel. This
 proves Proposition~\ref{prop:cate-learning-equations}.
 
-For the \(q\)-direction in Proposition~\ref{prop:cate-orthogonality-audit},
-let \(q_\varepsilon=q+\varepsilon h\). Direct differentiation gives
+For the $q$-direction in Proposition~\ref{prop:cate-orthogonality-audit},
+let $q_\varepsilon=q+\varepsilon h$. Direct differentiation gives
 \begin{align*}
 \dot Z_q[h]
 &=-\{A-e_0(X)\}\left\{\frac{h_1(X)}{e_0(X)}
 +\frac{h_0(X)}{1-e_0(X)}\right\}.
 \end{align*}
-Because \(h\) and \(v\) are functions of \(X\) and
-\(\mathbb E_R(A-e_0\mid X)=0\),
-\(\mathbb E_R\{v(X)\dot Z_q[h]\}=0\).
+Because $h$ and $v$ are functions of $X$ and
+$\mathbb E_R(A-e_0\mid X)=0$,
+$\mathbb E_R\{v(X)\dot Z_q[h]\}=0$.
 
-For the \(m\)-direction, direct differentiation of the first term of
+For the $m$-direction, direct differentiation of the first term of
 Equation~\eqref{eq:rf-learning-equation} gives
 \begin{align*}
 D_m\Psi_{\mathrm{RF}}[h,v]
@@ -505,8 +377,8 @@ D_m\Psi_{\mathrm{RF}}[h,v]
 \end{align*}
 The last equality again uses conditional randomization.
 
-For a prediction path \(g_\varepsilon=g+\varepsilon u\), only the transported
-correction changes. Exact transport, and \(\mathbb E_R(\kappa_0\mid X)=1\)
+For a prediction path $g_\varepsilon=g+\varepsilon u$, only the transported
+correction changes. Exact transport, and $\mathbb E_R(\kappa_0\mid X)=1$
 for RF, give
 \begin{align*}
 D_g\Psi_j[u,v]
@@ -516,7 +388,7 @@ D_g\mathbb E(\widehat L_j)[u]
 \end{align*}
 which proves Equations~\eqref{eq:cate-g-score-derivative} and
 \eqref{eq:cate-g-loss-derivative}. A ratio path
-\(r_\varepsilon=r+\varepsilon h_r\) affects only the positive OBS term, so
+$r_\varepsilon=r+\varepsilon h_r$ affects only the positive OBS term, so
 \begin{align*}
 D_r\Psi_j[h_r,v]
 &=\omega\mathbb E_O[h_rv(g-\zeta)],\\
@@ -527,29 +399,29 @@ This proves Equations~\eqref{eq:cate-ratio-score-derivative} and
 \eqref{eq:drf-ratio-derivative}.
 
 To prove Proposition~\ref{prop:cate-ratio-nonorthogonality}, take any
-\(f=v(g-\zeta)\in L^2(P_O^X)\). Its inner product with every element of
-\(L_0^2(P_O^X)\) is zero if and only if \(f\) lies in the orthogonal
+$f=v(g-\zeta)\in L^2(P_O^X)$. Its inner product with every element of
+$L_0^2(P_O^X)$ is zero if and only if $f$ lies in the orthogonal
 complement of that space, which consists of the almost-sure constants.
-For example, the centered direction \(h=f-\mathbb E_O(f)\) has pairing
-\(\mathbb E_O(hf)=\operatorname{Var}_O(f)\). Multiplication by nonzero
-\(\omega\) does not change the zero set.
+For example, the centered direction $h=f-\mathbb E_O(f)$ has pairing
+$\mathbb E_O(hf)=\operatorname{Var}_O(f)$. Multiplication by nonzero
+$\omega$ does not change the zero set.
 
 For Proposition~\ref{prop:cate-sieve-normal-equations}, expand each quadratic
-objective in \(\beta\).  The DRF curvature and right-hand side are
-\((1-\omega)\widehat\Gamma_R+\omega\widehat\Gamma_{O,r}+\rho P\) and
-\(\widehat h_\lambda+\omega\widehat d_g\).  The RF counterparts are
-\((1-\omega)\widehat\Gamma_{R,\kappa}
-+\omega\widehat\Gamma_{O,r}+\rho P\) and
-\(\widehat h_{m_\lambda}+\omega\widehat d_{g,\kappa}\).  Setting the
+objective in $\beta$.  The DRF curvature and right-hand side are
+$(1-\omega)\widehat\Gamma_R+\omega\widehat\Gamma_{O,r}+\rho P$ and
+$\widehat h_\lambda+\omega\widehat d_g$.  The RF counterparts are
+$(1-\omega)\widehat\Gamma_{R,\kappa}
++\omega\widehat\Gamma_{O,r}+\rho P$ and
+$\widehat h_{m_\lambda}+\omega\widehat d_{g,\kappa}$.  Setting the
 gradients to zero proves Equations~\eqref{eq:linear-sieve} and
-\eqref{eq:linear-sieve-rf}.  For \(0\leq\omega\leq1\), each unpenalized
+\eqref{eq:linear-sieve-rf}.  For $0\leq\omega\leq1$, each unpenalized
 Hessian is a convex combination of positive-semidefinite weighted Gram
-matrices; adding \(\rho P\succeq0\) preserves positive semidefiniteness.
+matrices; adding $\rho P\succeq0$ preserves positive semidefiniteness.
 
-For Proposition~\ref{prop:cate-sieve-lambda-profile}, fixed \(\omega\) makes
-the Hessian independent of \(\lambda\), while
-\(Z_\lambda=Z_0+\lambda\Delta\) and
-\(m_\lambda=m_R+\lambda d_m\) make the right-hand side affine. Multiplication
+For Proposition~\ref{prop:cate-sieve-lambda-profile}, fixed $\omega$ makes
+the Hessian independent of $\lambda$, while
+$Z_\lambda=Z_0+\lambda\Delta$ and
+$m_\lambda=m_R+\lambda d_m$ make the right-hand side affine. Multiplication
 by the fixed inverse Hessian proves
 Equation~\eqref{eq:linear-sieve-lambda-profile}. Substitution of the affine
 fitted function into the separate tuning criterion and expansion of its
@@ -557,46 +429,46 @@ squares proves Equation~\eqref{eq:linear-sieve-validation-profile}. The
 coefficients are the constant, linear, and quadratic terms of that expansion.
 
 For Theorem~\ref{thm:cate-finite-validation}, Hoeffding's inequality and a union
-bound over the \(M=|\mathcal G_j|\) grid pairs gives the uniform deviation
-\(\varepsilon_{\mathrm{val}}\). Comparing the selected score with the
-grid-oracle score and cancelling the common \(Q_{\mathrm{DR}}(0)\) gives the
+bound over the $M=|\mathcal G_j|$ grid pairs gives the uniform deviation
+$\varepsilon_{\mathrm{val}}$. Comparing the selected score with the
+grid-oracle score and cancelling the common $Q_{\mathrm{DR}}(0)$ gives the
 factor two.
 
 For Corollary~\ref{cor:cate-estimated-r-validation}, direct expansion with
 the evaluation-independent approximate ratio perturbs the expectation at
 each grid pair by
-\(\omega\mathbb E_O[(\widehat r-r_0)G_{j,\lambda,\omega}]\).
-The main-text quantity \(\Delta_r\) bounds these perturbations uniformly, so
-the same selector comparison adds \(2\Delta_r\).  Hoeffding's inequality
+$\omega\mathbb E_O[(\widehat r-r_0)G_{j,\lambda,\omega}]$.
+The main-text quantity $\Delta_r$ bounds these perturbations uniformly, so
+the same selector comparison adds $2\Delta_r$.  Hoeffding's inequality
 applied to the actual scores gives
-\(2\widehat\varepsilon_{\mathrm{val}}(\delta)\), proving both displayed
+$2\widehat\varepsilon_{\mathrm{val}}(\delta)$, proving both displayed
 bounds.
 
 For Theorem~\ref{thm:cate-general-selected-risk}, assign fitting failure
-probability \(\delta_f/M\) to each of the \(M\) fixed candidates.  A union
+probability $\delta_f/M$ to each of the $M$ fixed candidates.  A union
 bound makes all candidate-specific fitting inequalities hold simultaneously
-with probability at least \(1-\delta_f\).  On that event, the ideal risk of
-candidate \(k\) is at most \(B_k\).  Independently, the validation event in
+with probability at least $1-\delta_f$.  On that event, the ideal risk of
+candidate $k$ is at most $B_k$.  Independently, the validation event in
 Corollary~\ref{cor:cate-estimated-r-validation} holds with probability at
-least \(1-\delta_v\) and compares the selected fitted candidate with the
+least $1-\delta_v$ and compares the selected fitted candidate with the
 best fitted candidate, adding
-\(2\widehat\varepsilon_{\mathrm{val}}(\delta_v)
-+2\Delta_r^{\mathrm{val}}\).  Intersecting the fitting and validation events
-and then minimizing the simultaneous upper bounds over \(k\) proves
+$2\widehat\varepsilon_{\mathrm{val}}(\delta_v)
++2\Delta_r^{\mathrm{val}}$.  Intersecting the fitting and validation events
+and then minimizing the simultaneous upper bounds over $k$ proves
 Equation~\eqref{eq:cate-general-selected-risk}.  No independence among the
 candidate fits is required; only their joint independence from final
 validation is used.
 
 For Theorem~\ref{thm:cate-sieve-identity}, the first-order condition is
-\((\widehat H_j+\rho P)\widehat\beta_j=\widehat h_j\). Subtracting its value at
-\(\beta_p\) proves Equation~\eqref{eq:sieve-coefficient-identity}. Projection
-orthogonality, \(\mathbb E_R[b(\zeta_p-\tau)]=0\), removes the risk cross term and
+$(\widehat H_j+\rho P)\widehat\beta_j=\widehat h_j$. Subtracting its value at
+$\beta_p$ proves Equation~\eqref{eq:sieve-coefficient-identity}. Projection
+orthogonality, $\mathbb E_R[b(\zeta_p-\tau)]=0$, removes the risk cross term and
 proves Equation~\eqref{eq:sieve-risk-identity}.
 
-For Theorem~\ref{thm:cate-fixed-candidate-bound}, let \(\psi_{R,j}\) and
-\(\psi_{O,j}\) be the explicit raw contributions in the main text. Their
+For Theorem~\ref{thm:cate-fixed-candidate-bound}, let $\psi_{R,j}$ and
+$\psi_{O,j}$ be the explicit raw contributions in the main text. Their
 source means need not vanish separately, but exact transport gives
-\(P_R\psi_{R,j}+P_O\psi_{O,j}=0\). Center each source by its own mean. Since
+$P_R\psi_{R,j}+P_O\psi_{O,j}=0$. Center each source by its own mean. Since
 the centered RCT and OBS sample means are independent, their covariance
 proxies add:
 \begin{align*}
@@ -605,22 +477,22 @@ proxies add:
 &=\frac{\Sigma_{R,j}}{n_f}+\frac{\Sigma_{O,j}}{N_f}.
 \end{align*}
 The stated sub-Gaussian vector concentration inequality bounds the squared
-\(\Gamma_R^{-1/2}\)-norm by the sum of the two trace terms and their operator
+$\Gamma_R^{-1/2}$-norm by the sum of the two trace terms and their operator
 norm tail terms, without applying a triangle inequality between sources. On
-\(\mathcal E_H\), the whitened inverse penalized Hessian has norm at most
-\((1-\eta)^{-1}\). Combining this fact with
+$\mathcal E_H$, the whitened inverse penalized Hessian has norm at most
+$(1-\eta)^{-1}$. Combining this fact with
 Equation~\eqref{eq:sieve-coefficient-identity} and bounding the ridge vector
 separately proves Equation~\eqref{eq:finite-sieve-bound}.
 
 For Proposition~\ref{prop:cate-fixed-p-leading-risk}, write the leading term
 as
-\(A_{n_f,N_f}\triangleq\Gamma_R^{-1}\{(\mathbb P_R-P_R)\psi_{R,j}
-+(\mathbb P_O-P_O)\psi_{O,j}\}\), so the remainder defined in the
+$A_{n_f,N_f}\triangleq\Gamma_R^{-1}\{(\mathbb P_R-P_R)\psi_{R,j}
++(\mathbb P_O-P_O)\psi_{O,j}\}$, so the remainder defined in the
 proposition gives
-\(\widehat\beta_j-\beta_p=A_{n_f,N_f}+R_{n_f,N_f}\).
+$\widehat\beta_j-\beta_p=A_{n_f,N_f}+R_{n_f,N_f}$.
 Insert this identity into Equation~\eqref{eq:sieve-risk-identity}.
 Independence removes the cross covariance between the RCT and OBS components
-of \(A_{n_f,N_f}\), and hence
+of $A_{n_f,N_f}$, and hence
 \begin{align*}
 \mathbb E\|A_{n_f,N_f}\|_{\Gamma_R}^2
 &=\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{R,j})}{n_f}
@@ -635,34 +507,38 @@ Moreover, Cauchy--Schwarz and the stated mean-square remainder condition give
 =o(n_f^{-1}+N_f^{-1}),
 \end{align*}
 and the expected squared remainder has the same smaller order. The identities
-\(\operatorname{tr}(AB)=\operatorname{tr}(BA)\) then give
+$\operatorname{tr}(AB)=\operatorname{tr}(BA)$ then give
 Equation~\eqref{eq:cate-fixed-p-leading-risk}. The comparison in
 Corollary~\ref{cor:cate-rct-fusion-leading-risk} follows by subtracting the two
 leading expansions; it is not a finite-sample comparison.
 
 For Proposition~\ref{prop:cate-sieve-ratio-perturbation}, write the estimated-
 ratio normal equation as
-\((\widehat H_j^{r_0}+\widehat\Delta_{H,j}+\rho P)
+$(\widehat H_j^{r_0}+\widehat\Delta_{H,j}+\rho P)
 \widehat\beta_j^{\widehat r}
-=\widehat h_j^{r_0}+\widehat\Delta_{h,j}\). Subtract the exact-ratio equation
+=\widehat h_j^{r_0}+\widehat\Delta_{h,j}$. Subtract the exact-ratio equation
 and rearrange. Invertibility gives the displayed resolvent identity.
 
-Finally, substitute \(a_K^2=O(K^{-2s})\) and the covariance scales
-\(Kc_{R,j}(K;\lambda,\omega)/n_f\) and
-\(Kc_{O,j}(K;\lambda,\omega)/N_f\) into the finite-sample result. Adding
+Finally, substitute $a_K^2=O(K^{-2s})$ and the covariance scales
+\begin{align*}
+\frac{Kc_{R,j}(K;\lambda,\omega)}{n_f}
+&&\text{and}&&
+\frac{Kc_{O,j}(K;\lambda,\omega)}{N_f}
+\end{align*}
+into the finite-sample result. Adding
 the stated ridge and fitting-ratio terms proves
 Equation~\eqref{eq:cate-spline-rate}. Minimizing the resulting criterion over
-\(\mathcal K_n\) gives the displayed definition of \(K_j^\star\). Under the
+$\mathcal K_n$ gives the displayed definition of $K_j^\star$. Under the
 stated uniform positive finite limits, that criterion is asymptotically
 equivalent, uniformly over the coefficient candidates, to
-\(K^{-2s}+K v_j^\infty\). Balancing its two terms gives
-\(K\asymp(v_j^\infty)^{-1/(2s+1)}\) and rate
-\((v_j^\infty)^{2s/(2s+1)}\), proving
+$K^{-2s}+K v_j^\infty$. Balancing its two terms gives
+$K\asymp(v_j^\infty)^{-1/(2s+1)}$ and rate
+$(v_j^\infty)^{2s/(2s+1)}$, proving
 Corollary~\ref{cor:cate-spline-rate}.
 
 \subsection{A two-stratum oracle calculation}
 
-Let \(P_R(X=0)=P_R(X=1)=1/2\), \(\tau(0)=0\), \(\tau(1)=2\), and \(g=\tau\). With \(n=100\), \(N=900\), and a common covariate marginal,
+Let $P_R(X=0)=P_R(X=1)=1/2$, $\tau(0)=0$, $\tau(1)=2$, and $g=\tau$. With $n=100$, $N=900$, and a common covariate marginal,
 \begin{align*}
 \mathbb E_R\{\tau(X)\}&=1,
 &
@@ -670,13 +546,15 @@ Let \(P_R(X=0)=P_R(X=1)=1/2\), \(\tau(0)=0\), \(\tau(1)=2\), and \(g=\tau\). Wit
 &
 \omega_{\mathrm{ATE}}^\star&=\frac{1}{1+100/900}=0.9.
 \end{align*}
-The baseline between-\(X\) variance is \(0.01\), whereas the oracle component is
+The baseline between-$X$ variance is $0.01$, whereas the oracle component is
 \begin{align*}
 \frac{\operatorname{Var}_R\{0.1\tau(X)\}}{100}
 +\frac{0.9^2\operatorname{Var}_R\{\tau(X)\}}{900}
 &=0.0001+0.0009=0.001.
 \end{align*}
-The reduction \(0.009\) concerns only between-\(X\) variation; total variance also contains the within-\(X\) pseudo-outcome noise from Equation~\eqref{eq:ate-within-between}.
+The reduction $0.009$ concerns only between-$X$ variation. The first RCT
+variance term in Equation~\eqref{eq:ate-variance} also contains conditional
+pseudo-outcome noise.
 
 \subsection{Honest variance estimation and evaluation-sample inference}
 \label{app:ate-evaluation-regularity}
@@ -691,51 +569,51 @@ give
 \mathbb E\{\widehat{\operatorname{Var}}_{O,\mathrm{eval}}(\psi_O)\}
 &=\operatorname{Var}_O(\psi_O).
 \end{align*}
-Dividing by \(n\) and \(N\), then adding, proves unbiasedness of
-\(\widehat V\) by independence of \(D_R^{\mathrm{eval}}\) and
-\(D_O^{\mathrm{eval}}\).
+Dividing by $n$ and $N$, then adding, proves unbiasedness of
+$\widehat V$ by independence of $D_R^{\mathrm{eval}}$ and
+$D_O^{\mathrm{eval}}$.
 
 For Theorem~\ref{thm:ate-honest-clt-active}, impose the following evaluation
 regularity conditions after fixing the learned objects:
 \begin{enumerate}
 \item[(R1)] the RCT and OBS evaluation observations are conditionally
 independent and retain their respective product laws;
-\item[(R2)] \(n,N\to\infty\), \(n/N\to\kappa\in[0,\infty)\), and for some
-\(\delta>0\) the centered RCT and OBS evaluation-score arrays have uniformly
-bounded conditional \((2+\delta)\) moments;
+\item[(R2)] $n,N\to\infty$, $n/N\to\kappa\in[0,\infty)$, and for some
+$\delta>0$ the centered RCT and OBS evaluation-score arrays have uniformly
+bounded conditional $(2+\delta)$ moments;
 \item[(R3)]
-\(n\operatorname{Var}\{\widehat\theta_r(\widehat\lambda,
-\widehat\omega)\}\to\sigma^2\in(0,\infty)\) in probability, and the combined
+$n\operatorname{Var}\{\widehat\theta_r(\widehat\lambda,
+\widehat\omega)\}\to\sigma^2\in(0,\infty)$ in probability, and the combined
 sample-variance estimator is ratio-consistent for this variance.
 \end{enumerate}
 Center the two evaluation-score arrays at their population means. Their
-weighted sum is \(\widehat\theta_r-\theta\). Condition (R2) supplies the
+weighted sum is $\widehat\theta_r-\theta$. Condition (R2) supplies the
 two-sample triangular-array central limit theorem: the RCT Lyapunov remainder
-is of order \(n^{-\delta/2}\), and the OBS remainder also vanishes when
-\(n/N\to\kappa<\infty\). Condition (R3) and Slutsky's theorem yield the
+is of order $n^{-\delta/2}$, and the OBS remainder also vanishes when
+$n/N\to\kappa<\infty$. Condition (R3) and Slutsky's theorem yield the
 studentized limit and asymptotic coverage of the normal-approximation interval.
 
 \subsection{Proof of Theorem~\ref{thm:ate-three-way-comparison}}
 \label{app:ate-three-way-comparison}
 
-Under either exact \(r=r_0\) transport or its common-marginal special case,
+Under either exact $r=r_0$ transport or its common-marginal special case,
 Equation~\eqref{eq:pseudo-valid} gives
-\(\mathbb E_R(\Delta\mid X)=0\). Hence
-\(E=\operatorname{Cov}_R(\Delta,g)=0\), as shown in
-Equation~\eqref{eq:ate-population-orthogonality}. Multiplying
-Equation~\eqref{eq:ate-quadratic} by \(n\) therefore gives
+$\mathbb E_R(\Delta\mid X)=0$. Hence
+$\operatorname{Cov}_R(\Delta,g)=0$, as shown in
+Equation~\eqref{eq:ate-population-separation}. Multiplying
+Equation~\eqref{eq:ate-quadratic} by $n$ therefore gives
 \begin{align*}
 \widetilde{\mathcal V}(\lambda,\omega)
 &=
 \sigma_0^2+2C\lambda-2D\omega+A\lambda^2+B\omega^2.
 \end{align*}
-At \((\lambda,\omega)=(0,0)\), this equals \(\sigma_0^2\). Holding
-\(\lambda=0\) and completing the square in \(\omega\) gives the unique
-PPI++-only oracle \(D/B\) and variance \(\sigma_0^2-D^2/B\). Completing the
-two separate squares gives the joint oracle \((-C/A,D/B)\) and variance
-\(\sigma_0^2-C^2/A-D^2/B\). The two variance gaps are \(D^2/B\) and
-\(C^2/A\). Because \(A,B>0\), they are nonnegative and vanish exactly when
-\(D=0\) and \(C=0\), respectively.
+At $(\lambda,\omega)=(0,0)$, this equals $\sigma_0^2$. Holding
+$\lambda=0$ and completing the square in $\omega$ gives the unique
+PPI++-only oracle $D/B$ and variance $\sigma_0^2-D^2/B$. Completing the
+two separate squares gives the joint oracle $(-C/A,D/B)$ and variance
+$\sigma_0^2-C^2/A-D^2/B$. The two variance gaps are $D^2/B$ and
+$C^2/A$. Because $A,B>0$, they are nonnegative and vanish exactly when
+$D=0$ and $C=0$, respectively.
 
 \subsection{Density-ratio characterizations and estimated-ratio inheritance}
 \label{app:estimated-ratio-inheritance}
@@ -747,15 +625,15 @@ The defining property of the Radon--Nikodym derivative gives
 &=
 \mathbb E_R\{h(X)\}
 \end{align*}
-for every integrable \(h\). If a nonnegative normalized function
-\(\widetilde r\) gives
-the same equality for every bounded measurable \(h\), then
-\(\int_A \widetilde r\,dP_O=P_R(A)=\int_A r_0\,dP_O\) for every measurable
-set \(A\). Uniqueness of the Radon--Nikodym derivative gives
-\(\widetilde r=r_0\)
-\(P_O^X\)-almost surely.
+for every integrable $h$. If a nonnegative normalized function
+$\widetilde r$ gives
+the same equality for every bounded measurable $h$, then
+$\int_A \widetilde r\,dP_O=P_R(A)=\int_A r_0\,dP_O$ for every measurable
+set $A$. Uniqueness of the Radon--Nikodym derivative gives
+$\widetilde r=r_0$
+$P_O^X$-almost surely.
 
-If \(r_0\in L_2(P_O^X)\), then for every \(a\in L_2(P_O^X)\),
+If $r_0\in L_2(P_O^X)$, then for every $a\in L_2(P_O^X)$,
 \begin{align*}
 \mathcal R(a)
 &=
@@ -765,13 +643,13 @@ If \(r_0\in L_2(P_O^X)\), then for every \(a\in L_2(P_O^X)\),
 \mathbb E_O\{(a(X)-r_0(X))^2\}
 -\mathbb E_O\{r_0(X)^2\}.
 \end{align*}
-The squared term is uniquely minimized at \(a=r_0\) in
-\(L_2(P_O^X)\). Restricting the balance equations to the coordinates of
-\(\phi\) tests equality only against functions in their linear span, which
+The squared term is uniquely minimized at $a=r_0$ in
+$L_2(P_O^X)$. Restricting the balance equations to the coordinates of
+$\phi$ tests equality only against functions in their linear span, which
 proves the finite-feature qualification.
 
 \paragraph{Proof of Lemma~\ref{lem:linear-riesz-ratio}.}
-For \(a_\gamma=\phi^\top\gamma\), the gradient of the objective in
+For $a_\gamma=\phi^\top\gamma$, the gradient of the objective in
 Equation~\eqref{eq:ratio-riesz-empirical} is twice
 \begin{align*}
 \left[
@@ -792,14 +670,14 @@ For Equation~\eqref{eq:ratio-targeted-population}, transport identity
 which proves the claimed weighted excess-risk identity.
 
 \paragraph{Classifier odds.}
-Let \(p_R\) and \(p_O\) be densities with respect to a common dominating
+Let $p_R$ and $p_O$ be densities with respect to a common dominating
 measure. In the pooled nuisance population,
 \begin{align*}
 s_0(x)
 &=
 \frac{\pi p_R(x)}{\pi p_R(x)+(1-\pi)p_O(x)}.
 \end{align*}
-Solving for \(p_R(x)/p_O(x)\) gives
+Solving for $p_R(x)/p_O(x)$ gives
 \begin{align*}
 r_0(x)
 &=
@@ -808,10 +686,10 @@ r_0(x)
 which proves Equation~\eqref{eq:ratio-classifier-bayes} in
 Definition~\ref{def:classifier-density-ratio}. The same algebra with a fitted
 domain probability and the effective training prior yields
-\(\widehat r_{\mathrm{CLS}}\).
+$\widehat r_{\mathrm{CLS}}$.
 
 \paragraph{Proof of Proposition~\ref{prop:automatic-ratio-balance}.}
-The log of a positive weighted exponential sum is convex in \(\xi\). At an
+The log of a positive weighted exponential sum is convex in $\xi$. At an
 interior minimizer, differentiating the objective in
 Definition~\ref{def:classifier-calibrated-balance} gives
 \begin{align*}
@@ -839,11 +717,11 @@ approximate-balance rule and are not covered by the exact first-order
 condition.
 
 \paragraph{Proof of Proposition~\ref{lem:ratio-error-coefficients}.}
-On the tuning OBS sample, \(\widehat r g=r_0g+\delta_{\widehat r}\). The
+On the tuning OBS sample, $\widehat r g=r_0g+\delta_{\widehat r}$. The
 sample-variance identity
-\(\widehat{\operatorname{Var}}(U+V)=
+$\widehat{\operatorname{Var}}(U+V)=
 \widehat{\operatorname{Var}}(U)+2\widehat{\operatorname{Cov}}(U,V)+
-\widehat{\operatorname{Var}}(V)\) proves
+\widehat{\operatorname{Var}}(V)$ proves
 Equation~\eqref{eq:ratio-B-error}. When the axis thresholds are inactive,
 \begin{align*}
 \widehat\omega_{\widehat r}-\widehat\omega_{r_0}
@@ -857,11 +735,11 @@ denominator.
 \paragraph{Proof of Proposition~\ref{prop:estimated-ratio-decomposition}.}
 Condition on the nuisance and tuning samples. At the same selected
 coefficients, the only direct difference between
-\(\widehat\theta_{\widehat r}\) and \(\widehat\theta_{r_0}\) in
+$\widehat\theta_{\widehat r}$ and $\widehat\theta_{r_0}$ in
 Equation~\eqref{eq:ate-estimator} is
-\(\widehat\omega\mathbb P_{O,N}\delta_{\widehat r}\). Adding and subtracting
-\(\widehat\omega P_O\delta_{\widehat r}\) identifies the scalar drift
-\(b_{\widehat r}\) and centered fluctuation \(e_{\widehat r}\), proving both
+$\widehat\omega\mathbb P_{O,N}\delta_{\widehat r}$. Adding and subtracting
+$\widehat\omega P_O\delta_{\widehat r}$ identifies the scalar drift
+$b_{\widehat r}$ and centered fluctuation $e_{\widehat r}$, proving both
 equalities in Equations~\eqref{eq:estimated-ratio-exact-decomposition} and
 \eqref{eq:estimated-ratio-mean-fluctuation}.
 
@@ -869,7 +747,7 @@ equalities in Equations~\eqref{eq:estimated-ratio-exact-decomposition} and
 Taking the conditional expectation of
 Equation~\eqref{eq:estimated-ratio-mean-fluctuation} removes its centered
 empirical term. The remaining added mean is
-\(\widehat\omega P_O\delta_{\widehat r}\), and
+$\widehat\omega P_O\delta_{\widehat r}$, and
 transport identity \eqref{eq:ratio-transport-characterization} gives
 \begin{align*}
 P_O\delta_{\widehat r}
@@ -897,11 +775,11 @@ the centered OBS evaluation perturbation,
 \right\|_{L_2(P_O)}^2,
 \end{align*}
 so Equation~\eqref{eq:estimated-ratio-fluctuation-rate} makes this perturbation
-\(o_p(1)\). Tuning-moment consistency and asymptotically inactive thresholds
+$o_p(1)$. Tuning-moment consistency and asymptotically inactive thresholds
 make the selected
 coefficients converge to their exact-ratio limits. Slutsky's theorem then
 transfers the normal limit. More explicitly, for the deterministic limit
-\((\lambda^\circ,\omega^\circ)\),
+$(\lambda^\circ,\omega^\circ)$,
 \begin{align*}
 &\widehat\theta_{r_0}(\widehat\lambda,\widehat\omega)
 -\widehat\theta_{r_0}(\lambda^\circ,\omega^\circ)
@@ -911,12 +789,12 @@ transfers the normal limit. More explicitly, for the deterministic limit
 +(\widehat\omega-\omega^\circ)
 \left\{\mathbb P_{O,N}(r_0g)-\mathbb P_{R,n}g\right\}.
 \end{align*}
-Coefficient consistency makes both coefficient differences \(o_p(1)\).
-The RCT score satisfies \(\mathbb P_{R,n}\Delta=O_p(n^{-1/2})\), and exact
+Coefficient consistency makes both coefficient differences $o_p(1)$.
+The RCT score satisfies $\mathbb P_{R,n}\Delta=O_p(n^{-1/2})$, and exact
 transport gives
-\(\mathbb P_{O,N}(r_0g)-\mathbb P_{R,n}g
-=O_p(N^{-1/2}+n^{-1/2})\). Because \(n/N\) is bounded, the entire display is
-\(o_p(n^{-1/2})\). If each deterministic limit is the corresponding
+$\mathbb P_{O,N}(r_0g)-\mathbb P_{R,n}g
+=O_p(N^{-1/2}+n^{-1/2})$. Because $n/N$ is bounded, the entire display is
+$o_p(n^{-1/2})$. If each deterministic limit is the corresponding
 exact-ratio population-oracle pair in
 Theorem~\ref{thm:ate-three-way-comparison}, this replacement argument transfers
 its first-order variance ordering.
@@ -929,13 +807,13 @@ variance. None of these arguments compares realized finite-sample variances.
 The fixed-coefficient theorem cannot be extended by selecting a coefficient on
 the same evaluation outcomes without a separate analysis.
 
-\paragraph{Reuse through \(\lambda\).}
-Let \(X\) be degenerate, \(\theta=0\), \(Z_0=0\), and let the \(\Delta_i\) be i.i.d. Rademacher variables. Every fixed \(\lambda\) satisfies \(\mathbb E\{\lambda\mathbb P_{R,n}\Delta\}=0\). If the same outcomes select \(\widehat\lambda=\operatorname{sign}(\mathbb P_{R,n}\Delta)\), then
+\paragraph{Reuse through $\lambda$.}
+Let $X$ be degenerate, $\theta=0$, $Z_0=0$, and let the $\Delta_i$ be i.i.d. Rademacher variables. Every fixed $\lambda$ satisfies $\mathbb E\{\lambda\mathbb P_{R,n}\Delta\}=0$. If the same outcomes select $\widehat\lambda=\operatorname{sign}(\mathbb P_{R,n}\Delta)$, then
 \begin{align*}
 \mathbb P_{R,n}(Z_0+\widehat\lambda\Delta)
 &=|\mathbb P_{R,n}\Delta|,
 \end{align*}
 whose expectation is strictly positive.
 
-\paragraph{Reuse through \(\omega\).}
-Under the common covariate marginal, let \(g(X)\) be a nondegenerate mean-zero Rademacher variable and let the RCT-valid score be identically zero. Every fixed \(\omega\) centers \(\omega\{\mathbb P_{O,N}g-\mathbb P_{R,n}g\}\). Choosing \(\widehat\omega\) as the sign of that same bracket produces its absolute value, which again has strictly positive expectation. The bias in both examples comes solely from adaptive reuse.
+\paragraph{Reuse through $\omega$.}
+Under the common covariate marginal, let $g(X)$ be a nondegenerate mean-zero Rademacher variable and let the RCT-valid score be identically zero. Every fixed $\omega$ centers $\omega\{\mathbb P_{O,N}g-\mathbb P_{R,n}g\}$. Choosing $\widehat\omega$ as the sign of that same bracket produces its absolute value, which again has strictly positive expectation. The bias in both examples comes solely from adaptive reuse.
