@@ -121,6 +121,8 @@ Also define
 \end{align*}
 \end{definition}
 
+The following corollary rewrites the variance in Equation~\eqref{eq:ate-variance} using the four coefficients $A$, $B$, $C$, and $D$.
+
 \renewcommand*{\theHtheoremcorollary}{\theHtheorem.\arabic{theoremcorollary}}
 \begin{theoremcorollary}[Separated ATE variance quadratic]
 \label{prop:ate-variance-quadratic}
@@ -136,6 +138,8 @@ If the displayed scores have finite second moments, then
 \end{align}
 \end{theoremcorollary}
 
+Removing the constant term from Equation~\eqref{eq:ate-quadratic} gives the following equivalent optimization objective.
+
 \begin{proposition}[Equivalent ATE coefficient objective]
 \label{def:ate-coefficient-objective}
 \label{prop:ate-argmin-equivalence}
@@ -150,6 +154,8 @@ If the displayed scores have finite second moments, then
 		\mathcal J_{\mathrm{ATE}}(\lambda,\omega).
 	\end{align*}
 \end{proposition}
+
+The next theorem gives the closed-form variance-minimizing coefficients and their ridge-regularized counterparts.
 
 \begin{theorem}[Population and ridge oracles]
 \label{def:ate-joint-ridge-oracles}
@@ -210,7 +216,7 @@ The next theorem separates the two sources of this oracle variance reduction.
 \label{thm:ate-three-way-comparison}
 	Suppose the scores in Equation~\eqref{eq:ate-variance} have finite second
 	moments and $A,B>0$. Define
-$\widetilde{\mathcal V}(\lambda,\omega) \triangleq n\operatorname{Var}\{\widehat\theta_{r_0}(\lambda,\omega)\}$ and $\sigma_0^2\triangleq\operatorname{Var}_R(Z_0)$. Here ``PPI\textsuperscript{++}-only'' means the member of our family that fixes $\lambda=0$ and optimally selects $\omega$, not every procedure called PPI\textsuperscript{++}. Then
+$\widetilde{\mathcal V}(\lambda,\omega) \triangleq n\operatorname{Var}\{\widehat\theta_{r_0}(\lambda,\omega)\}$ and $\sigma_0^2\triangleq\operatorname{Var}_R(Z_0)$. Here ``PPI\textsuperscript{++}-only'' means the member of our family that fixes $\lambda=0$ and optimally selects $\omega$. Then
 \begin{align}
 	\widetilde{\mathcal V}_{\mathrm{RCT}}
 	&\triangleq\widetilde{\mathcal V}(0,0)=\sigma_0^2,
@@ -224,10 +230,16 @@ $\widetilde{\mathcal V}(\lambda,\omega) \triangleq n\operatorname{Var}\{\widehat
 	=\sigma_0^2-\frac{D^2}{B}-\frac{C^2}{A}.
 	\label{eq:ate-three-way-variance}
 \end{align}
-Therefore $\widetilde{\mathcal V}_{\mathrm{joint}} \leq\widetilde{\mathcal V}_{\mathrm{PPI}^{++}} \leq\widetilde{\mathcal V}_{\mathrm{RCT}}$. The second inequality is strict exactly when $D\neq0$, and the first is strict exactly when $C\neq0$. These are population-oracle variance comparisons within the stated estimator family.
+Therefore $\widetilde{\mathcal V}_{\mathrm{joint}} \leq\widetilde{\mathcal V}_{\mathrm{PPI}^{++}} \leq\widetilde{\mathcal V}_{\mathrm{RCT}}$.
 \end{theorem}
 
+Thus, with population-oracle coefficients and the exact density ratio, the joint ATE estimator has variance no larger than either the PPI\textsuperscript{++}-only estimator or the RCT-only estimator.
+
 \subsection{Estimable honest algorithm}
+
+This subsection gives a finite-sample algorithm for estimating the two fusion coefficients.
+
+We first define the feasible region over which $\lambda$ and $\omega$ are selected.
 
 \begin{definition}[Coefficient rectangle and interval projection]
 \label{def:interval-projection}
@@ -256,63 +268,39 @@ For positive $A,B$, the separated objective gives the coordinatewise projection
 	\omega_{\Theta_{\mathrm{rect}}}^\star
 	&=\operatorname{Proj}_{[L_\omega,U_\omega]}(D/B).
 \end{align*}
-The population oracle weakly improves the variance objective whenever
-$(0,0)$ is feasible. Estimated coefficients have no universal finite-sample
-no-harm guarantee.
+The population oracle weakly improves the variance objective whenever $(0,0)$ is feasible. Estimated coefficients have no universal finite-sample no-harm guarantee.
 
 \subsubsection{Coefficient estimation and honest evaluation}
 
-For $S\in\{R,O\}$, let $m_S\triangleq n_S^{\mathrm{tune}}\geq2$.
-Conditional on the fixed nuisance fits, $\widehat{\operatorname{Cov}}_S$
-and $\widehat{\operatorname{Var}}_S$ denote the usual unbiased
-tuning-sample covariance and variance with denominator $m_S-1$.
-The factor $n/N$ below uses the evaluation-sample sizes whose variance is
+For $S\in\{R,O\}$, suppose $n_S^{\mathrm{tune}}\geq2$. Conditional on the fixed nuisance fits, $\widehat{\operatorname{Cov}}_S$ and $\widehat{\operatorname{Var}}_S$ denote the usual unbiased tuning-sample covariance and variance with denominator $n_S^{\mathrm{tune}}-1$. The factor $n/N$ below uses the evaluation-sample sizes whose variance is
 optimized.
 
-Using the tuning samples, compute
+Let $\widehat r$ denote a density-ratio estimator fitted only on the nuisance samples. Under the common-covariate regime, set $\widehat r\triangleq 1$.
+
+Using the tuning samples, compute the following four empirical analogues of $A$, $B$, $C$, and $D$ in Definition~\ref{def:ate-variance-objects}:
 \begin{align}
 \widehat A&\triangleq\widehat{\operatorname{Var}}_R(\Delta),
 &
 \widehat B&\triangleq\widehat{\operatorname{Var}}_R(\widehat{g})
-+\frac nN\widehat{\operatorname{Var}}_O(r\widehat{g}),
-\\
++\frac nN\widehat{\operatorname{Var}}_O(\widehat r\widehat{g}),
+\notag\\
 \widehat C&\triangleq\widehat{\operatorname{Cov}}_R(Z_0,\Delta),
 &
-\widehat D&\triangleq\widehat{\operatorname{Cov}}_R(Z_0,\widehat{g}),
-&
-\widehat E&\triangleq\widehat{\operatorname{Cov}}_R(\Delta,\widehat{g}).
+\widehat D&\triangleq\widehat{\operatorname{Cov}}_R(Z_0,\widehat{g}).
+\label{eq:ate-empirical-moments}
 \end{align}
-Define
-\begin{align*}
-\widehat{\mathbf H}_{\mathrm{ATE}}
+These four moments define the separated empirical objective
+\begin{align}
+\widehat{\mathcal J}_{\mathrm{ATE}}(\lambda,\omega)
 &\triangleq
-\begin{pmatrix}
-\widehat A&-\widehat E\\
--\widehat E&\widehat B
-\end{pmatrix},
-&
-\widehat{\boldsymbol\ell}
-&\triangleq
-\begin{pmatrix}\widehat C\\-\widehat D\end{pmatrix},
-&
-\widehat d
-&\triangleq
-\widehat A\widehat B-\widehat E^2.
-\end{align*}
-Before observing the tuning outcomes, prespecify the bounds defining the
-nonempty compact rectangle $\Theta_{\mathrm{rect}}$, require it to contain
-the origin, and choose positive thresholds $t_A,t_B,t_{\det}$.
+2\widehat C\lambda-2\widehat D\omega
++\widehat A\lambda^2+\widehat B\omega^2.
+\label{eq:ate-empirical-objective}
+\end{align}
 
-Recall that $\widehat\mu_R=(\widehat\mu_{R,0},\widehat\mu_{R,1})$ and
-$\widehat\mu_O=(\widehat\mu_{O,0},\widehat\mu_{O,1})$ are outcome-regression
-predictors fitted on the RCT and OBS nuisance samples, respectively, and
-$\widehat{g}$ is their fitted OBS contrast from
-Equation~\eqref{eq:obs-effect-prediction}. No correctness assumption
-is imposed on these fitted regressions, and $\widehat{g}$ is not assumed to be a causal
-effect. Algorithm~\ref{alg:honest-ate} states the independent-sample
-implementation covered by the exact finite-sample results. The nuisance,
-tuning, and evaluation samples may be supplied directly or obtained by an
-honest prespecified split.
+Before observing the tuning outcomes, prespecify the bounds defining the nonempty compact rectangle $\Theta_{\mathrm{rect}}$, require it to contain the origin, and choose positive thresholds $t_A$ and $t_B$.
+
+Recall that $\widehat\mu_R=(\widehat\mu_{R,0},\widehat\mu_{R,1})$ and $\widehat\mu_O=(\widehat\mu_{O,0},\widehat\mu_{O,1})$ are outcome-regression predictors fitted on the RCT and OBS nuisance samples, respectively, and $\widehat{g}$ is their fitted OBS contrast from Equation~\eqref{eq:obs-effect-prediction}. Algorithm~\ref{alg:honest-ate} states the independent-sample implementation covered by the exact finite-sample results. The nuisance, tuning, and evaluation samples may be supplied directly or obtained by an honest prespecified split.
 
 \begin{algorithm}[H]
 \caption{ATE estimation with honest evaluation}
@@ -322,79 +310,39 @@ honest prespecified split.
 samples $D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}$, evaluation samples
 $D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}$, the rectangle
 $\Theta_{\mathrm{rect}}$, and denominator thresholds.}
-Fit $\widehat\mu_R$, $\widehat\mu_O$, $\widehat{g}$, and any ratio model on $D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}$. The exact theorem uses the true $r$; replacing it by $\widehat r$ invokes the drift conditions below.\;
-Compute the five moments on $D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}$, and
-select the coefficients using the axis, unrestricted joint, or constrained
-quadratic rule.\;
-Evaluate Equation~\eqref{eq:ate-estimator} on
-$D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}$. Set
-$\psi_R\triangleq Z_{\widehat\lambda}-\widehat\omega \widehat{g}$ and
-$\psi_O\triangleq\widehat\omega r\widehat{g}$, and compute
-$\widehat V\triangleq
-\widehat{\operatorname{Var}}_{R,\mathrm{eval}}(\psi_R)/n+
-\widehat{\operatorname{Var}}_{O,\mathrm{eval}}(\psi_O)/N$.\;
-\KwOut{$\widehat\theta_r$ and $\widehat V$.}
+Fit $\widehat\mu_R$, $\widehat\mu_O$, $\widehat{g}$, and a density-ratio estimator $\widehat r$ on $D_R^{\mathrm{nuis}},D_O^{\mathrm{nuis}}$. The function $\widehat r$ estimates the exact density ratio $r_0$. When $\widehat r\neq r_0$, Equation~\eqref{eq:ate-ratio-drift} gives the resulting mean error. \;
+
+Compute the four moments in Equation~\eqref{eq:ate-empirical-moments} on $D_R^{\mathrm{tune}},D_O^{\mathrm{tune}}$, and select the coefficients using the threshold-and-projection rule in Equation~\eqref{eq:ate-separated-plugin}.\;
+
+Set $r=\widehat r$ in Equation~\eqref{eq:ate-estimator}, and evaluate it on $D_R^{\mathrm{eval}},D_O^{\mathrm{eval}}$. Set $\psi_R\triangleq Z_{\widehat\lambda}-\widehat\omega \widehat{g}$ and $\psi_O\triangleq\widehat\omega\widehat r\widehat{g}$. Compute $\widehat V\triangleq \widehat{\operatorname{Var}}_{R,\mathrm{eval}}(\psi_R)/n+\widehat{\operatorname{Var}}_{O,\mathrm{eval}}(\psi_O)/N$.\;
+\KwOut{$\widehat\theta_{\widehat r}$ and $\widehat V$.}
 \end{algorithm}
 
 \paragraph{How Algorithm~\ref{alg:honest-ate} selects the coefficients.}
-The axis plug-in applies the population identity in
-Equation~\eqref{eq:ate-population-separation} by setting $\widehat E=0$ before
-minimizing:
-\begin{align*}
-\widehat\lambda_{\mathrm{axis}}
+
+Because Equation~\eqref{eq:ate-empirical-objective} is separated in $\lambda$ and $\omega$, Algorithm~\ref{alg:honest-ate} selects the two coefficients coordinatewise and projects each one onto its prespecified interval:
+\begin{align}
+\widehat\lambda
 &\triangleq
 \begin{cases}
--\widehat C/\widehat A,&\widehat A>t_A,\\
+\operatorname{Proj}_{[L_\lambda,U_\lambda]}(-\widehat C/\widehat A),&\widehat A>t_A,\\
 0,&\widehat A\leq t_A,
 \end{cases}
 &
-\widehat\omega_{\mathrm{axis}}
+\widehat\omega
 &\triangleq
 \begin{cases}
-\widehat D/\widehat B,&\widehat B>t_B,\\
+\operatorname{Proj}_{[L_\omega,U_\omega]}(\widehat D/\widehat B),&\widehat B>t_B,\\
 0,&\widehat B\leq t_B.
 \end{cases}
-\end{align*}
-When $\widehat A>t_A$, $\widehat B>t_B$, and
-$\widehat d>t_{\det}$, the unrestricted empirical joint rule instead retains
-$\widehat E$ and minimizes the empirical quadratic over $\mathbb R^2$:
-\begin{align*}
-\widehat\lambda_{\mathrm{joint}}
-&\triangleq
-\frac{\widehat E\widehat D-\widehat B\widehat C}{\widehat d},
-&
-\widehat\omega_{\mathrm{joint}}
-&\triangleq
-\frac{\widehat A\widehat D-\widehat E\widehat C}{\widehat d}.
-\end{align*}
-The constrained empirical rule retains the same $\widehat E$ but minimizes
-over the prespecified rectangle:
-\begin{align*}
-\widehat{\boldsymbol\beta}_{\Theta_{\mathrm{rect}}}
-&\in
-\operatorname*{arg\,min}_{\boldsymbol\beta\in\Theta_{\mathrm{rect}}}
-\left\{
-2\widehat{\boldsymbol\ell}^\top\boldsymbol\beta
-+\boldsymbol\beta^\top\widehat{\mathbf H}_{\mathrm{ATE}}
-\boldsymbol\beta
-\right\}.
-\end{align*}
-Under the same positive-determinant threshold, the unrestricted and constrained
-rules coincide when the unrestricted minimizer lies in
-$\Theta_{\mathrm{rect}}$. Otherwise, the constrained minimizer lies on the
-rectangle boundary and must be obtained from the displayed quadratic program.
-Separate coordinate clipping is exact only for the axis plug-in. If a required
-threshold fails or the quadratic solver is numerically unstable, the
-prespecified joint-rule fallback is $(0,0)$; the axis rule uses its
-coordinate-specific threshold definitions above.
+\label{eq:ate-separated-plugin}
+\end{align}
 
 \paragraph{Analysis.}
-The axis plug-in uses
-$(-\widehat C/\widehat A,\widehat D/\widehat B)$. The empirical joint rules
-retain $\widehat E$. Although the population covariance
-$\operatorname{Cov}_R(\Delta,\widehat{g})$ is zero by
-Equation~\eqref{eq:ate-population-separation}, its tuning-sample estimate
-$\widehat E$ is generally nonzero because of sampling noise.
+
+The four-moment rule in Equation~\eqref{eq:ate-separated-plugin} directly estimates the two population-oracle coordinates in Equation~\eqref{eq:axis-oracle}. The thresholds avoid division by nearly zero empirical curvature, and the projections enforce the prespecified feasible rectangle.
+
+%%%% 2026-09-07-1730-uptohere %%%% 2026
 
 Each sample covariance is conditionally unbiased for its corresponding
 fixed-score population moment given the nuisance fits, but the ratios defining
@@ -403,6 +351,7 @@ unbiased for the population oracle coefficients. The thresholds and feasible
 rectangle control instability; they do not turn these selected coefficients
 into finite-sample oracle estimates.
 
+For Algorithm~\ref{alg:honest-ate}, set $r=\widehat r$ in the generic evaluation scores below. The exact variance and normal-approximation results continue to state $r=r_0$ explicitly.
 For explicit evaluation notation, define
 \begin{align*}
 \psi_{R,i}
@@ -693,9 +642,8 @@ its ratio-weighted error $\delta_{\widehat r}$.
 
 \begin{proposition}[How ratio error changes coefficient selection]
 \label{lem:ratio-error-coefficients}
-This result isolates how replacing $r_0$ by $\widehat r$ changes the
-curvature used to choose $\omega$, and therefore can also change $\lambda$
-under joint tuning.
+
+This result isolates how replacing $r_0$ by $\widehat r$ changes the empirical curvature used to choose $\omega$. Under the separated rule in Equation~\eqref{eq:ate-separated-plugin}, $\widehat\lambda$ is unchanged because it depends only on $\widehat A$ and $\widehat C$.
 For a candidate ratio $\widetilde r$, write
 \begin{align}
 \widehat B_{\widetilde r}
@@ -704,8 +652,9 @@ For a candidate ratio $\widetilde r$, write
 +\frac nN\widehat{\operatorname{Var}}_O(\widetilde r \widehat{g}).
 \label{eq:ratio-dependent-B}
 \end{align}
-When the axis threshold for Equation~\eqref{eq:ratio-dependent-B} is inactive,
-define
+At $\widetilde r=\widehat r$, Equation~\eqref{eq:ratio-dependent-B} equals the empirical coefficient $\widehat B$ in Equation~\eqref{eq:ate-empirical-moments}.
+
+When $\widehat B_{\widetilde r}>t_B$, define the coefficient before interval projection by
 \begin{align}
 \widehat\omega_{\widetilde r}
 &\triangleq
@@ -722,7 +671,8 @@ With $\delta_{\widehat r}$ from Equation~\eqref{eq:ratio-error-score},
 \right].
 \label{eq:ratio-B-error}
 \end{align}
-When the axis-rule thresholds are inactive,
+
+When both $\widehat B_{\widehat r}$ and $\widehat B_{r_0}$ exceed $t_B$,
 \begin{align}
 \widehat\omega_{\widehat r}-\widehat\omega_{r_0}
 &=
@@ -731,9 +681,8 @@ When the axis-rule thresholds are inactive,
 {\widehat B_{\widehat r}\widehat B_{r_0}}.
 \label{eq:ratio-omega-error}
 \end{align}
-For the joint rule, Equation~\eqref{eq:ratio-B-error} changes the lower-right
-entry of $\widehat{\mathbf H}_{\mathrm{ATE}}$, so both selected coefficients
-may change.
+
+Equation~\eqref{eq:ratio-B-error} can therefore change the selected $\widehat\omega$ through both its denominator and the projection in Equation~\eqref{eq:ate-separated-plugin}, while the separated rule leaves $\widehat\lambda$ unchanged.
 \end{proposition}
 
 The coefficient path in Equations~\eqref{eq:ratio-B-error} and
@@ -823,7 +772,7 @@ Assume every tuning moment computed with
 $\widehat r$ converges in probability to its exact-ratio counterpart, and
 the selected coefficients converge in probability to a deterministic
 exact-ratio pair $(\lambda^\circ,\omega^\circ)$. Also suppose the probability
-of invoking any denominator or determinant fallback tends to zero. If
+of invoking any denominator fallback tends to zero. If
 \begin{align}
 \sqrt n\,\widehat\omega P_O\delta_{\widehat r}
 &=o_p(1),
@@ -845,4 +794,4 @@ This does not imply universal finite-sample dominance.
 
 \subsubsection{Diagnostics}
 
-An implementation should report split assignments, propensity bounds, candidate boxes, all denominator and determinant thresholds, coefficient fallbacks, ratio overlap and clipping, and the selected RCT-only comparator. Near-zero $\widehat A$, $\widehat B$, or $\widehat d$ must trigger the prespecified rule rather than an unstable analytic ratio.
+An implementation should report split assignments, propensity bounds, the coefficient rectangle, both denominator thresholds, coefficient fallbacks, ratio overlap and clipping, and the selected RCT-only comparator. Near-zero $\widehat A$ or $\widehat B$ must trigger the zero-coordinate fallback in Equation~\eqref{eq:ate-separated-plugin} rather than an unstable ratio.
