@@ -7,16 +7,16 @@ The first boundary is covariate-marginal mismatch. Without weighting, if $P_R(X)
 \begin{align}
 \omega
 \left[
-\mathbb E_O\{g(X)\}
+\mathbb E_O\{\widehat{g}(X)\}
 -
-\mathbb E_R\{g(X)\}
+\mathbb E_R\{\widehat{g}(X)\}
 \right],
 \end{align}
-and the observational and trial terms in the unweighted CATE loss no longer cancel. The exact-ratio ATE theorem addresses the first problem when $P_R^X\ll P_O^X$ and the true ratio $r=dP_R^X/dP_O^X$ is available. With an estimated ratio $\widehat r$, the exact conditional drift is $\omega\mathbb E_O[(\widehat r-r)g]$. Evaluation-only variance estimation is valid at first order only in the stated negligible-drift regime; otherwise the ratio estimator's influence-function contribution must be included. The present CATE theorem remains a common-marginal result.
+and the observational and trial terms in the unweighted CATE loss no longer cancel. The exact-ratio ATE theorem addresses the first problem when $P_R^X\ll P_O^X$ and the true ratio $r=dP_R^X/dP_O^X$ is available. With an estimated ratio $\widehat r$, the exact conditional drift is $\omega\mathbb E_O[(\widehat r-r)\widehat{g}]$. Evaluation-only variance estimation is valid at first order only in the stated negligible-drift regime; otherwise the ratio estimator's influence-function contribution must be included. The present CATE theorem remains a common-marginal result.
 
 The second failure mode is weak trial overlap or an incorrect propensity. The conditional-mean identity in Proposition~\ref{prop:pseudo-validity} uses the known randomized-trial propensity and its strict positivity. Extreme inverse-propensity factors can also make the required moments unstable even when the identity remains algebraically valid.
 
-The third failure mode is weak or misleading observational prediction. Under the common-marginal model, the unrestricted oracle $\omega$-gain is controlled by the squared correlation between $g(X)$ and $\tau(X)$, together with the finite $n/N$ attenuation. A weak correlation gives little between-$X$ gain. The $\lambda$-channel can likewise be unhelpful when $Z_1-Z_0$ is noisy or nearly degenerate. Population oracle coefficients reveal these limits but do not ensure that their sample estimates are stable.
+The third failure mode is weak or misleading observational prediction. Under the common-marginal model, the unrestricted oracle $\omega$-gain is controlled by the squared correlation between $\widehat{g}(X)$ and $\tau(X)$, together with the finite $n/N$ attenuation. A weak correlation gives little between-$X$ gain. The $\lambda$-channel can likewise be unhelpful when $Z_1-Z_0$ is noisy or nearly degenerate. Population oracle coefficients reveal these limits but do not ensure that their sample estimates are stable.
 
 The fourth failure mode is adaptive reuse of evaluation data. Estimating nuisance functions, tuning $(\lambda,\omega)$, and evaluating the selected candidate on the same outcomes invalidates the conditioning used by the exact results. The explicit score-level counterexamples in Appendix~\ref{app:proofs} show that such reuse can create bias even when every fixed coefficient is unbiased. Three-way splitting prevents direct leakage. The present theory does not cover nested or overlapping cross-fitted reuse; unbiasedness and pooled inference under such reuse require a separate stability or influence-function analysis.
 

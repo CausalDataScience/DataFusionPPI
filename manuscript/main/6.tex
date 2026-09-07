@@ -33,9 +33,9 @@ s_{R,\mathrm{tu}}^2(\Delta),
 &
 \widehat B
 &=
-s_{R,\mathrm{tu}}^2(g)
+s_{R,\mathrm{tu}}^2(\widehat{g})
 +
-\frac nN s_{O,\mathrm{tu}}^2(rg),
+\frac nN s_{O,\mathrm{tu}}^2(r\widehat{g}),
 \\
 \widehat C
 &=
@@ -43,14 +43,14 @@ s_{R,\mathrm{tu}}(Z_0,\Delta),
 &
 \widehat D
 &=
-s_{R,\mathrm{tu}}(Z_0,g),
+s_{R,\mathrm{tu}}(Z_0,\widehat{g}),
 \\
 \widehat E
 &=
-s_{R,\mathrm{tu}}(\Delta,g).
+s_{R,\mathrm{tu}}(\Delta,\widehat{g}).
 \label{eq:plugin-moments}
 \end{align}
-In particular, $\widehat D$ is observable and targets $D=\operatorname{Cov}_R\{\tau(X),g(X)\}$ without observing $\tau(X)$.
+In particular, $\widehat D$ is observable and targets $D=\operatorname{Cov}_R\{\tau(X),\widehat{g}(X)\}$ without observing $\tau(X)$.
 
 When the denominators are stable, the population-orthogonality axis plug-in is
 \begin{align}
@@ -120,7 +120,7 @@ The axis version replaces $\widehat E$ by zero. Coordinatewise clipping has a cl
 The exact adaptive algorithm uses mutually independent nuisance-training, coefficient-tuning, and final-evaluation blocks from both sources.
 
 \begin{enumerate}[label=\arabic*.]
-\item Fit $\widehat\mu_R,\widehat\mu_O,g$ using only the nuisance-training blocks. Under unequal covariate marginals, the exact algorithm uses the true $r$; a separately fitted $\widehat r$ belongs to the approximate regime described below.
+\item Fit $\widehat\mu_R,\widehat\mu_O,\widehat{g}$ using only the nuisance-training blocks. Under unequal covariate marginals, the exact algorithm uses the true $r$; a separately fitted $\widehat r$ belongs to the approximate regime described below.
 \item Score the independent tuning blocks, compute \eqref{eq:plugin-moments}, apply the prespecified thresholds, and select either \eqref{eq:axis-plugin}, \eqref{eq:joint-plugin}, or \eqref{eq:plugin-qp}.
 \item Hold every fitted function and selected coefficient fixed. On the untouched final blocks, report
 \begin{align}
@@ -129,7 +129,7 @@ The exact adaptive algorithm uses mutually independent nuisance-training, coeffi
 \mathbb P_{R,n}Z_{\widehat\lambda}
 +
 \widehat\omega
-\{\mathbb P_{O,N}(rg)-\mathbb P_{R,n}g\}.
+\{\mathbb P_{O,N}(r\widehat{g})-\mathbb P_{R,n}\widehat{g}\}.
 \label{eq:honest-selected-estimator}
 \end{align}
 \end{enumerate}
@@ -138,11 +138,11 @@ For final-block scores
 \begin{align}
 \psi_R(V)
 &=
-Z_{\widehat\lambda}(V)-\widehat\omega g(X),
+Z_{\widehat\lambda}(V)-\widehat\omega \widehat{g}(X),
 &
 \psi_O(X)
 &=
-\widehat\omega r(X)g(X),
+\widehat\omega r(X)\widehat{g}(X),
 \end{align}
 let
 \begin{align}
@@ -212,10 +212,10 @@ Replacing $r$ by an independently trained $\widehat r$ creates the exact conditi
 \begin{align}
 b_{\mathcal F}
 &=
-\mathbb E_O[\{\widehat r(X)-r(X)\}g(X)],
+\mathbb E_O[\{\widehat r(X)-r(X)\}\widehat{g}(X)],
 \label{eq:ratio-drift}
 \end{align}
-Let $h_n=(\widehat r-r)g$. Then
+Let $h_n=(\widehat r-r)\widehat{g}$. Then
 \begin{align}
 \mathbb E(\widehat\theta_{\widehat r}\mid\mathcal F)
 &=
@@ -247,7 +247,7 @@ or influence-function analysis that accounts for dependence across folds.
 
 Partition the trial indices into folds $I_{R,1},\ldots,I_{R,K}$ and the observational indices into folds $I_{O,1},\ldots,I_{O,K}$. For fold $k$, fit $\widehat\mu_R^{(-k)}$ without $I_{R,k}$ and fit $\widehat\mu_O^{(-k)}$ without $I_{O,k}$. Use the same observation-trained function
 \begin{align}
-g^{(-k)}(x)
+\widehat{g}^{(-k)}(x)
 &=
 \widehat\mu_{O,1}^{(-k)}(x)
 -
@@ -292,12 +292,12 @@ Let $c$ index a candidate function $t_c$. Choose one reference coefficient $\lam
 &\quad+
 \mathbb P_{O,\mathrm{val}}
 [
-\{g(X)-t_c(X)\}^2
+\{\widehat{g}(X)-t_c(X)\}^2
 ]
 -
 \mathbb P_{R,\mathrm{val}}
 [
-\{g(X)-t_c(X)\}^2
+\{\widehat{g}(X)-t_c(X)\}^2
 ].
 \label{eq:validation-score}
 \end{align}
@@ -325,6 +325,6 @@ The additive noise term in \eqref{eq:validation-identity} is common across candi
 
 \subsection{Diagnostics and reporting}
 
-A reproducible implementation should report the trial and observational fold assignments, the propensity bounds, the candidate grid, the function class, the penalty and its scaling, and every denominator used in an oracle-inspired coefficient. Near-zero estimates of $\operatorname{Var}(\Delta)$, $\operatorname{Var}\{g(X)\}$, or $\operatorname{Var}(G_t)$ require a prespecified fallback such as $\lambda=0$ or $\omega=0$. Values of $\omega$ outside $[0,1]$ require an explicit curvature check of the original empirical quadratic.
+A reproducible implementation should report the trial and observational fold assignments, the propensity bounds, the candidate grid, the function class, the penalty and its scaling, and every denominator used in an oracle-inspired coefficient. Near-zero estimates of $\operatorname{Var}(\Delta)$, $\operatorname{Var}\{\widehat{g}(X)\}$, or $\operatorname{Var}(G_t)$ require a prespecified fallback such as $\lambda=0$ or $\omega=0$. Values of $\omega$ outside $[0,1]$ require an explicit curvature check of the original empirical quadratic.
 
 Validation should report both the selected candidate and the randomized-trial-only comparator. This comparison is empirical rather than guaranteed. The exact honest-split propositions explain the intended signal and noise channels; extending them to overlapping cross-fitted reuse is outside the present theory.

@@ -137,10 +137,9 @@ risk.
 
 Both RCT-only routes identify the desired projection, but neither directly
 averages the large OBS covariate sample. Recall the fitted OBS
-treatment-effect prediction $\widehat g$ from
-Equation~\eqref{eq:obs-effect-prediction}. For compact formulas in this section,
-write $g\triangleq\widehat g$, and define
-$G_\zeta(X)\triangleq\{g(X)-\zeta(X)\}^2$. The following full-fusion
+treatment-effect prediction $\widehat{g}$ from
+Equation~\eqref{eq:obs-effect-prediction}, and define
+$G_\zeta(X)\triangleq\{\widehat{g}(X)-\zeta(X)\}^2$. The following full-fusion
 objects are retained here so that the subsequent orthogonality and
 finite-sample results remain self-contained.
 
@@ -253,24 +252,34 @@ $L_2(P_R^X)$ projections of $\tau$.
 
 Proposition~\ref{prop:cate-target} and Theorem~\ref{thm:rf-target} establish
 the exact population targets. We now ask a different question: how does each
-fitted object enter the first-order equation that learns $\zeta$? Following
-\citet[Assumption~1]{foster2023orthogonal}, loss orthogonality means that the
-mixed derivative $D_\eta D_\zeta L$ vanishes at the population target and
-nuisance truth. Equivalently, up to scaling, it means
-$D_\eta\Psi=0$ for $\Psi\triangleq-D_\zeta L/2$. This definition alone
-does not establish an oracle convergence rate.
+fitted object enter the first-order equation that learns $\zeta$?
 
 \begin{definition}[Derivative directions and learning roles]
-Use the Gateaux derivative defined in Equation~\eqref{eq:gateaux-derivative}.
+For a functional $F$ of a function-valued argument $u$, let $h$ be an
+admissible direction such that $u+\varepsilon h$ remains in the domain of
+$F$ for all sufficiently small $|\varepsilon|$. Whenever the derivative
+exists, define the Gateaux derivative by
+\begin{align}
+D_uF(u)[h]
+&\triangleq
+\left.\frac{d}{d\varepsilon}F(u+\varepsilon h)\right|_{\varepsilon=0}.
+\label{eq:gateaux-derivative}
+\end{align}
 For an object $\eta$, let $h$ denote an admissible direction.
 The target argument is $\zeta$, and $v$ denotes an admissible target
 direction such that $\zeta+\varepsilon v$ remains in the ambient loss domain
-for all sufficiently small $\varepsilon$. The learned objects $q,m,g,r$
-are nuisance directions. The coefficients $\lambda$ and $\omega$ are held fixed during
+for all sufficiently small $\varepsilon$. The learned objects $q,m,\widehat{g},r$
+are nuisance arguments. The coefficients $\lambda$ and $\omega$ are held fixed during
 this audit: $\lambda$ selects $q_\lambda$ or $m_\lambda$, while
 $\omega$ scales the OBS correction. The trial propensity $e_0$ is known
 by design.
 \end{definition}
+
+Following \citet[Assumption~1]{foster2023orthogonal}, loss orthogonality means
+that the mixed derivative $D_\eta D_\zeta L$ vanishes at the population target
+and nuisance truth. Equivalently, up to scaling, it means $D_\eta\Psi=0$ for
+$\Psi\triangleq-D_\zeta L/2$. This definition alone does not establish an
+oracle convergence rate.
 
 Write $Z_q\triangleq\varphi(V;q)$,
 $s_0(X)\triangleq e_0(X)\{1-e_0(X)\}$, and
@@ -280,18 +289,18 @@ $\kappa_0(A,X)\triangleq\kappa(A,X)
 For fixed $(\lambda,\omega)$, define the DRF and RF population learning
 equations by
 \begin{align}
-\Psi_{\mathrm{DRF}}(\zeta;q,g,r)[v]
+\Psi_{\mathrm{DRF}}(\zeta;q,\widehat{g},r)[v]
 &\triangleq
 -\frac12D_\zeta\mathbb E\{\widehat L_{\mathrm{DRF}}\}[v]
 \nonumber\\
 &=\mathbb E_R[v(X)\{Z_q-\zeta(X)\}]
 \nonumber\\
 &\quad+\omega\left[
-\mathbb E_O\{r(X)v(X)[g(X)-\zeta(X)]\}
--\mathbb E_R\{v(X)[g(X)-\zeta(X)]\}
+\mathbb E_O\{r(X)v(X)[\widehat{g}(X)-\zeta(X)]\}
+-\mathbb E_R\{v(X)[\widehat{g}(X)-\zeta(X)]\}
 \right],
 \label{eq:drf-learning-equation}\\
-\Psi_{\mathrm{RF}}(\zeta;m,g,r)[v]
+\Psi_{\mathrm{RF}}(\zeta;m,\widehat{g},r)[v]
 &\triangleq
 -\frac12D_\zeta\mathbb E\{\widehat L_{\mathrm{RF}}\}[v]
 \nonumber\\
@@ -300,8 +309,8 @@ v(X)\frac{A-e_0(X)}{s_0(X)}
 \{Y-m(X)-[A-e_0(X)]\zeta(X)\}\right]
 \nonumber\\
 &\quad+\omega\left[
-\mathbb E_O\{r(X)v(X)[g(X)-\zeta(X)]\}
--\mathbb E_R\{\kappa_0(A,X)v(X)[g(X)-\zeta(X)]\}
+\mathbb E_O\{r(X)v(X)[\widehat{g}(X)-\zeta(X)]\}
+-\mathbb E_R\{\kappa_0(A,X)v(X)[\widehat{g}(X)-\zeta(X)]\}
 \right].
 \label{eq:rf-learning-equation}
 \end{align}
@@ -321,9 +330,9 @@ For every integrable function $f(X)$, exact transport gives
 $\mathbb E_O(r_0f)=\mathbb E_R(f)$, and randomization gives
 $\mathbb E_R(\kappa_0\mid X)=1$. Consequently,
 \begin{align*}
-\Psi_{\mathrm{DRF}}(\zeta;q,g,r_0)[v]
+\Psi_{\mathrm{DRF}}(\zeta;q,\widehat{g},r_0)[v]
 &=\mathbb E_R[v(X)\{Z_q-\zeta(X)\}],\\
-\Psi_{\mathrm{RF}}(\zeta;m,g,r_0)[v]
+\Psi_{\mathrm{RF}}(\zeta;m,\widehat{g},r_0)[v]
 &=\mathbb E_R\left[
 v(X)\frac{A-e_0(X)}{s_0(X)}
 \{Y-m(X)-[A-e_0(X)]\zeta(X)\}\right].
@@ -357,15 +366,21 @@ D_m\Psi_{\mathrm{RF}}[h,v]
 v(X)\frac{A-e_0(X)}{s_0(X)}h(X)\right]=0.
 \end{align*}
 
-\item For a prediction direction $u$ and either
-$j\in\{\mathrm{DRF},\mathrm{RF}\}$,
+\item For a prediction direction $u$, define the path
+$\widehat{g}_\varepsilon\triangleq\widehat{g}+\varepsilon u$. For either
+$j\in\{\mathrm{DRF},\mathrm{RF}\}$, write $\Psi_j(\widehat{g}_\varepsilon)[v]$
+and $\widehat L_j(\widehat{g}_\varepsilon)$ with all other displayed arguments
+held fixed. Then
 \begin{align}
-D_g\Psi_j[u,v]
+\left.\frac{d}{d\varepsilon}
+\Psi_j(\widehat{g}_\varepsilon)[v]\right|_{\varepsilon=0}
 &=\omega\mathbb E_O[\{r(X)-r_0(X)\}u(X)v(X)],
 \label{eq:cate-g-score-derivative}\\
-D_g\mathbb E(\widehat L_j)[u]
+\left.\frac{d}{d\varepsilon}
+\mathbb E\{\widehat L_j(\widehat{g}_\varepsilon)\}
+\right|_{\varepsilon=0}
 &=2\omega\mathbb E_O[\{r(X)-r_0(X)\}
-\{g(X)-\zeta(X)\}u(X)].
+\{\widehat{g}(X)-\zeta(X)\}u(X)].
 \label{eq:cate-g-loss-derivative}
 \end{align}
 Both derivatives vanish when $r=r_0$, but not generally for an approximate
@@ -374,10 +389,10 @@ ratio.
 \item For a ratio direction $h_r$,
 \begin{align}
 D_r\Psi_j[h_r,v]
-&=\omega\mathbb E_O[h_r(X)v(X)\{g(X)-\zeta(X)\}],
+&=\omega\mathbb E_O[h_r(X)v(X)\{\widehat{g}(X)-\zeta(X)\}],
 \label{eq:cate-ratio-score-derivative}\\
 D_r\mathbb E\{\widehat L_j\}[h_r]
-&=\omega\mathbb E_O[h_r(X)\{g(X)-\zeta(X)\}^2].
+&=\omega\mathbb E_O[h_r(X)\{\widehat{g}(X)-\zeta(X)\}^2].
 \label{eq:drf-ratio-derivative}
 \end{align}
 These derivatives are generally nonzero.
@@ -398,11 +413,11 @@ may have only a tangent cone.
 \begin{proposition}[Density-ratio nonorthogonality]
 \label{prop:cate-ratio-nonorthogonality}
 Suppose $\omega\neq0$ and
-$v(g-\zeta)\in L^2(P_O^X)$.
+$v(\widehat{g}-\zeta)\in L^2(P_O^X)$.
 Over the full normalized tangent space $\mathcal T_r$, the ratio-score
 derivative in Equation~\eqref{eq:cate-ratio-score-derivative} vanishes for
 every $h_r\in\mathcal T_r$ if and only if
-$v(X)\{g(X)-\zeta(X)\}$ is constant $P_O^X$-almost surely. Therefore,
+$v(X)\{\widehat{g}(X)-\zeta(X)\}$ is constant $P_O^X$-almost surely. Therefore,
 the learning equations are generally not orthogonal to the density ratio.
 Balancing selected empirical moments does not generally produce orthogonality
 over the full normalized tangent space.
@@ -410,7 +425,7 @@ over the full normalized tangent space.
 
 As a direct chain-rule consequence of items 1--3 in
 Proposition~\ref{prop:cate-orthogonality-audit}, if the same OBS outcome
-regression generates $(q_O,g)$ for DRF or $(m_O,g)$ for RF, then its
+regression generates $(q_O,\widehat{g})$ for DRF or $(m_O,\widehat{g})$ for RF, then its
 total learning-equation derivative is zero when $e_0$ is known and exact
 $r_0$ is held fixed. This conclusion does not cover paths that change
 $r$, or the use of an approximate ratio.
@@ -821,7 +836,7 @@ empirical selector below minimizes an observed validation criterion.
 \label{def:cate-finite-grid-validation}
 Set
 $Z_0\triangleq\varphi(V;q_R)$, where $q_R$ is fixed before validation,
-and let $g$ be the fitted OBS treatment-effect prediction in
+and let $\widehat{g}$ be the fitted OBS treatment-effect prediction in
 Equation~\eqref{eq:obs-effect-prediction}.  Under a common covariate marginal
 use $r_0=1$; under covariate shift use the exact ratio
 $r_0=dP_R^X/dP_O^X$.  Let $\mathbb P_{R,\mathrm{val}}$ and
@@ -829,7 +844,7 @@ $\mathbb P_{O,\mathrm{val}}$ denote empirical averages over the RCT and
 OBS validation samples.  Define
 \begin{align*}
 G_{j,\lambda,\omega}(X)
-&\triangleq\{g(X)-\widehat\tau_j(X;\lambda,\omega)\}^2,\\
+&\triangleq\{\widehat{g}(X)-\widehat\tau_j(X;\lambda,\omega)\}^2,\\
 S_{R,j,\lambda,\omega}
 &\triangleq\{Z_0-\widehat\tau_j(X;\lambda,\omega)\}^2
 -\omega G_{j,\lambda,\omega}(X),\\
@@ -1087,8 +1102,9 @@ For DRF, define
 \widehat\Gamma_R&\triangleq\mathbb P_R^{\mathrm{fit}}(bb^\top),
 &\widehat\Gamma_{O,r}&\triangleq\mathbb P_O^{\mathrm{fit}}(r_0bb^\top),\\
 \widehat h_\lambda&\triangleq\mathbb P_R^{\mathrm{fit}}(bZ_\lambda),
-&\widehat d_g&\triangleq\mathbb P_O^{\mathrm{fit}}(r_0bg)
--\mathbb P_R^{\mathrm{fit}}(bg).
+&\widehat d_{\mathrm{OBS}}&\triangleq
+\mathbb P_O^{\mathrm{fit}}(r_0b\widehat{g})
+-\mathbb P_R^{\mathrm{fit}}(b\widehat{g}).
 \end{align*}
 For RF, let
 \begin{align*}
@@ -1098,9 +1114,9 @@ s_{m_\lambda}&\triangleq
 &\triangleq\mathbb P_R^{\mathrm{fit}}(\kappa bb^\top),\\
 \widehat h_{m_\lambda}&\triangleq
 \mathbb P_R^{\mathrm{fit}}(bs_{m_\lambda}),
-&\widehat d_{g,\kappa}&\triangleq
-\mathbb P_O^{\mathrm{fit}}(r_0bg)
--\mathbb P_R^{\mathrm{fit}}(\kappa bg).
+&\widehat d_{\mathrm{OBS},\kappa}&\triangleq
+\mathbb P_O^{\mathrm{fit}}(r_0b\widehat{g})
+-\mathbb P_R^{\mathrm{fit}}(\kappa b\widehat{g}).
 \end{align*}
 
 \begin{proposition}[Normal equations and positive semidefiniteness]
@@ -1111,12 +1127,12 @@ For DRF and RF, respectively, define
 &\triangleq(1-\omega)\widehat\Gamma_R
 +\omega\widehat\Gamma_{O,r},
 &\widehat h_{\mathrm{DRF}}(\lambda,\omega)
-&\triangleq\widehat h_\lambda+\omega\widehat d_g,\\
+&\triangleq\widehat h_\lambda+\omega\widehat d_{\mathrm{OBS}},\\
 \widehat H_{\mathrm{RF}}(\omega)
 &\triangleq(1-\omega)\widehat\Gamma_{R,\kappa}
 +\omega\widehat\Gamma_{O,r},
 &\widehat h_{\mathrm{RF}}(\lambda,\omega)
-&\triangleq\widehat h_{m_\lambda}+\omega\widehat d_{g,\kappa}.
+&\triangleq\widehat h_{m_\lambda}+\omega\widehat d_{\mathrm{OBS},\kappa}.
 \end{align*}
 The normal equation is
 \begin{align*}
@@ -1212,14 +1228,14 @@ decomposition because the random inverse Hessian and score are dependent.
 For the concentration result, define the raw source contributions explicitly:
 \begin{align*}
 \psi_{R,\mathrm{DRF}}
-&\triangleq b\{Z_\lambda-\omega g-(1-\omega)\zeta_p\},
+&\triangleq b\{Z_\lambda-\omega\widehat{g}-(1-\omega)\zeta_p\},
 &\psi_{O,\mathrm{DRF}}
-&\triangleq\omega r_0b(g-\zeta_p),\\
+&\triangleq\omega r_0b(\widehat{g}-\zeta_p),\\
 \psi_{R,\mathrm{RF}}
 &\triangleq b[s_{m_\lambda}
--\kappa\{\omega g+(1-\omega)\zeta_p\}],
+-\kappa\{\omega \widehat{g}+(1-\omega)\zeta_p\}],
 &\psi_{O,\mathrm{RF}}
-&\triangleq\omega r_0b(g-\zeta_p).
+&\triangleq\omega r_0b(\widehat{g}-\zeta_p).
 \end{align*}
 Under the exact-target conditions,
 $\mathbb E_R\psi_{R,j}+\mathbb E_O\psi_{O,j}=0$; the two source means need
@@ -1351,7 +1367,7 @@ its Hessian. Define
 \begin{align}
 \widehat\Delta_{h,j}
 &\triangleq\omega\mathbb P_O^{\mathrm{fit}}
-[(\widehat r-r_0)bg],
+[(\widehat r-r_0)b\widehat{g}],
 \label{eq:cate-ratio-score-drift}\\
 \widehat\Delta_{H,j}
 &\triangleq\omega\mathbb P_O^{\mathrm{fit}}

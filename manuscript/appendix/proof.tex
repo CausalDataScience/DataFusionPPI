@@ -36,37 +36,29 @@ iterated expectation. This gives
 &=\mathbb E_R\{\tau(X)\}=\theta.
 \end{align*}
 
-\subsection{Proof of Proposition~\ref{prop:ate-nuisance-sensitivity}}
+\subsection{Proof of Theorem~\ref{thm:ate-variance}}
 
 Pseudo-outcome validity and exact transport give
 \begin{align*}
 P_R(Z_\lambda)&=\theta,
 &
-P_O(r_0g)&=P_R(g).
+P_O(r_0\widehat{g})&=P_R(\widehat{g}).
 \end{align*}
 Substituting these identities into Equation~\eqref{eq:ate-estimator} proves
 Equation~\eqref{eq:ate-exact-target}. For any fixed $\widetilde r$,
 \begin{align*}
 \mathbb E\{\widehat\theta_{\widetilde r}(\lambda,\omega)\}-\theta
-&=\omega\{P_O(\widetilde r g)-P_R(g)\}
+&=\omega\{P_O(\widetilde r \widehat{g})-P_R(\widehat{g})\}
 \\
-&=\omega P_O\{(\widetilde r-r_0)g\},
+&=\omega P_O\{(\widetilde r-r_0)\widehat{g}\},
 \end{align*}
-which proves Equation~\eqref{eq:ate-ratio-drift}.
-
-\subsection{Proof of Theorem~\ref{thm:ate-variance}}
-
-Using $\mathbb E_R(Z_\lambda)=\theta$ and exact transport,
-\begin{align}
-\mathbb E_O\{r_0(X)g(X)\}=\mathbb E_R\{g(X)\},
-\end{align}
-the evaluation-sample mean of Equation~\eqref{eq:ate-estimator} is $\theta$. Rewrite
-the centered estimator as
+which proves Equation~\eqref{eq:ate-ratio-drift}. Using
+the same pseudo-outcome and transport identities, rewrite the centered estimator as
 \begin{align}
 \widehat\theta_{r_0}(\lambda,\omega)-\theta
 &=
-(\mathbb P_{R,n}-P_R)\{Z_\lambda-\omega g\}
-+(\mathbb P_{O,N}-P_O)\{\omega r_0g\}.
+(\mathbb P_{R,n}-P_R)\{Z_\lambda-\omega \widehat{g}\}
++(\mathbb P_{O,N}-P_O)\{\omega r_0\widehat{g}\}.
 \end{align}
 The two summands are independent because $D_R^{\mathrm{eval}}$ and
 $D_O^{\mathrm{eval}}$ are
@@ -82,22 +74,21 @@ moment assumptions; variance unbiasedness alone is not a central limit theorem.
 
 Expand the first variance in Equation~\eqref{eq:ate-variance} using
 $Z_\lambda=Z_0+\lambda\Delta$. The interaction coefficient vanishes because
-\begin{align*}
-\operatorname{Cov}_R(\Delta,g)
+\begin{align}
+\operatorname{Cov}_R(\Delta,\widehat{g})
 &=
 \mathbb E_R\left[
-\{g-\mathbb E_R(g)\}\mathbb E_R(\Delta\mid X)
+\{\widehat{g}-\mathbb E_R(\widehat{g})\}\mathbb E_R(\Delta\mid X)
 \right]
-=0.
-\end{align*}
-Also, since $g$ is a fixed function of $X$,
-\begin{align*}
+ =0,
+\notag\\
 D
-&=\operatorname{Cov}_R(Z_0,g)
-=\operatorname{Cov}_R\{\mathbb E_R(Z_0\mid X),g\}
-=\operatorname{Cov}_R\{\tau(X),g(X)\}.
-\end{align*}
-Collecting the remaining terms and multiplying by $n$ gives
+&=\operatorname{Cov}_R(Z_0,\widehat{g})
+=\operatorname{Cov}_R\{\mathbb E_R(Z_0\mid X),\widehat{g}\}
+=\operatorname{Cov}_R\{\tau(X),\widehat{g}(X)\}.
+\label{eq:ate-population-separation}
+\end{align}
+Collecting the coefficient-dependent terms and multiplying by $n$ gives
 $2C\lambda-2D\omega+A\lambda^2+B\omega^2$, which proves
 Equation~\eqref{eq:ate-quadratic}. Finally, for every $(u,v)$,
 \begin{align*}
@@ -129,32 +120,23 @@ When $A,B>0$, the two first-order conditions are
 \end{align*}
 The separated quadratic is strictly convex, so their unique solution is
 $\lambda^\star=-C/A$ and $\omega^\star=D/B$.
-For $\rho>0$, the ridge objective has gradient
+For every $\rho\geq0$, the ridge objective has gradient
 \begin{align*}
 \begin{pmatrix}
 2C+2(A+\rho)\lambda\\
 -2D+2(B+\rho)\omega
 \end{pmatrix}.
 \end{align*}
-Since $A+\rho>0$ and $B+\rho>0$, setting the gradient to zero proves
-Equation~\eqref{eq:ridge-oracle} and uniqueness.
+Since $A,B>0$, both $A+\rho$ and $B+\rho$ are positive for every
+$\rho\geq0$. Setting the gradient to zero therefore proves
+Equation~\eqref{eq:ridge-oracle} and uniqueness. At $\rho=0$, the penalized
+objective reduces to $\mathcal J_{\mathrm{ATE}}$, whose minimizers are also
+the minimizers of the exact population variance by
+Proposition~\ref{prop:ate-argmin-equivalence}.
 
-\subsection{Flat directions and compact constraints}
+\subsection{Compact constraints}
 
-If $A=\operatorname{Var}_R(\Delta)=0$, then $\Delta$ is constant almost
-surely, and $\mathbb E_R(\Delta\mid X)=0$ forces that constant to be zero.
-Consequently $C=0$, and the objective is flat in $\lambda$.
-If
-\begin{align*}
-B
-&=\operatorname{Var}_R(g)+\frac nN\operatorname{Var}_O(r_0g)=0,
-\end{align*}
-then $g$ is constant $P_R$-almost surely and $r_0g$ is constant
-$P_O$-almost surely.  Exact transport gives
-$P_O(r_0g)=P_R(g)$, so the two constants agree and
-$\mathbb P_{O,N}(r_0g)-\mathbb P_{R,n}(g)=0$ for every evaluation sample.
-Consequently $D=0$, and the objective is flat in $\omega$. Continuity of
-$\mathcal J_{\mathrm{ATE}}$ guarantees a minimizer on every nonempty compact
+Continuity of $\mathcal J_{\mathrm{ATE}}$ guarantees a minimizer on every nonempty compact
 rectangle. If the rectangle contains the origin, its minimum variance cannot
 exceed the RCT-only variance.
 
@@ -175,7 +157,7 @@ Equation~\eqref{eq:ate-separable-minimum}.
 
 \subsection{Prediction-powered CATE losses and finite-sample theory}
 
-Fix $t,\lambda,\omega,g,r_0$ before using the fitting sample. Conditional
+Fix $t,\lambda,\omega,\widehat{g},r_0$ before using the fitting sample. Conditional
 on $X$, pseudo-outcome validity gives
 $\mathbb E_R(Z_\lambda-\tau(X)\mid X)=0$, and hence
 \begin{align}
@@ -186,8 +168,8 @@ $\mathbb E_R(Z_\lambda-\tau(X)\mid X)=0$, and hence
 \end{align}
 Exact transport also gives
 \begin{align}
-\mathbb E_O\{r_0(X)(g(X)-t(X))^2\}
-&=\mathbb E_R\{g(X)-t(X)\}^2.
+\mathbb E_O\{r_0(X)(\widehat{g}(X)-t(X))^2\}
+&=\mathbb E_R\{\widehat{g}(X)-t(X)\}^2.
 \end{align}
 The correction in Equation~\eqref{eq:dr-fusion-loss} therefore has mean zero,
 which proves Proposition~\ref{prop:cate-target}.
@@ -377,29 +359,32 @@ D_m\Psi_{\mathrm{RF}}[h,v]
 \end{align*}
 The last equality again uses conditional randomization.
 
-For a prediction path $g_\varepsilon=g+\varepsilon u$, only the transported
+For the prediction path $\widehat{g}_\varepsilon=\widehat{g}+\varepsilon u$, only the transported
 correction changes. Exact transport, and $\mathbb E_R(\kappa_0\mid X)=1$
 for RF, give
 \begin{align*}
-D_g\Psi_j[u,v]
+\left.\frac{d}{d\varepsilon}
+\Psi_j(\widehat{g}_\varepsilon)[v]\right|_{\varepsilon=0}
 &=\omega\mathbb E_O[\{r-r_0\}uv],\\
-D_g\mathbb E(\widehat L_j)[u]
-&=2\omega\mathbb E_O[\{r-r_0\}(g-\zeta)u],
+\left.\frac{d}{d\varepsilon}
+\mathbb E\{\widehat L_j(\widehat{g}_\varepsilon)\}
+\right|_{\varepsilon=0}
+&=2\omega\mathbb E_O[\{r-r_0\}(\widehat{g}-\zeta)u],
 \end{align*}
 which proves Equations~\eqref{eq:cate-g-score-derivative} and
 \eqref{eq:cate-g-loss-derivative}. A ratio path
 $r_\varepsilon=r+\varepsilon h_r$ affects only the positive OBS term, so
 \begin{align*}
 D_r\Psi_j[h_r,v]
-&=\omega\mathbb E_O[h_rv(g-\zeta)],\\
+&=\omega\mathbb E_O[h_rv(\widehat{g}-\zeta)],\\
 D_r\mathbb E(\widehat L_j)[h_r]
-&=\omega\mathbb E_O[h_r(g-\zeta)^2].
+&=\omega\mathbb E_O[h_r(\widehat{g}-\zeta)^2].
 \end{align*}
 This proves Equations~\eqref{eq:cate-ratio-score-derivative} and
 \eqref{eq:drf-ratio-derivative}.
 
 To prove Proposition~\ref{prop:cate-ratio-nonorthogonality}, take any
-$f=v(g-\zeta)\in L^2(P_O^X)$. Its inner product with every element of
+$f=v(\widehat{g}-\zeta)\in L^2(P_O^X)$. Its inner product with every element of
 $L_0^2(P_O^X)$ is zero if and only if $f$ lies in the orthogonal
 complement of that space, which consists of the almost-sure constants.
 For example, the centered direction $h=f-\mathbb E_O(f)$ has pairing
@@ -409,10 +394,10 @@ $\omega$ does not change the zero set.
 For Proposition~\ref{prop:cate-sieve-normal-equations}, expand each quadratic
 objective in $\beta$.  The DRF curvature and right-hand side are
 $(1-\omega)\widehat\Gamma_R+\omega\widehat\Gamma_{O,r}+\rho P$ and
-$\widehat h_\lambda+\omega\widehat d_g$.  The RF counterparts are
+$\widehat h_\lambda+\omega\widehat d_{\mathrm{OBS}}$.  The RF counterparts are
 $(1-\omega)\widehat\Gamma_{R,\kappa}
 +\omega\widehat\Gamma_{O,r}+\rho P$ and
-$\widehat h_{m_\lambda}+\omega\widehat d_{g,\kappa}$.  Setting the
+$\widehat h_{m_\lambda}+\omega\widehat d_{\mathrm{OBS},\kappa}$.  Setting the
 gradients to zero proves Equations~\eqref{eq:linear-sieve} and
 \eqref{eq:linear-sieve-rf}.  For $0\leq\omega\leq1$, each unpenalized
 Hessian is a convex combination of positive-semidefinite weighted Gram
@@ -538,7 +523,7 @@ Corollary~\ref{cor:cate-spline-rate}.
 
 \subsection{A two-stratum oracle calculation}
 
-Let $P_R(X=0)=P_R(X=1)=1/2$, $\tau(0)=0$, $\tau(1)=2$, and $g=\tau$. With $n=100$, $N=900$, and a common covariate marginal,
+Let $P_R(X=0)=P_R(X=1)=1/2$, $\tau(0)=0$, $\tau(1)=2$, and $\widehat{g}=\tau$. With $n=100$, $N=900$, and a common covariate marginal,
 \begin{align*}
 \mathbb E_R\{\tau(X)\}&=1,
 &
@@ -599,7 +584,7 @@ studentized limit and asymptotic coverage of the normal-approximation interval.
 Under either exact $r=r_0$ transport or its common-marginal special case,
 Equation~\eqref{eq:pseudo-valid} gives
 $\mathbb E_R(\Delta\mid X)=0$. Hence
-$\operatorname{Cov}_R(\Delta,g)=0$, as shown in
+$\operatorname{Cov}_R(\Delta,\widehat{g})=0$, as shown in
 Equation~\eqref{eq:ate-population-separation}. Multiplying
 Equation~\eqref{eq:ate-quadratic} by $n$ therefore gives
 \begin{align*}
@@ -609,7 +594,7 @@ Equation~\eqref{eq:ate-quadratic} by $n$ therefore gives
 \end{align*}
 At $(\lambda,\omega)=(0,0)$, this equals $\sigma_0^2$. Holding
 $\lambda=0$ and completing the square in $\omega$ gives the unique
-PPI++-only oracle $D/B$ and variance $\sigma_0^2-D^2/B$. Completing the
+PPI\textsuperscript{++}-only oracle $D/B$ and variance $\sigma_0^2-D^2/B$. Completing the
 two separate squares gives the joint oracle $(-C/A,D/B)$ and variance
 $\sigma_0^2-C^2/A-D^2/B$. The two variance gaps are $D^2/B$ and
 $C^2/A$. Because $A,B>0$, they are nonnegative and vanish exactly when
@@ -663,9 +648,9 @@ Equation~\eqref{eq:ratio-riesz-linear}.
 For Equation~\eqref{eq:ratio-targeted-population}, transport identity
 \eqref{eq:ratio-transport-characterization} gives
 \begin{align*}
-\mathbb E_O(g^2a^2)-2\mathbb E_R(g^2a)
+\mathbb E_O(\widehat{g}^2a^2)-2\mathbb E_R(\widehat{g}^2a)
 &=
-\mathbb E_O\{g^2(a-r_0)^2\}-\mathbb E_O(g^2r_0^2),
+\mathbb E_O\{\widehat{g}^2(a-r_0)^2\}-\mathbb E_O(\widehat{g}^2r_0^2),
 \end{align*}
 which proves the claimed weighted excess-risk identity.
 
@@ -717,7 +702,7 @@ approximate-balance rule and are not covered by the exact first-order
 condition.
 
 \paragraph{Proof of Proposition~\ref{lem:ratio-error-coefficients}.}
-On the tuning OBS sample, $\widehat r g=r_0g+\delta_{\widehat r}$. The
+On the tuning OBS sample, $\widehat r \widehat{g}=r_0\widehat{g}+\delta_{\widehat r}$. The
 sample-variance identity
 $\widehat{\operatorname{Var}}(U+V)=
 \widehat{\operatorname{Var}}(U)+2\widehat{\operatorname{Cov}}(U,V)+
@@ -752,7 +737,7 @@ transport identity \eqref{eq:ratio-transport-characterization} gives
 \begin{align*}
 P_O\delta_{\widehat r}
 &=
-\mathbb E_O(\widehat r g)-\mathbb E_R(g),
+\mathbb E_O(\widehat r \widehat{g})-\mathbb E_R(\widehat{g}),
 \end{align*}
 which proves Equation~\eqref{eq:estimated-ratio-mean-preservation}.
 
@@ -787,12 +772,12 @@ $(\lambda^\circ,\omega^\circ)$,
 &\qquad=
 (\widehat\lambda-\lambda^\circ)\mathbb P_{R,n}\Delta
 +(\widehat\omega-\omega^\circ)
-\left\{\mathbb P_{O,N}(r_0g)-\mathbb P_{R,n}g\right\}.
+\left\{\mathbb P_{O,N}(r_0\widehat{g})-\mathbb P_{R,n}\widehat{g}\right\}.
 \end{align*}
 Coefficient consistency makes both coefficient differences $o_p(1)$.
 The RCT score satisfies $\mathbb P_{R,n}\Delta=O_p(n^{-1/2})$, and exact
 transport gives
-$\mathbb P_{O,N}(r_0g)-\mathbb P_{R,n}g
+$\mathbb P_{O,N}(r_0\widehat{g})-\mathbb P_{R,n}\widehat{g}
 =O_p(N^{-1/2}+n^{-1/2})$. Because $n/N$ is bounded, the entire display is
 $o_p(n^{-1/2})$. If each deterministic limit is the corresponding
 exact-ratio population-oracle pair in
@@ -816,4 +801,4 @@ Let $X$ be degenerate, $\theta=0$, $Z_0=0$, and let the $\Delta_i$ be i.i.d. Rad
 whose expectation is strictly positive.
 
 \paragraph{Reuse through $\omega$.}
-Under the common covariate marginal, let $g(X)$ be a nondegenerate mean-zero Rademacher variable and let the RCT-valid score be identically zero. Every fixed $\omega$ centers $\omega\{\mathbb P_{O,N}g-\mathbb P_{R,n}g\}$. Choosing $\widehat\omega$ as the sign of that same bracket produces its absolute value, which again has strictly positive expectation. The bias in both examples comes solely from adaptive reuse.
+Under the common covariate marginal, let $\widehat{g}(X)$ be a nondegenerate mean-zero Rademacher variable and let the RCT-valid score be identically zero. Every fixed $\omega$ centers $\omega\{\mathbb P_{O,N}\widehat{g}-\mathbb P_{R,n}\widehat{g}\}$. Choosing $\widehat\omega$ as the sign of that same bracket produces its absolute value, which again has strictly positive expectation. The bias in both examples comes solely from adaptive reuse.
