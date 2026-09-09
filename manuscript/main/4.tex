@@ -1,90 +1,88 @@
 \section{Data Fusion for CATE Estimation}
 \label{sec:cate}
 
-In this section, we develop two methods that combine an RCT with a potentially
-confounded OBS to estimate the CATE in the RCT population. The RCT identifies
-the causal target. The OBS outcome regressions and their treatment-effect
-prediction may improve statistical efficiency, but they need not be causally
-valid. The first method is the Doubly Robust Fusion Learner, based on an AIPW
-pseudo-outcome. The second is the R-Fusion Learner, based on an R-loss scaled
-by the known trial propensity variance.
+In this section, we develop two estimators of the CATE $\tau$ in Equation~\eqref{eq:cate} that combine  RCT data with  potentially confounded OBS data. The RCT identifies the causal target. The OBS outcome regressions and their treatment-effect prediction may improve statistical efficiency, but they need not be causally valid due to unmeasured confounders. The first estimator is the Doubly Robust Fusion (DRF) Learner, based on the AIPW pseudo-outcome of the DR-learner \citep{kennedy2022drlearner}. The second is the R-Fusion (RF) Learner, based on the R-learner loss \citep{nie2020rlearner} scaled by the known trial propensity variance.
 
-This section reuses the objects of Sections~\ref{sec:rct-obs-setting} and~\ref{sec:ate} without change: the fused score $Z_\lambda=\varphi(V;\widehat\mu_\lambda)$ of Definition~\ref{def:fusion-score}, the OBS prediction $\widehat g$ of Equation~\eqref{eq:obs-effect-prediction}, the exact ratio $r_0$ of Definition~\ref{def:true-density-ratio} with its estimators from Section~\ref{sec:ratio-estimation}, and the three sample roles of Assumption~\ref{ass:honest-separation}. The two channels are the same as in Section~\ref{sec:ate}: $\lambda$ blends the two fitted outcome regressions inside the RCT-valid score, and $\omega$ scales a transported OBS correction, which now corrects a loss instead of a scalar. The nuisance samples fit $\widehat\mu_R$, $\widehat\mu_O$, $\widehat g$, and $\widehat r$ as before; the tuning samples fit one candidate CATE function for each candidate coefficient pair; and the evaluation samples select among these finitely many candidates and report the selected risk, with the cost of that selection made explicit in Section~\ref{sec:cate-risk-selection}.
 
 \subsection{CATE targets and RCT-valid learning losses}
 \label{sec:cate-loss}
 
 
-\begin{definition}[Candidate class and ideal risk]
+The CATE estimators of this section minimize empirical versions of the following risk.
+\begin{definition}[CATE risk]
 \label{def:cate-class-risk}
-Let $\mathcal Z\subseteq L_2(P_R^X)$ be a prespecified nonempty class of candidate CATE functions, such as a fixed linear sieve. For $\zeta\in\mathcal Z$, define the ideal risk
+Let $\mathcal Z\subseteq L_2(P_R^X)$ be a prespecified nonempty class of candidate CATE functions, such as a fixed linear sieve. For $\zeta\in\mathcal Z$, define the CATE risk
 \begin{align}
 \mathcal R(\zeta)&\triangleq\mathbb E_R\{\zeta(X)-\tau(X)\}^2.
 \label{eq:cate-ideal-risk}
 \end{align}
 \end{definition}
 
-Recall the fused score $Z_\lambda=\varphi(V;\widehat\mu_\lambda)$ of Definition~\ref{def:fusion-score}. Throughout this section $\lambda\in[0,1]$, so that $\widehat\mu_\lambda$ is a convex combination of the two fitted regressions; this is the rectangle of Definition~\ref{def:interval-projection} with $[L_\lambda,U_\lambda]=[0,1]$, and every result below holds for any compact interval containing $0$. Under Assumptions~\ref{ass:trial} and~\ref{ass:honest-separation}, Equation~\eqref{eq:pseudo-valid} gives $\mathbb E_R(Z_\lambda\mid X)=\tau(X)$ for every fixed $\lambda$, so the fused score is a conditionally valid pseudo-outcome for $\tau$ without either fitted regression being correct. Recall also the OBS prediction $\widehat g$ of Equation~\eqref{eq:obs-effect-prediction}, and write $G_\zeta(X)\triangleq\{\widehat g(X)-\zeta(X)\}^2$ for its squared distance to a candidate. As in Section~\ref{sec:ate}, all fitted objects are held fixed in conditional calculations.
+Recall the fused score $Z_\lambda=\varphi(V;\widehat\mu_\lambda)$ of Definition~\ref{def:fusion-score}. Throughout this section $\lambda\in[0,1]$, so that $\widehat\mu_\lambda$ in Definition~\ref{def:fusion-score} is a convex combination of the two fitted regressions $\widehat\mu_R$ and $\widehat\mu_O$. Under Assumptions~\ref{ass:honest-separation} and~\ref{ass:trial}, recall that $\mathbb E_R(Z_\lambda\mid X)=\tau(X)$ for every fixed $\lambda$. Recall also the OBS prediction $\widehat g\triangleq\widehat\mu_{O,1}-\widehat\mu_{O,0}$ in Equation~\eqref{eq:obs-effect-prediction}, and write $G_\zeta(X)\triangleq\{\widehat g(X)-\zeta(X)\}^2$ for the squared distance between the OBS prediction and the candidate CATE function $\zeta$.
 
-The two learners below are the function-valued versions of the ATE estimator in Equation~\eqref{eq:ate-estimator}. Each is a loss on the tuning samples with an RCT-only main term and an $\omega$-scaled transported OBS correction.
+We first define the two population risks that the DRF and RF estimators target, and then their empirical versions.
+
+\begin{definition}[RCT population risks]
+\label{def:rct-risks}
+For $\lambda\in[0,1]$ and a candidate CATE function $\zeta\in\mathcal Z$, define the doubly robust (DR) risk by
+\begin{align}
+\mathcal L_{\mathrm{DR}}(\zeta;\lambda)&\triangleq\mathbb E_R\{Z_\lambda-\zeta(X)\}^2.
+\label{eq:dr-risk}
+\end{align}
+Let $m_\lambda$ be the estimate of the RCT marginal outcome regression $\mathbb E_R[Y\mid X]$ built from the same fitted regressions as $\widehat\mu_\lambda$,
+\begin{align*}
+	m_R(x)&\triangleq e(x)\widehat\mu_{R,1}(x)+\{1-e(x)\}\widehat\mu_{R,0}(x), \\ 
+	m_O(x)&\triangleq e(x)\widehat\mu_{O,1}(x)+\{1-e(x)\}\widehat\mu_{O,0}(x), \\
+	m_\lambda&\triangleq(1-\lambda)m_R+\lambda m_O,
+\end{align*}
+and define the R risk by
+\begin{align}
+\mathcal L_R(\zeta;\lambda)&\triangleq\mathbb E_R\left[\frac{[\,Y-m_\lambda(X)-\{A-e(X)\}\zeta(X)\,]^2}{e(X)\{1-e(X)\}}\right].
+\label{eq:r-risk}
+\end{align}
+\end{definition}
+
+The DR risk is the mean squared error of regressing the RCT-valid pseudo-outcome $Z_\lambda$ on $X$, as in the DR-learner \citep{kennedy2022drlearner}. It is motivated by the conditional validity $\mathbb E_R(Z_\lambda\mid X)=\tau(X)$ in Equation~\eqref{eq:pseudo-valid}, which makes $\tau$ the population regression of $Z_\lambda$ on $X$. The R risk is the R-learner loss \citep{nie2020rlearner} with the known trial propensity $e$, divided by $e(X)\{1-e(X)\}$, the conditional variance of $A$ given $X$. Under the unrestricted function class, the minimizer of $\mathcal L_R(\zeta;\lambda)$ is again $\tau$, and over $\mathcal Z$ it is the $L_2(P_R^X)$ projection of $\tau$; Proposition~\ref{prop:cate-target} states both, so no separate lemma is needed. Both risks are computable from the RCT alone. To use the large OBS covariate sample, the empirical versions below add the same transported correction as the ATE estimator in Equation~\eqref{eq:ate-estimator}, now applied to the squared distance $G_\zeta$.
 
 \begin{definition}[Doubly Robust Fusion and R-Fusion losses]
 \label{def:fusion-losses}
-For $\lambda\in[0,1]$, $\omega\in\mathbb R$, a candidate transport weight $r$, and $\zeta\in\mathcal Z$, define the Doubly Robust Fusion (DRF) loss by
+For $S\in\{R,O\}$, let $\mathbb P_S^{\mathrm{tune}}$ denote the empirical average over the tuning sample $D_S^{\mathrm{tune}}$. For $\lambda\in[0,1]$, $\omega\in\mathbb R$, a candidate transport weight $r$, and a candidate CATE function $\zeta\in\mathcal Z$, define the Doubly Robust Fusion (DRF) loss by
 \begin{align}
 \widehat L_{\mathrm{DRF}}(\zeta;\lambda,\omega,r)
 &\triangleq\mathbb P_R^{\mathrm{tune}}\{Z_\lambda-\zeta(X)\}^2
 +\omega\left[\mathbb P_O^{\mathrm{tune}}\{r(X)G_\zeta(X)\}-\mathbb P_R^{\mathrm{tune}}\{G_\zeta(X)\}\right].
 \label{eq:dr-fusion-loss}
 \end{align}
-For a fixed marginal-outcome function $m:\mathcal X\to\mathbb R$, define the curvature weight $w(A,X)\triangleq\{A-e(X)\}^2/[e(X)\{1-e(X)\}]$ and the R-Fusion (RF) loss by
+Define the weight $\chi(A,X)\triangleq\{A-e(X)\}^2/[e(X)\{1-e(X)\}]$, which satisfies $\mathbb E_R\{\chi(A,X)\mid X\}=1$ under Assumption~\ref{ass:trial}, and the R-Fusion (RF) loss by
 \begin{align}
-\widehat L_{\mathrm{RF}}(\zeta;m,\omega,r)
-&\triangleq\mathbb P_R^{\mathrm{tune}}\left[\frac{[\,Y-m(X)-\{A-e(X)\}\zeta(X)\,]^2}{e(X)\{1-e(X)\}}\right]
+\widehat L_{\mathrm{RF}}(\zeta;\lambda,\omega,r)
+&\triangleq\mathbb P_R^{\mathrm{tune}}\left[\frac{[\,Y-m_\lambda(X)-\{A-e(X)\}\zeta(X)\,]^2}{e(X)\{1-e(X)\}}\right]
 \notag\\
-&\quad+\omega\left[\mathbb P_O^{\mathrm{tune}}\{r(X)G_\zeta(X)\}-\mathbb P_R^{\mathrm{tune}}\{w(A,X)G_\zeta(X)\}\right].
+&\quad+\omega\left[\mathbb P_O^{\mathrm{tune}}\{r(X)G_\zeta(X)\}-\mathbb P_R^{\mathrm{tune}}\{\chi(A,X)G_\zeta(X)\}\right].
 \label{eq:rf-fusion-loss}
 \end{align}
-The fused marginal-outcome function used with the RF loss is built from the same fitted regressions as $\widehat\mu_\lambda$:
-\begin{align*}
-m_R(x)&\triangleq e(x)\widehat\mu_{R,1}(x)+\{1-e(x)\}\widehat\mu_{R,0}(x),
-&
-m_O(x)&\triangleq e(x)\widehat\mu_{O,1}(x)+\{1-e(x)\}\widehat\mu_{O,0}(x),
-\\
-m_\lambda&\triangleq(1-\lambda)m_R+\lambda m_O.
-\end{align*}
 \end{definition}
 
-In both losses the first term uses the RCT only and the bracket is the OBS correction. ``Doubly robust'' names the AIPW score inside $Z_\lambda$ under the known propensity $e$; it does not assert orthogonality to $r$, which Section~\ref{sec:cate-orthogonality} examines. The weight $w(A,X)$ makes the RCT part of the correction match the curvature of the R loss, because $\mathbb E_R\{w(A,X)\mid X\}=1$ under Assumption~\ref{ass:trial}. When $\mathcal Z$ consists of the constant functions and $\mathbb P_O^{\mathrm{tune}}(r)=1$, the minimizer of $\widehat L_{\mathrm{DRF}}$ is exactly the ATE estimator $\widehat\theta_r(\lambda,\omega)$ of Equation~\eqref{eq:ate-estimator} computed on the tuning samples, because the first-order condition in a constant $c$ reads
-\begin{align*}
-c\{1+\omega(\mathbb P_O^{\mathrm{tune}}r-1)\}
-&=\mathbb P_R^{\mathrm{tune}}Z_\lambda+\omega\left\{\mathbb P_O^{\mathrm{tune}}(r\widehat g)-\mathbb P_R^{\mathrm{tune}}\widehat g\right\}.
-\end{align*}
-Section~\ref{sec:cate} is therefore the extension of Section~\ref{sec:ate} from a constant to a function class.
+The first term of each loss is the empirical version of the corresponding risk in Definition~\ref{def:rct-risks}, and the bracket is the OBS correction. Both losses also depend on the fitted objects $\widehat\mu_R$ and $\widehat\mu_O$, through $Z_\lambda$ and $m_\lambda$, and on $\widehat g$, through $G_\zeta$; these objects are fixed before the tuning samples are used, so the notation displays only the tuning coefficients, and later sections write $\widehat L_j(\zeta;\lambda,\omega)$ for $j\in\{\mathrm{DRF},\mathrm{RF}\}$ with $r$ suppressed as well.  Any fixed function $m$ may replace $m_\lambda$; we then write $\mathcal L_R(\zeta;m)$, $Q_R(m)$, and $\widehat L_{\mathrm{RF}}(\zeta;m,\omega,r)$, and Section~\ref{sec:cate-orthogonality} uses this form to differentiate in $m$.
 
 \begin{proposition}[Exact targets of the two losses]
 \label{prop:cate-target}
-Suppose Assumptions~\ref{ass:trial} and~\ref{ass:honest-separation} hold, and either Assumption~\ref{ass:common-marginal} holds with $r_0=1$ or Assumption~\ref{ass:exact-transport} holds with $r_0=dP_R^X/dP_O^X$. Fix $\lambda\in[0,1]$, $\omega\in\mathbb R$, $\zeta\in\mathcal Z$, and a measurable $m$, and suppose $Z_\lambda\in L_2(P_R)$, $\tau\in L_2(P_R^X)$, $Y-m(X)\in L_2(P_R)$, $G_\zeta\in L_1(P_R)$, and $r_0G_\zeta\in L_1(P_O)$. Define the RCT-only population losses and their noise floors
+Suppose Assumptions~\ref{ass:trial} and~\ref{ass:honest-separation} hold, and either Assumption~\ref{ass:common-marginal} holds with $r_0=1$ or Assumption~\ref{ass:exact-transport} holds with $r_0=dP_R^X/dP_O^X$. Fix $\lambda\in[0,1]$, $\omega\in\mathbb R$, $\zeta\in\mathcal Z$, and suppose $Z_\lambda\in L_2(P_R)$, $\tau\in L_2(P_R^X)$, $Y-m_\lambda(X)\in L_2(P_R)$, $G_\zeta\in L_1(P_R)$, and $r_0G_\zeta\in L_1(P_O)$. Define the noise floors
 \begin{align*}
-\mathcal L_{\mathrm{DR}}(\zeta;\lambda)&\triangleq\mathbb E_R\{Z_\lambda-\zeta(X)\}^2,
-&
 Q_{\mathrm{DR}}(\lambda)&\triangleq\mathbb E_R\{Z_\lambda-\tau(X)\}^2,
-\\
-\mathcal L_R(\zeta;m)&\triangleq\mathbb E_R\left[\frac{[\,Y-m(X)-\{A-e(X)\}\zeta(X)\,]^2}{e(X)\{1-e(X)\}}\right],
-\\
-Q_R(m)&\triangleq\mathbb E_R\left[\frac{[\,Y-m(X)-\{A-e(X)\}\tau(X)\,]^2}{e(X)\{1-e(X)\}}\right].
+&
+Q_R(\lambda)&\triangleq\mathbb E_R\left[\frac{[\,Y-m_\lambda(X)-\{A-e(X)\}\tau(X)\,]^2}{e(X)\{1-e(X)\}}\right].
 \end{align*}
 Then, with $r=r_0$,
 \begin{align}
 \mathbb E\{\widehat L_{\mathrm{DRF}}(\zeta;\lambda,\omega,r_0)\}&=\mathcal L_{\mathrm{DR}}(\zeta;\lambda)=Q_{\mathrm{DR}}(\lambda)+\mathcal R(\zeta),
 \notag\\
-\mathbb E\{\widehat L_{\mathrm{RF}}(\zeta;m,\omega,r_0)\}&=\mathcal L_R(\zeta;m)=Q_R(m)+\mathcal R(\zeta).
+\mathbb E\{\widehat L_{\mathrm{RF}}(\zeta;\lambda,\omega,r_0)\}&=\mathcal L_R(\zeta;\lambda)=Q_R(\lambda)+\mathcal R(\zeta).
 \label{eq:cate-target}
 \end{align}
-Consequently, whenever the minimum is attained, the population minimizers of either expected loss over $\mathcal Z$ are the $L_2(P_R^X)$ projections of $\tau$ onto $\mathcal Z$, for every $\omega$.
+Consequently, whenever the minimum is attained, the population minimizers of either expected loss over $\mathcal Z$ are the $L_2(P_R^X)$ projections of $\tau$ onto $\mathcal Z$, for every $\omega$. The same identities hold with any fixed $m$ in place of $m_\lambda$.
 \end{proposition}
-
-The noise floors $Q_{\mathrm{DR}}(\lambda)$ and $Q_R(m_\lambda)$ do not depend on $\zeta$, so they do not move the population minimizer; they are the objects that the choice of $\lambda$ acts on in Section~\ref{sec:cate-risk-selection}, and they need not select the same $\lambda$. The expected loss is flat in $\omega$ for the same reason as in Theorem~\ref{thm:ate-variance}: under exact transport the OBS correction has mean zero. Section~\ref{sec:cate-orthogonality} shows what $\omega$ and an estimated ratio change, and Section~\ref{sec:cate-general-learning} shows what $\omega$ buys in finite samples.
+Proposition~\ref{prop:cate-target} shows that both fusion losses target the CATE: minimizing over $\zeta$ is unaffected by the noise floors $Q_{\mathrm{DR}}(\lambda)$ and $Q_R(\lambda)$, which do not depend on $\zeta$.  Also, the expected loss is flat in $\omega$ for the same reason as in Theorem~\ref{thm:ate-variance}: under exact transport the OBS correction has mean zero. In the later sections, we show what $\omega$ and an estimated ratio change (Section~\ref{sec:cate-orthogonality}) and what $\omega$ buys in finite samples (Section~\ref{sec:cate-general-learning}).
 
 \subsection{Orthogonality of learning equations and nuisance sensitivity}
 \label{sec:cate-orthogonality}
@@ -143,7 +141,7 @@ v(X)\frac{A-e(X)}{e(X)\{1-e(X)\}}
 \nonumber\\
 &\quad+\omega\left[
 \mathbb E_O\{r(X)v(X)[\widehat{g}(X)-\zeta(X)]\}
--\mathbb E_R\{w(A,X)v(X)[\widehat{g}(X)-\zeta(X)]\}
+-\mathbb E_R\{\chi(A,X)v(X)[\widehat{g}(X)-\zeta(X)]\}
 \right].
 \label{eq:rf-learning-equation}
 \end{align}
@@ -161,7 +159,7 @@ $r_0=dP_R^X/dP_O^X$.  Use $r=r_0$, and suppose all displayed
 expectations below are finite.
 For every integrable function $f(X)$, exact transport gives
 $\mathbb E_O(r_0f)=\mathbb E_R(f)$, and randomization gives
-$\mathbb E_R(w\mid X)=1$. Consequently,
+$\mathbb E_R(\chi\mid X)=1$. Consequently,
 \begin{align*}
 \Psi_{\mathrm{DRF}}(\zeta;q,\widehat{g},r_0)[v]
 &=\mathbb E_R[v(X)\{Z_q-\zeta(X)\}],\\
@@ -532,13 +530,13 @@ fixed-function decompositions from Proposition~\ref{prop:cate-target} are
 \begin{align*}
 \mathcal L_{\mathrm{DR}}(\zeta;\lambda)
 &=Q_{\mathrm{DR}}(\lambda)+\mathcal R(\zeta),
-&\mathcal L_R(\zeta;m_\lambda)
-&=Q_R(m_\lambda)+\mathcal R(\zeta).
+&\mathcal L_R(\zeta;\lambda)
+&=Q_R(\lambda)+\mathcal R(\zeta).
 \end{align*}
 Recall that $Z_0=\varphi(V;\widehat\mu_R)$ and
 $Z_1=\varphi(V;\widehat\mu_O)$, while $m_R$ and $m_O$ are the corresponding
 RCT and OBS marginal-outcome nuisances.  Proposition~\ref{prop:cate-target} defines $Q_{\mathrm{DR}}(\lambda)$ and
-$Q_R(m_\lambda)$, respectively.  These terms do not equal the ideal risk
+$Q_R(\lambda)$, respectively.  These terms do not equal the ideal risk
 of a fitted CATE function.
 
 \begin{proposition}[Closed-form noise-floor coefficients]
@@ -562,7 +560,7 @@ $m_\lambda\triangleq m_R+\lambda d_m$, define
 \begin{align*}
 Q_{\mathrm{DR}}(\lambda)
 &\triangleq\mathbb E_R\{Z_\lambda-\tau(X)\}^2,\\
-Q_R(m_\lambda)
+Q_R(\lambda)
 &\triangleq\mathbb E_R\left[
 \frac{[Y-m_\lambda(X)-\{A-e(X)\}\tau(X)]^2}
 {e(X)\{1-e(X)\}}\right].
@@ -614,7 +612,7 @@ $\omega\in\Omega$, the method-specific corrections satisfy
 \mathbb E_O\{r_0(X)G_\zeta(X)\}-\mathbb E_R\{G_\zeta(X)\}
 &=0,\\
 \mathbb E_O\{r_0(X)G_\zeta(X)\}
--\mathbb E_R\{w(A,X)G_\zeta(X)\}
+-\mathbb E_R\{\chi(A,X)G_\zeta(X)\}
 &=0.
 \end{align*}
 Consequently,
@@ -623,8 +621,8 @@ Consequently,
 (\zeta;\lambda,\omega,r_0)\}
 &=\mathcal L_{\mathrm{DR}}(\zeta;\lambda),\\
 \mathbb E\{\widehat L_{\mathrm{RF}}
-(\zeta;m_\lambda,\omega,r_0)\}
-&=\mathcal L_R(\zeta;m_\lambda),
+(\zeta;\lambda,\omega,r_0)\}
+&=\mathcal L_R(\zeta;\lambda),
 \end{align*}
 and both right-hand sides are constant in $\omega$.  Therefore,
 \begin{align*}
@@ -634,7 +632,7 @@ and both right-hand sides are constant in $\omega$.  Therefore,
 &=\Omega,\\
 \operatorname*{arg\,min}_{\omega\in\Omega}
 \mathbb E\{\widehat L_{\mathrm{RF}}
-(\zeta;m_\lambda,\omega,r_0)\}
+(\zeta;\lambda,\omega,r_0)\}
 &=\Omega.
 \end{align*}
 Thus population loss at a fixed function and fixed $\lambda$ cannot select
@@ -941,13 +939,13 @@ For RF, let
 \begin{align*}
 s_{m_\lambda}&\triangleq
 \frac{(A-e)(Y-m_\lambda)}{e(1-e)},
-&\widehat\Gamma_{R,w}
-&\triangleq\mathbb P_R^{\mathrm{tune}}(w bb^\top),\\
+&\widehat\Gamma_{R,\chi}
+&\triangleq\mathbb P_R^{\mathrm{tune}}(\chi bb^\top),\\
 \widehat h_{m_\lambda}&\triangleq
 \mathbb P_R^{\mathrm{tune}}(bs_{m_\lambda}),
-&\widehat d_{\mathrm{OBS},w}&\triangleq
+&\widehat d_{\mathrm{OBS},\chi}&\triangleq
 \mathbb P_O^{\mathrm{tune}}(r_0b\widehat{g})
--\mathbb P_R^{\mathrm{tune}}(w b\widehat{g}).
+-\mathbb P_R^{\mathrm{tune}}(\chi b\widehat{g}).
 \end{align*}
 
 \begin{proposition}[Normal equations and positive semidefiniteness]
@@ -960,10 +958,10 @@ For DRF and RF, respectively, define
 &\widehat h_{\mathrm{DRF}}(\lambda,\omega)
 &\triangleq\widehat h_\lambda+\omega\widehat d_{\mathrm{OBS}},\\
 \widehat H_{\mathrm{RF}}(\omega)
-&\triangleq(1-\omega)\widehat\Gamma_{R,w}
+&\triangleq(1-\omega)\widehat\Gamma_{R,\chi}
 +\omega\widehat\Gamma_{O,r},
 &\widehat h_{\mathrm{RF}}(\lambda,\omega)
-&\triangleq\widehat h_{m_\lambda}+\omega\widehat d_{\mathrm{OBS},w}.
+&\triangleq\widehat h_{m_\lambda}+\omega\widehat d_{\mathrm{OBS},\chi}.
 \end{align*}
 The normal equation is
 \begin{align*}
@@ -1064,7 +1062,7 @@ For the concentration result, define the raw source contributions explicitly:
 &\triangleq\omega r_0b(\widehat{g}-\zeta_p),\\
 \psi_{R,\mathrm{RF}}
 &\triangleq b[s_{m_\lambda}
--w\{\omega \widehat{g}+(1-\omega)\zeta_p\}],
+-\chi\{\omega \widehat{g}+(1-\omega)\zeta_p\}],
 &\psi_{O,\mathrm{RF}}
 &\triangleq\omega r_0b(\widehat{g}-\zeta_p).
 \end{align*}

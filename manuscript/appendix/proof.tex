@@ -159,7 +159,7 @@ Equation~\eqref{eq:ate-separable-minimum}.
 
 
 \paragraph{Proof of Proposition~\ref{prop:cate-target}.}
-Fix $\zeta,\lambda,\omega,m$ and the fitted objects before using the tuning samples. By Equation~\eqref{eq:pseudo-valid}, $\mathbb E_R\{Z_\lambda-\tau(X)\mid X\}=0$, so the cross term in $\mathbb E_R[\{Z_\lambda-\tau(X)\}+\{\tau(X)-\zeta(X)\}]^2$ vanishes and $\mathcal L_{\mathrm{DR}}(\zeta;\lambda)=Q_{\mathrm{DR}}(\lambda)+\mathcal R(\zeta)$. For the R loss, write $Y-m(X)-\{A-e(X)\}\zeta(X)=U+\{A-e(X)\}\{\tau(X)-\zeta(X)\}$ with $U\triangleq Y-m(X)-\{A-e(X)\}\tau(X)$. Conditional randomization gives $\mathbb E_R[\{A-e(X)\}\{Y-m(X)\}\mid X]=e(X)\{1-e(X)\}\tau(X)$ and $\mathbb E_R[\{A-e(X)\}^2\mid X]=e(X)\{1-e(X)\}$, hence $\mathbb E_R[U\{A-e(X)\}\mid X]=0$. Dividing the expanded square by $e(X)\{1-e(X)\}$ and taking $\mathbb E_R(\cdot\mid X)$ therefore leaves $\mathcal L_R(\zeta;m)=Q_R(m)+\mathcal R(\zeta)$. Finally, exact transport gives $\mathbb E_O\{r_0(X)G_\zeta(X)\}=\mathbb E_R\{G_\zeta(X)\}$, and $\mathbb E_R\{w(A,X)\mid X\}=1$ gives $\mathbb E_R\{w(A,X)G_\zeta(X)\}=\mathbb E_R\{G_\zeta(X)\}$, so both OBS corrections have mean zero for every $\omega$. This proves Equation~\eqref{eq:cate-target}.
+Fix $\zeta,\lambda,\omega$ and the fitted objects before using the tuning samples, and let $m$ be $m_\lambda$ or any fixed function. By Equation~\eqref{eq:pseudo-valid}, $\mathbb E_R\{Z_\lambda-\tau(X)\mid X\}=0$, so the cross term in $\mathbb E_R[\{Z_\lambda-\tau(X)\}+\{\tau(X)-\zeta(X)\}]^2$ vanishes and $\mathcal L_{\mathrm{DR}}(\zeta;\lambda)=Q_{\mathrm{DR}}(\lambda)+\mathcal R(\zeta)$. For the R loss, write $Y-m(X)-\{A-e(X)\}\zeta(X)=U+\{A-e(X)\}\{\tau(X)-\zeta(X)\}$ with $U\triangleq Y-m(X)-\{A-e(X)\}\tau(X)$. Conditional randomization gives $\mathbb E_R[\{A-e(X)\}\{Y-m(X)\}\mid X]=e(X)\{1-e(X)\}\tau(X)$ and $\mathbb E_R[\{A-e(X)\}^2\mid X]=e(X)\{1-e(X)\}$, hence $\mathbb E_R[U\{A-e(X)\}\mid X]=0$. Dividing the expanded square by $e(X)\{1-e(X)\}$ and taking $\mathbb E_R(\cdot\mid X)$ therefore leaves $\mathcal L_R(\zeta;m)=Q_R(m)+\mathcal R(\zeta)$. Finally, exact transport gives $\mathbb E_O\{r_0(X)G_\zeta(X)\}=\mathbb E_R\{G_\zeta(X)\}$, and $\mathbb E_R\{\chi(A,X)\mid X\}=1$ gives $\mathbb E_R\{\chi(A,X)G_\zeta(X)\}=\mathbb E_R\{G_\zeta(X)\}$, so both OBS corrections have mean zero for every $\omega$. This proves Equation~\eqref{eq:cate-target}.
 
 
 \subsection{Proofs for general two-source learning}
@@ -241,8 +241,8 @@ For the R loss, write
 $U_R\triangleq Y-m_R-(A-e)\tau$.  Since
 $m_\lambda=m_R+\lambda d_m$,
 \begin{align*}
-Q_R(m_\lambda)
-&=Q_R(m_R)
+Q_R(\lambda)
+&=Q_R(0)
 -2\lambda\mathbb E_R(U_Rd_m/\{e(1-e)\})
 +\lambda^2\mathbb E_R(d_m^2/\{e(1-e)\}),\\
 \mathbb E_R(U_Rd_m/\{e(1-e)\})
@@ -261,18 +261,18 @@ For Proposition~\ref{prop:cate-omega-flatness}, exact transport gives
 \mathbb E_O(r_0G_\zeta)-\mathbb E_R(G_\zeta)=0.
 \end{align*}
 Moreover, conditional randomization and strict overlap give
-$\mathbb E_R(w\mid X)=1$, so
+$\mathbb E_R(\chi\mid X)=1$, so
 \begin{align*}
-\mathbb E_R(w G_\zeta)
-&=\mathbb E_R[\mathbb E_R(w\mid X)G_\zeta]
+\mathbb E_R(\chi G_\zeta)
+&=\mathbb E_R[\mathbb E_R(\chi\mid X)G_\zeta]
 =\mathbb E_R(G_\zeta),\\
-\mathbb E_O(r_0G_\zeta)-\mathbb E_R(w G_\zeta)
+\mathbb E_O(r_0G_\zeta)-\mathbb E_R(\chi G_\zeta)
 &=0.
 \end{align*}
 Substitution into Equations~\eqref{eq:dr-fusion-loss} and
 \eqref{eq:rf-fusion-loss} leaves
 $\mathcal L_{\mathrm{DR}}(\zeta;\lambda)$ and
-$\mathcal L_R(\zeta;m_\lambda)$, respectively, for every
+$\mathcal L_R(\zeta;\lambda)$, respectively, for every
 $\omega\in\Omega$.  Each objective is therefore constant on the nonempty
 set $\Omega$, and its minimizer set is all of $\Omega$.
 
@@ -304,8 +304,8 @@ Equations~\eqref{eq:drf-learning-equation} and
 \eqref{eq:rf-learning-equation}. For $r=r_0$, exact transport gives
 $\mathbb E_O(r_0f)=\mathbb E_R(f)$ for each integrable $f(X)$. Also,
 \begin{align*}
-\mathbb E_R(w\mid X)
-&=\mathbb E_R(w\mid X)
+\mathbb E_R(\chi\mid X)
+&=\mathbb E_R(\chi\mid X)
 =\frac{\mathbb E_R[\{A-e(X)\}^2\mid X]}{e(X)\{1-e(X)\}}=1.
 \end{align*}
 The two correction terms in each learning equation therefore cancel. This
@@ -331,7 +331,7 @@ D_m\Psi_{\mathrm{RF}}[h,v]
 The last equality again uses conditional randomization.
 
 For the prediction path $\widehat{g}_\varepsilon=\widehat{g}+\varepsilon u$, only the transported
-correction changes. Exact transport, and $\mathbb E_R(w\mid X)=1$
+correction changes. Exact transport, and $\mathbb E_R(\chi\mid X)=1$
 for RF, give
 \begin{align*}
 \left.\frac{d}{d\varepsilon}
@@ -366,9 +366,9 @@ For Proposition~\ref{prop:cate-sieve-normal-equations}, expand each quadratic
 objective in $\beta$.  The DRF curvature and right-hand side are
 $(1-\omega)\widehat\Gamma_R+\omega\widehat\Gamma_{O,r}+\rho P$ and
 $\widehat h_\lambda+\omega\widehat d_{\mathrm{OBS}}$.  The RF counterparts are
-$(1-\omega)\widehat\Gamma_{R,w}
+$(1-\omega)\widehat\Gamma_{R,\chi}
 +\omega\widehat\Gamma_{O,r}+\rho P$ and
-$\widehat h_{m_\lambda}+\omega\widehat d_{\mathrm{OBS},w}$.  Setting the
+$\widehat h_{m_\lambda}+\omega\widehat d_{\mathrm{OBS},\chi}$.  Setting the
 gradients to zero proves Equations~\eqref{eq:linear-sieve} and
 \eqref{eq:linear-sieve-rf}.  For $0\leq\omega\leq1$, each unpenalized
 Hessian is a convex combination of positive-semidefinite weighted Gram
