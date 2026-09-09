@@ -693,62 +693,19 @@ convex hull of the weighted OBS feature vectors. Boundary or infeasible cases re
 approximate-balance rule and are not covered by the exact first-order
 condition.
 
-\paragraph{Proof of Proposition~\ref{lem:ratio-error-coefficients}.}
-On the tuning OBS sample, $\widehat r \widehat{g}=r_0\widehat{g}+\delta_{\widehat r}$. The
-sample-variance identity
-$\widehat{\operatorname{Var}}(U+V)=
-\widehat{\operatorname{Var}}(U)+2\widehat{\operatorname{Cov}}(U,V)+
-\widehat{\operatorname{Var}}(V)$ proves
-Equation~\eqref{eq:ratio-B-error}.
-The final claim follows because $\widehat D$ does not depend on the ratio.
 
-\paragraph{Proof of Proposition~\ref{prop:estimated-ratio-decomposition}.}
-Condition on the nuisance and tuning samples. At the same selected
-coefficients, the only direct difference between
-$\widehat\theta_{\widehat r}$ and $\widehat\theta_{r_0}$ in
-Equation~\eqref{eq:ate-estimator} is
-$\widehat\omega\mathbb P_{O,N}\delta_{\widehat r}$. Adding and subtracting
-$\widehat\omega P_O\delta_{\widehat r}$ identifies the scalar drift
-$b_{\widehat r}$ and the centered fluctuation $\widehat\omega(\mathbb P_{O,N}-P_O)\delta_{\widehat r}$, proving Equation~\eqref{eq:estimated-ratio-mean-fluctuation}.
+\paragraph{Proof of Proposition~\ref{prop:estimated-ratio-effect}.}
+Item 1. On the tuning OBS sample, $\widehat r\widehat g=r_0\widehat g+(\widehat r-r_0)\widehat g$, and the sample-variance identity $\widehat{\operatorname{Var}}(U+V)=\widehat{\operatorname{Var}}(U)+2\widehat{\operatorname{Cov}}(U,V)+\widehat{\operatorname{Var}}(V)$ with $U=r_0\widehat g$ and $V=(\widehat r-r_0)\widehat g$ proves Equation~\eqref{eq:ratio-B-error}. The moments $\widehat A$, $\widehat C$, and $\widehat D$ in Equation~\eqref{eq:ate-empirical-moments} do not involve the ratio, so the ratio enters Equation~\eqref{eq:ate-separated-plugin} only through $\widehat B$.
 
+Item 2. At the same selected coefficients, the two estimators in Equation~\eqref{eq:ate-estimator} share the term $\mathbb P_{R,n}Z_{\widehat\lambda}-\widehat\omega\mathbb P_{R,n}\widehat g$ and differ only in $\widehat\omega\mathbb P_{O,N}(r\widehat g)$, whose difference across $r=\widehat r$ and $r=r_0$ is $\widehat\omega\mathbb P_{O,N}\{(\widehat r-r_0)\widehat g\}$.
 
-
-
-
-
-
-
-
-
-
-\paragraph{Proof of Proposition~\ref{cor:estimated-ratio-mean-preservation}.}
-Condition on all fitted and selected objects. With the evaluation scores in
-Algorithm~\ref{alg:honest-ate},
-\begin{align*}
-\widehat\theta_{\widehat r}
-&=\mathbb P_{R,n}\psi_R+\mathbb P_{O,N}\psi_O.
-\end{align*}
-The exact drift identity in Equation~\eqref{eq:ate-ratio-drift} gives its
-conditional mean $\theta+b_{\widehat r}$. Independence of the two evaluation
-samples gives
-\begin{align*}
-V_n=\frac1n\operatorname{Var}_R(\psi_R)+\frac1N\operatorname{Var}_O(\psi_O).
-\end{align*}
-Each sample variance in $\widehat V$ is conditionally unbiased for
-the corresponding variance. Dividing by its sample size and adding proves
-Equation~\eqref{eq:estimated-ratio-conditional-identities}. Finally, transport
-identity \eqref{eq:ratio-transport-characterization} yields
-\begin{align*}
-P_O\delta_{\widehat r}
-&=\mathbb E_O(\widehat r\widehat{g})-\mathbb E_R(\widehat{g}),
-\end{align*}
-which proves Equation~\eqref{eq:estimated-ratio-mean-preservation}.
+Item 3. Condition on all fitted and selected objects. With the evaluation scores of Algorithm~\ref{alg:honest-ate}, $\widehat\theta_{\widehat r}=\mathbb P_{R,n}\psi_R+\mathbb P_{O,N}\psi_O$. The exact drift identity in Equation~\eqref{eq:ate-ratio-drift} gives the conditional mean $\theta+\widehat\omega\,\mathbb E_O\{(\widehat r-r_0)\widehat g\}$, and the transport identity in Equation~\eqref{eq:ratio-transport-characterization} rewrites $\mathbb E_O(r_0\widehat g)$ as $\mathbb E_R(\widehat g)$. Independence of the two evaluation samples gives $\operatorname{Var}(\widehat\theta_{\widehat r})=\operatorname{Var}_R(\psi_R)/n+\operatorname{Var}_O(\psi_O)/N$, and each sample variance in $\widehat V$ is conditionally unbiased for the corresponding variance, which proves Equation~\eqref{eq:estimated-ratio-conditional-identities}.
 
 \paragraph{Proof of Theorem~\ref{thm:estimated-ratio-feasible-clt}.}
-Continue conditioning on the fitted and selected objects. Center the two
+Write $\beta\triangleq\widehat\omega\{\mathbb E_O(\widehat r\widehat g)-\mathbb E_R(\widehat g)\}$ for the drift in item 3 of Proposition~\ref{prop:estimated-ratio-effect}. Continue conditioning on the fitted and selected objects. Center the two
 evaluation scores at their respective conditional means. The resulting two
 independent triangular arrays sum to
-$\widehat\theta_{\widehat r}-(\theta+b_{\widehat r})$ and have total variance
+$\widehat\theta_{\widehat r}-(\theta+\beta)$ and have total variance
 $V_n$. On the event
 $nV_n\geq\sigma^2/2$, whose probability tends to one, the uniform
 conditional $(2+\delta)$-moment bound and bounded $n/N$ make the conditional
@@ -782,44 +739,25 @@ n\{\widehat V-V_n\}=o_p(1)+\frac nN o_p(1)=o_p(1).
 Together with $nV_n\to_p\sigma^2>0$, this proves
 $\widehat V/V_n\to_p1$. Finally,
 \begin{align*}
-\frac{\widehat\theta_{\widehat r}-\theta}{\sqrt{\widehat V}}=\frac{\widehat\theta_{\widehat r}-(\theta+b_{\widehat r})}{\sqrt{V_n}}\sqrt{\frac{V_n}{\widehat V}}+\frac{b_{\widehat r}}{\sqrt{V_n}}\sqrt{\frac{V_n}{\widehat V}}.
+\frac{\widehat\theta_{\widehat r}-\theta}{\sqrt{\widehat V}}=\frac{\widehat\theta_{\widehat r}-(\theta+\beta)}{\sqrt{V_n}}\sqrt{\frac{V_n}{\widehat V}}+\frac{\beta}{\sqrt{V_n}}\sqrt{\frac{V_n}{\widehat V}}.
 \end{align*}
 The bias condition and Slutsky's theorem prove the stated limit and coverage.
 
+
 \paragraph{Proof of Corollary~\ref{cor:estimated-ratio-inheritance}.}
-Fix $k\in\{\mathrm{RCT},\mathrm{PPI}^{++},\mathrm{joint}\}$ and write $(\widehat\lambda,\widehat\omega)\triangleq(\widehat\lambda_k,\widehat\omega_k)$ and $(\lambda^\star,\omega^\star)\triangleq(\lambda_k^\star,\omega_k^\star)$. Then the bias condition in
-Theorem~\ref{thm:estimated-ratio-feasible-clt} makes
-$b_{\widehat r}=o_p(n^{-1/2})$. Moreover,
+Fix $k\in\{\mathrm{RCT},\mathrm{PPI}^{++},\mathrm{joint}\}$ and write $(\widehat\lambda,\widehat\omega)\triangleq(\widehat\lambda_k,\widehat\omega_k)$ and $(\lambda^\star,\omega^\star)\triangleq(\lambda_k^\star,\omega_k^\star)$. Decompose
 \begin{align*}
-\mathbb E\left[
-\left\{\sqrt n\,\widehat\omega
-(\mathbb P_{O,N}-P_O)\delta_{\widehat r}\right\}^2
-\mathrel{\Big|}\text{fitted and selected objects}
-\right]
-&=
-\widehat\omega^2\frac nN
-\|\delta_{\widehat r}-P_O\delta_{\widehat r}\|_{L_2(P_O)}^2,
+\widehat\theta_{\widehat r,k}-\widehat\theta_{r_0}(\lambda^\star,\omega^\star)
+&=\left\{\widehat\theta_{\widehat r}(\widehat\lambda,\widehat\omega)-\widehat\theta_{r_0}(\widehat\lambda,\widehat\omega)\right\}
++\left\{\widehat\theta_{r_0}(\widehat\lambda,\widehat\omega)-\widehat\theta_{r_0}(\lambda^\star,\omega^\star)\right\}.
 \end{align*}
-so Equation~\eqref{eq:estimated-ratio-fluctuation-rate} and conditional
-Chebyshev imply that the centered ratio perturbation is $o_p(n^{-1/2})$.
-For the corresponding exact-ratio oracle $(\lambda^\star,\omega^\star)$,
+By item 2 of Proposition~\ref{prop:estimated-ratio-effect}, the first difference equals $\widehat\omega\mathbb P_{O,N}\{(\widehat r-r_0)\widehat g\}$. Its conditional mean is the drift of item 3, which the bias condition in Theorem~\ref{thm:estimated-ratio-feasible-clt} makes $o_p(n^{-1/2})$ because $nV_n=O_p(1)$. Its conditional variance is $\widehat\omega^2\operatorname{Var}_O\{(\widehat r-r_0)\widehat g\}/N$, so Equation~\eqref{eq:estimated-ratio-fluctuation-rate} and conditional Chebyshev make its centered part $o_p(n^{-1/2})$. For the second difference,
 \begin{align*}
-&\widehat\theta_{r_0}(\widehat\lambda,\widehat\omega)
--\widehat\theta_{r_0}(\lambda^\star,\omega^\star)
-\\
-&\qquad=
-(\widehat\lambda-\lambda^\star)\mathbb P_{R,n}\Delta
-+(\widehat\omega-\omega^\star)
-\left\{\mathbb P_{O,N}(r_0\widehat{g})
--\mathbb P_{R,n}\widehat{g}\right\}.
+\widehat\theta_{r_0}(\widehat\lambda,\widehat\omega)-\widehat\theta_{r_0}(\lambda^\star,\omega^\star)
+&=(\widehat\lambda-\lambda^\star)\mathbb P_{R,n}\Delta
++(\widehat\omega-\omega^\star)\left\{\mathbb P_{O,N}(r_0\widehat g)-\mathbb P_{R,n}\widehat g\right\}.
 \end{align*}
-RCT validity gives $P_R\Delta=0$, and exact transport gives
-$P_O(r_0\widehat g)=P_R(\widehat g)$. Together with the assumed second-moment
-stability and bounded $n/N$, these identities make both empirical factors
-$O_p(n^{-1/2})$. Coefficient consistency makes
-the displayed difference $o_p(n^{-1/2})$. Combining these three differences
-proves Equation~\eqref{eq:estimated-ratio-first-order-equivalence}. Convergence of the exact-ratio second moments
-then transfers the ordering in Theorem~\ref{thm:ate-three-way-comparison}, which is Equation~\eqref{eq:estimated-ratio-inherited-ordering}.
+RCT validity gives $P_R\Delta=0$, and exact transport gives $P_O(r_0\widehat g)=P_R(\widehat g)$. Together with the second-moment bounds in Equation~\eqref{eq:estimated-ratio-stability} and bounded $n/N$, these identities make both empirical factors $O_p(n^{-1/2})$, and coefficient consistency makes the second difference $o_p(n^{-1/2})$. Combining the two differences proves Equation~\eqref{eq:estimated-ratio-first-order-equivalence}. Convergence of the exact-ratio second moments then transfers the ordering in Theorem~\ref{thm:ate-three-way-comparison}, which is Equation~\eqref{eq:estimated-ratio-inherited-ordering}.
 
 \subsection{Counterexamples to adaptive reuse}
 

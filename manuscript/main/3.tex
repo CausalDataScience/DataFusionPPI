@@ -343,7 +343,6 @@ Because Equation~\eqref{eq:ate-empirical-objective} is separated in $\lambda$ an
 The four-moment rule in Equation~\eqref{eq:ate-separated-plugin} directly estimates the two population-oracle coordinates in Equation~\eqref{eq:axis-oracle}. The thresholds avoid division by nearly zero empirical curvature, and the projections enforce the prespecified feasible rectangle.
 
 
-
 For Algorithm~\ref{alg:honest-ate}, set $r=\widehat r$ in the generic evaluation scores below.  For explicit evaluation notation, define
 \begin{align*}
 	\psi_{R,i}
@@ -409,7 +408,7 @@ an estimated ratio $\widehat r$ that need not equal $r_0$.
 \subsubsection{Estimating the density ratio}
 \label{sec:ratio-estimation}
 
-This subsection explains how to estimate the target density ratio $r_0$, replacing the fixed candidate $r$ above by a fitted ratio $\widehat r$.
+This subsection replaces the fixed candidate $r$ above by a fitted ratio $\widehat r$ in three steps. Propositions~\ref{prop:ratio-characterizations} and~\ref{prop:ratio-riesz-characterization} characterize the target $r_0$ in two ways, as the unique weight that transports OBS averages to RCT averages and as the unique minimizer of a quadratic risk. Definitions~\ref{def:empirical-riesz-ratio} to~\ref{def:classifier-calibrated-balance} turn these two characterizations into estimators. Proposition~\ref{prop:estimated-ratio-effect}, Theorem~\ref{thm:estimated-ratio-feasible-clt}, and Corollary~\ref{cor:estimated-ratio-inheritance} then track how the error $\widehat r-r_0$ enters Algorithm~\ref{alg:honest-ate}: it biases the point estimate by an explicit drift but leaves the variance estimator unbiased, and when the drift is small relative to the standard error, the exact-ratio results of Theorems~\ref{thm:ate-honest-clt-active} and~\ref{thm:ate-three-way-comparison} carry over.
 
 \begin{proposition}[Transport characterization]
 \label{prop:ratio-characterizations}
@@ -548,136 +547,67 @@ $\mathbb P_O^{\mathrm{nuis}}(\widehat r_{\mathrm{BAL}})=1$, and
 
 These are $p$ finite moment equations, not pointwise balance. They are analogous to covariate-balancing propensity scores, which concern treatment rather than source assignment \citep{imai2014covariate}. Exact feasibility requires the RCT feature mean to lie in the relative interior of the convex hull of the positively weighted OBS feature vectors; otherwise a prespecified approximate-balance rule is required.
 
-We now quantify how ratio error propagates to coefficient selection and the final ATE estimator.
-Recall the tuning-sample moments $\widehat A,\widehat B,\widehat C,\widehat D$ in Equation~\eqref{eq:ate-empirical-moments}, the selection rule with thresholds $t_A,t_B$ in Equation~\eqref{eq:ate-separated-plugin}, the variance estimator $\widehat V$ in Equation~\eqref{eq:ate-evaluation-variance}, and the conditional evaluation variance $V_n$ in Theorem~\ref{thm:ate-honest-clt-active}. Below, all of them are computed with the estimated ratio $\widehat r$ in place of $r_0$.
-\begin{proposition}[How ratio error changes coefficient selection]
-\label{lem:ratio-error-coefficients}
-Define the ratio-weighted prediction error by
-\begin{align}\label{eq:ratio-error-score}
-	\delta_{\widehat r}(X) &\triangleq\{\widehat r(X)-r_0(X)\}\widehat g(X).
-\end{align}
-For a ratio $r\in\{\widehat r,r_0\}$, let $\widehat B_r$ denote the tuning-sample moment $\widehat B$ of Equation~\eqref{eq:ate-empirical-moments} computed with $r$:
-\begin{align}\label{eq:ratio-dependent-B}
-	\widehat B_{r} &\triangleq \widehat{\operatorname{Var}}_R(\widehat g) +\frac nN\widehat{\operatorname{Var}}_O(r\widehat g).
-\end{align}
-Thus $\widehat B_{\widehat r}$ is the denominator that Algorithm~\ref{alg:honest-ate} actually uses for $\widehat\omega$ in Equation~\eqref{eq:ate-separated-plugin}, and $\widehat B_{r_0}$ is the denominator it would use if $r_0$ were known. The numerator $\widehat D=\widehat{\operatorname{Cov}}_R(Z_0,\widehat g)$ uses the RCT tuning sample only and does not depend on $r$. Then
-\begin{align}\label{eq:ratio-B-error}
-	\widehat B_{\widehat r}-\widehat B_{r_0} &=
-	\frac nN\left[
-	2\widehat{\operatorname{Cov}}_O(r_0\widehat g,\delta_{\widehat r})
-	+\widehat{\operatorname{Var}}_O(\delta_{\widehat r})
-	\right].
-\end{align}
-Hence ratio error enters $\widehat\omega=\widehat D/\widehat B$ only through this denominator and the threshold $t_B$ in Equation~\eqref{eq:ate-separated-plugin}. It leaves $\widehat\lambda$ unchanged because the separated rule computes $\widehat\lambda$ only from $\widehat A$ and $\widehat C$.
-\end{proposition}
-The next proposition isolates its additional, direct effect on the final ATE estimator.
 
-\begin{proposition}[Exact estimated-ratio decomposition]
-\label{prop:estimated-ratio-decomposition}
-	Let $(\widehat\lambda,\widehat\omega)$ be selected without the evaluation
-	observations. Define the scalar population drift by
-	\begin{align*}
-	b_{\widehat r}&\triangleq\widehat\omega P_O\delta_{\widehat r}.
-	\end{align*}
-	Conditional on the fitted objects and selected coefficients,
-	\begin{align}
-		\widehat\theta_{\widehat r}(\widehat\lambda,\widehat\omega)-\theta
-		&=
-		\widehat\theta_{r_0}(\widehat\lambda,\widehat\omega)-\theta
-		+b_{\widehat r}
-		+\widehat\omega(\mathbb P_{O,N}-P_O)\delta_{\widehat r}.
-		\label{eq:estimated-ratio-mean-fluctuation}
-	\end{align}
-\end{proposition}
-Equation~\eqref{eq:ratio-B-error} describes the coefficient-selection path, whereas Equation~\eqref{eq:estimated-ratio-mean-fluctuation} separates the direct ATE error into population drift and evaluation fluctuation.
+We now quantify how the error $\widehat r-r_0$ propagates through Algorithm~\ref{alg:honest-ate}. The estimated ratio enters the algorithm at exactly two places. In the tuning step it enters the moment $\widehat B$ of Equation~\eqref{eq:ate-empirical-moments}, which sets $\widehat\omega$ through Equation~\eqref{eq:ate-separated-plugin}. In the evaluation step it enters the OBS score $\psi_O=\widehat\omega\widehat r\widehat g$, which feeds both $\widehat\theta_{\widehat r}$ and $\widehat V$ in Equation~\eqref{eq:ate-evaluation-variance}. The coefficient $\widehat\lambda$ uses only $\widehat A$ and $\widehat C$, so it does not depend on $\widehat r$. The next proposition treats the two places in turn and then records what they imply for the bias and the variance of $\widehat\theta_{\widehat r}$.
 
-
-
-
-
-
-\begin{proposition}[Conditional mean and variance with an estimated ratio]
-\label{cor:estimated-ratio-mean-preservation}
-Run Algorithm~\ref{alg:honest-ate} with the estimated ratio $\widehat r$, so that $\widehat\theta_{\widehat r}$ and $\widehat V$ in Equation~\eqref{eq:ate-evaluation-variance} are computed with $\widehat r$. Suppose Assumption~\ref{ass:honest-separation} holds, $n,N\geq2$, and $\psi_R\in L_2(P_R)$, $\psi_O\in L_2(P_O)$. Suppose also that $\widehat{g}\in L_1(P_R)$ and
-$r_0\widehat{g},\widehat r\widehat{g}\in L_1(P_O)$. With
-$b_{\widehat r}$ defined in
-Proposition~\ref{prop:estimated-ratio-decomposition}, let $V_n$ be the conditional evaluation variance of Theorem~\ref{thm:ate-honest-clt-active} computed with $\widehat r$:
+\begin{proposition}[Effect of the estimated ratio on Algorithm~\ref{alg:honest-ate}]
+\label{prop:estimated-ratio-effect}
+Let $\widehat B_{\widehat r}$ denote $\widehat B$ in Equation~\eqref{eq:ate-empirical-moments} evaluated with the estimated ratio $\widehat r$, and let $\widehat B_{r_0}$ denote the same expression evaluated with the oracle ratio $r_0$. Let $\widehat\theta_{\widehat r}$ and $\widehat\theta_{r_0}$ be the estimator in Equation~\eqref{eq:ate-estimator} with the same selected coefficients $(\widehat\lambda,\widehat\omega)$ and with $r=\widehat r$ and $r=r_0$, respectively. Suppose Assumption~\ref{ass:honest-separation} holds, $n,N\geq2$, $\psi_R\in L_2(P_R)$, $\psi_O\in L_2(P_O)$, $\widehat g\in L_1(P_R)$, and $r_0\widehat g,\widehat r\widehat g\in L_1(P_O)$.
+\begin{enumerate}
+\item (Tuning step.) On the tuning samples,
 \begin{align}
-V_n
-&\triangleq
-\operatorname{Var}\{\widehat\theta_{\widehat r}\mid
-\text{fitted and selected objects}\}.
-\label{eq:estimated-ratio-conditional-variance}
+\widehat B_{\widehat r}-\widehat B_{r_0}
+&=\frac nN\left[
+2\widehat{\operatorname{Cov}}_O\{r_0\widehat g,(\widehat r-r_0)\widehat g\}
++\widehat{\operatorname{Var}}_O\{(\widehat r-r_0)\widehat g\}
+\right].
+\label{eq:ratio-B-error}
 \end{align}
-Then
+Hence the ratio error changes $\widehat\omega=\widehat D/\widehat B$ only through its denominator and the threshold $t_B$ in Equation~\eqref{eq:ate-separated-plugin}, and it leaves $\widehat\lambda$ unchanged.
+\item (Evaluation step.) On the evaluation samples,
 \begin{align}
-\mathbb E\{\widehat\theta_{\widehat r}\mid
-\text{fitted and selected objects}\}
-&=\theta+b_{\widehat r},
-\\
-\mathbb E\{\widehat V\mid
-\text{fitted and selected objects}\}
-&=V_n.
+\widehat\theta_{\widehat r}-\widehat\theta_{r_0}
+&=\widehat\omega\,\mathbb P_{O,N}\{(\widehat r-r_0)\widehat g\}.
+\label{eq:estimated-ratio-difference}
+\end{align}
+\item (Bias and variance.) Conditional on all fitted and selected objects,
+\begin{align}
+\mathbb E(\widehat\theta_{\widehat r})
+&=\theta+\widehat\omega\{\mathbb E_O(\widehat r\widehat g)-\mathbb E_R(\widehat g)\},
+&
+\mathbb E(\widehat V)&=\operatorname{Var}(\widehat\theta_{\widehat r}).
 \label{eq:estimated-ratio-conditional-identities}
 \end{align}
-The conditional mean equals $\theta$ exactly when $b_{\widehat r}=0$. The
-balance condition
-\begin{align}
-P_O\delta_{\widehat r}=0
-\quad\Longleftrightarrow\quad
-\mathbb E_O\{\widehat r(X)\widehat{g}(X)\}
-&=\mathbb E_R\{\widehat{g}(X)\}
-\label{eq:estimated-ratio-mean-preservation}
-\end{align}
-is sufficient, and $\widehat\omega=0$ is another sufficient case.
+\end{enumerate}
 \end{proposition}
 
-When the corresponding unconditional moments exist,
-$\mathbb E(\widehat\theta_{\widehat r})=\theta+\mathbb E(b_{\widehat r})$ and
-$\mathbb E(\widehat V)=\mathbb E(V_n)$. In general,
-the latter is not the unconditional variance of the estimator, which also
-contains the between-fit variation of $b_{\widehat r}$.
-
-
-
-
+Item 1 is the coefficient-selection path and item 2 is the evaluation path. Both are small when the OBS sample is much larger than the trial: the difference in item 1 carries the factor $n/N$, and the difference in item 2 has conditional variance $\widehat\omega^2\operatorname{Var}_O\{(\widehat r-r_0)\widehat g\}/N$. Item 3 says what remains. The ratio error biases the point estimate by the drift $\widehat\omega\{\mathbb E_O(\widehat r\widehat g)-\mathbb E_R(\widehat g)\}$, which is $\widehat\omega$ times the transport error of $\widehat r$ on the single function $\widehat g$, while $\widehat V$ stays an unbiased estimator of the conditional variance because it is built from the same scores as $\widehat\theta_{\widehat r}$. The drift vanishes when $\mathbb E_O(\widehat r\widehat g)=\mathbb E_R(\widehat g)$, which is the population version of the balance that Definition~\ref{def:classifier-calibrated-balance} enforces on the nuisance sample with $\phi=\widehat g$, and it also vanishes when $\widehat\omega=0$. When the corresponding unconditional moments exist, the unconditional mean of $\widehat\theta_{\widehat r}$ is $\theta$ plus the expected drift, and the unconditional variance additionally contains the between-fit variation of the drift, which $\widehat V$ does not capture. Therefore the only new requirement for Wald inference with $\widehat r$ is that the drift be small relative to the standard error.
 
 \begin{theorem}[Feasible normal approximation with an estimated ratio]
 \label{thm:estimated-ratio-feasible-clt}
-Let $\widehat\theta_{\widehat r}$, $\widehat V$, and $V_n$ be as in Proposition~\ref{cor:estimated-ratio-mean-preservation}. Suppose Assumption~\ref{ass:honest-separation} holds, $n,N\to\infty$, $n/N\to\kappa\in[0,\infty)$, and,
-for some $\delta>0$, the centered evaluation scores have conditional
-$(2+\delta)$-moments that are uniformly bounded in probability. If
+Let $\widehat\theta_{\widehat r}$ and $\widehat V$ be the outputs of Algorithm~\ref{alg:honest-ate} with the estimated ratio $\widehat r$, and let $V_n\triangleq\operatorname{Var}(\widehat\theta_{\widehat r}\mid\text{fitted and selected objects})$ be the conditional variance in item 3 of Proposition~\ref{prop:estimated-ratio-effect}. Suppose Assumption~\ref{ass:honest-separation} holds, $n,N\to\infty$, $n/N\to\kappa\in[0,\infty)$, and, for some $\delta>0$, the centered evaluation scores have conditional $(2+\delta)$-moments that are uniformly bounded in probability. Suppose also that
 \begin{align}
-nV_n&\to_p\sigma^2\in(0,\infty),
-&
-\frac{b_{\widehat r}}{\sqrt{V_n}}&=o_p(1),
+nV_n\to_p\sigma^2\in(0,\infty),
+\qquad
+\frac{\widehat\omega\{\mathbb E_O(\widehat r\widehat g)-\mathbb E_R(\widehat g)\}}{\sqrt{V_n}}=o_p(1).
 \label{eq:estimated-ratio-mean-rate}
 \end{align}
-then
+Then
 \begin{align}
-\frac{\widehat V}{V_n}&\to_p1,
-&
-\frac{\widehat\theta_{\widehat r}-\theta}
-{\sqrt{\widehat V}}&\rightsquigarrow N(0,1).
+\frac{\widehat V}{V_n}\to_p1,
+\qquad
+\frac{\widehat\theta_{\widehat r}-\theta}{\sqrt{\widehat V}}\rightsquigarrow N(0,1),
 \label{eq:estimated-ratio-feasible-clt}
 \end{align}
-Consequently, the interval
+and the interval
 \begin{align}
-\widehat\theta_{\widehat r}
-&\mathbin{\pm}z_{1-\alpha/2}\sqrt{\widehat V}
+\widehat\theta_{\widehat r}\mathbin{\pm}z_{1-\alpha/2}\sqrt{\widehat V}
 \label{eq:estimated-ratio-confidence-interval}
 \end{align}
-has asymptotic coverage $1-\alpha$, where $z_{1-\alpha/2}$ is the standard
-normal quantile.
+has asymptotic coverage $1-\alpha$, where $z_{1-\alpha/2}$ is the standard normal quantile.
 \end{theorem}
 
-Theorem~\ref{thm:estimated-ratio-feasible-clt} permits
-$\widehat r\neq r_0$, but it requires the induced conditional mean drift to be
-negligible relative to the standard error. If that drift is not negligible, the
-present interval needs further justification. Accommodating first-stage
-variation requires an appropriate asymptotic expansion and variance analysis,
-which may use influence functions, direct bias control, or a different
-orthogonal construction.
+Equation~\eqref{eq:estimated-ratio-mean-rate} states two requirements. The first is that the conditional variance shrinks at the parametric rate with a nondegenerate limit, so that the standard error $\sqrt{V_n}$ is of order $n^{-1/2}$. The second is that the bias caused by the ratio error, the drift of Proposition~\ref{prop:estimated-ratio-effect}, is negligible relative to that standard error. Equation~\eqref{eq:estimated-ratio-feasible-clt} gives the two conclusions that a Wald interval needs: the variance estimator is consistent for the conditional variance, and the studentized estimator is asymptotically standard normal. Theorem~\ref{thm:estimated-ratio-feasible-clt} therefore permits $\widehat r\neq r_0$, and the price is the drift condition. If the drift is not negligible, the interval needs further justification, which may use influence functions, direct bias control, or a different orthogonal construction that accounts for first-stage variation.
 
 \begin{theoremcorollary}[Inheritance of the exact-ratio oracle ordering]
 \label{cor:estimated-ratio-inheritance}
@@ -698,10 +628,9 @@ and their feasible coefficients $(\widehat\lambda_k,\widehat\omega_k)$ are the e
 \mathbb P(\widehat A\leq t_A)+\mathbb P(\widehat B\leq t_B)&\to0,
 \label{eq:estimated-ratio-stability}
 \end{align}
-and
+and the evaluation-step difference in item 2 of Proposition~\ref{prop:estimated-ratio-effect} is negligible at the $\sqrt n$ scale,
 \begin{align}
-|\widehat\omega_k|\sqrt{\frac nN}
-\left\|\delta_{\widehat r}-P_O\delta_{\widehat r}\right\|_{L_2(P_O)}
+\widehat\omega_k^2\,\frac nN\operatorname{Var}_O\{(\widehat r-r_0)\widehat g\}
 &=o_p(1).
 \label{eq:estimated-ratio-fluctuation-rate}
 \end{align}
@@ -717,5 +646,4 @@ so $\sigma_k^2$ equals the limit of $\widetilde{\mathcal V}_k$ in Equation~\eqre
 \label{eq:estimated-ratio-inherited-ordering}
 \end{align}
 \end{theoremcorollary}
-This is not a universal
-finite-sample dominance statement.
+This is not a universal finite-sample dominance statement.
