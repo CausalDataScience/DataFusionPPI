@@ -162,65 +162,6 @@ Equation~\eqref{eq:ate-separable-minimum}.
 Fix $\zeta,\lambda,\omega$ and the fitted objects before using the tuning samples, and let $m$ be $m_\lambda$ or any fixed function. By Equation~\eqref{eq:pseudo-valid}, $\mathbb E_R\{Z_\lambda-\tau(X)\mid X\}=0$, so the cross term in $\mathbb E_R[\{Z_\lambda-\tau(X)\}+\{\tau(X)-\zeta(X)\}]^2$ vanishes and $\mathcal L_{\mathrm{DR}}(\zeta;\lambda)=Q_{\mathrm{DR}}(\lambda)+\mathcal R(\zeta)$. For the R loss, write $Y-m(X)-\{A-e(X)\}\zeta(X)=U+\{A-e(X)\}\{\tau(X)-\zeta(X)\}$ with $U\triangleq Y-m(X)-\{A-e(X)\}\tau(X)$. Conditional randomization gives $\mathbb E_R[\{A-e(X)\}\{Y-m(X)\}\mid X]=e(X)\{1-e(X)\}\tau(X)$ and $\mathbb E_R[\{A-e(X)\}^2\mid X]=e(X)\{1-e(X)\}$, hence $\mathbb E_R[U\{A-e(X)\}\mid X]=0$. Dividing the expanded square by $e(X)\{1-e(X)\}$ and taking $\mathbb E_R(\cdot\mid X)$ therefore leaves $\mathcal L_R(\zeta;m)=Q_R(m)+\mathcal R(\zeta)$. Finally, exact transport gives $\mathbb E_O\{r_0(X)G_\zeta(X)\}=\mathbb E_R\{G_\zeta(X)\}$, and $\mathbb E_R\{\chi(A,X)\mid X\}=1$ gives $\mathbb E_R\{\chi(A,X)G_\zeta(X)\}=\mathbb E_R\{G_\zeta(X)\}$, so both OBS corrections have mean zero for every $\omega$. This proves Equation~\eqref{eq:cate-target}.
 
 
-\subsection{Proofs for general two-source learning}
-
-For Theorem~\ref{thm:cate-general-erm}, exact transport and the target
-identities in Section~\ref{sec:cate-loss} imply
-\begin{align*}
-L_j(\zeta)-L_j(\zeta_j^\circ)
-&=\mathcal R(\zeta)-\mathcal R(\zeta_j^\circ).
-\end{align*}
-The global approximate-ERM inequality gives
-\begin{align*}
-\widehat L_j(\widehat\zeta_j)+\operatorname{Pen}(\widehat\zeta_j)
-&\leq
-\widehat L_j(\zeta_j^\circ)+\operatorname{Pen}(\zeta_j^\circ)
-+\epsilon_{\mathrm{opt}}.
-\end{align*}
-Add and subtract the two population losses.  By the definition of the
-centered comparator process, the resulting stochastic term is exactly
-$-\mathbb Z_j(\widehat\zeta_j)$.  This proves
-Equation~\eqref{eq:cate-general-erm-exact}, including its sign and without an
-extra factor two.
-
-For Theorem~\ref{thm:cate-general-localized}, work on the intersection of the
-two sourcewise modulus events.  Independence and a union bound give probability
-at least $1-2\delta$.  The exact ERM reduction shows that any approximate
-minimizer with excess risk in a peeling shell
-$2^m u<\mathcal R(\zeta)-\mathcal R(\zeta_j^\circ)\leq2^{m+1}u$
-must satisfy an upper bound by the sum of the two source moduli, the penalty at
-the comparator, and $\epsilon_{\mathrm{opt}}$.  Sub-root regularity and the
-definition of $u_{j,n_f,N_f}^\star$ make that upper bound strictly smaller
-than the shell's lower endpoint once $u$ is a sufficiently large universal
-multiple of
-$u_{j,n_f,N_f}^\star+\operatorname{Pen}(\zeta_j^\circ)
-+\epsilon_{\mathrm{opt}}$. For each fixed $\delta$, the full-modulus
-sub-root condition gives
-$\Phi_{j,n_f,N_f}(tu;\delta)\leq
-\sqrt{t}\,\Phi_{j,n_f,N_f}(u;\delta)$ for every $t\geq1$.
-Thus the stochastic upper bound grows only as the square root of the peeling
-level, whereas the shell's excess-risk lower endpoint grows linearly. Summing the
-geometric tail allocation over shells proves
-Equation~\eqref{eq:cate-general-localized}.  Separability permits the displayed
-suprema to be taken over countable dense subclasses; otherwise the same
-argument is understood in outer probability.
-
-For Proposition~\ref{prop:cate-general-estimated-r}, condition on the
-ratio-training sample.  The preceding argument now uses the actual
-$\widehat r$-weighted source process, hence its fixed point is
-$u_{j,n_f,N_f}^\star(\widehat r;\delta)$.  Add and subtract the exact-ratio
-population loss at $\zeta$ and $\zeta_j^\circ$.  Their increment is bounded
-by $\Delta_j^{\mathrm{tune}}$, after which the same localization argument
-closes at $\bar u$.  If the two stated $L_2(P_O)$ bounds hold,
-Cauchy--Schwarz gives
-\begin{align*}
-\Delta_j^{\mathrm{tune}}(u;\widehat r)
-&\leq |\omega|\|\widehat r-r_0\|_{L_2(P_O)}
-\sup_{\zeta\in\mathcal Z_j(u)}
-\|G_\zeta-G_{\zeta_j^\circ}\|_{L_2(P_O)},
-\end{align*}
-which proves the final claim.
-
 \subsection{Proofs for coefficient selection}
 
 For Proposition~\ref{prop:cate-noise-floor-lambda}, pseudo-outcome validity
@@ -256,111 +197,37 @@ and the objective is flat.  A convex
 quadratic minimized over $[0,1]$ is minimized by projecting its
 unrestricted minimizer onto that interval.
 
-For Proposition~\ref{prop:cate-omega-flatness}, exact transport gives
-\begin{align*}
-\mathbb E_O(r_0G_\zeta)-\mathbb E_R(G_\zeta)=0.
-\end{align*}
-Moreover, conditional randomization and strict overlap give
-$\mathbb E_R(\chi\mid X)=1$, so
-\begin{align*}
-\mathbb E_R(\chi G_\zeta)
-&=\mathbb E_R[\mathbb E_R(\chi\mid X)G_\zeta]
-=\mathbb E_R(G_\zeta),\\
-\mathbb E_O(r_0G_\zeta)-\mathbb E_R(\chi G_\zeta)
-&=0.
-\end{align*}
-Substitution into Equations~\eqref{eq:dr-fusion-loss} and
-\eqref{eq:rf-fusion-loss} leaves
-$\mathcal L_{\mathrm{DR}}(\zeta;\lambda)$ and
-$\mathcal L_R(\zeta;\lambda)$, respectively, for every
-$\omega\in\Omega$.  Each objective is therefore constant on the nonempty
-set $\Omega$, and its minimizer set is all of $\Omega$.
 
 For Proposition~\ref{prop:cate-validation-identity}, condition on the fitted
 grid function at each $(\lambda,\omega)\in\mathcal G_j$.  Conditional
 pseudo-outcome validity gives
 \begin{align*}
-\mathbb E_R\{Z_0-\widehat\tau_j(X;\lambda,\omega)\}^2
+\mathbb E_R\{Z_0-\widehat\zeta_j(X;\lambda,\omega)\}^2
 &=Q_{\mathrm{DR}}(0)
-+\mathcal R\{\widehat\tau_j(\cdot;\lambda,\omega)\}.
++\mathcal R\{\widehat\zeta_j(\cdot;\lambda,\omega)\}.
 \end{align*}
 Exact transport gives
 $\mathbb E_O(r_0G_{j,\lambda,\omega})
 =\mathbb E_R(G_{j,\lambda,\omega})$, so the term multiplied by $\omega$
 has mean zero.  This proves Equation~\eqref{eq:common-reference-identity}.
 
+
 \subsection{Proofs for the orthogonality audit}
 
-Condition throughout on the auxiliary samples and algorithmic randomness, so
-all nuisances, $\lambda$, and $\omega$ are fixed before the independent
-loss observations are used. Assume strict trial overlap, exact transport for
-claims at $r_0$, and sufficient integrability and domination to interchange
-Gateaux differentiation and expectation. Directions belong to the tangent
-sets stated in the main text.
 
-Differentiating Equations~\eqref{eq:dr-fusion-loss} and
-\eqref{eq:rf-fusion-loss} in the target direction $v$ gives
-Equations~\eqref{eq:drf-learning-equation} and
-\eqref{eq:rf-learning-equation}. For $r=r_0$, exact transport gives
-$\mathbb E_O(r_0f)=\mathbb E_R(f)$ for each integrable $f(X)$. Also,
-\begin{align*}
-\mathbb E_R(\chi\mid X)
-&=\mathbb E_R(\chi\mid X)
-=\frac{\mathbb E_R[\{A-e(X)\}^2\mid X]}{e(X)\{1-e(X)\}}=1.
-\end{align*}
-The two correction terms in each learning equation therefore cancel. This
-proves Proposition~\ref{prop:cate-learning-equations}.
+Condition throughout on the nuisance samples, so that $\widehat\mu_R$, $\widehat\mu_O$, $\widehat g$, $r$, $\lambda$, and $\omega$ are fixed before the tuning samples are used, and assume enough integrability to interchange differentiation and expectation.
 
-For the $q$-direction in Proposition~\ref{prop:cate-orthogonality-audit},
-let $q_\varepsilon=q+\varepsilon h$. Direct differentiation gives
-\begin{align*}
-\dot Z_q[h]
-&=-\{A-e(X)\}\left\{\frac{h_1(X)}{e(X)}
-+\frac{h_0(X)}{1-e(X)}\right\}.
-\end{align*}
-Because $h$ and $v$ are functions of $X$ and
-$\mathbb E_R(A-e\mid X)=0$,
-$\mathbb E_R\{v(X)\dot Z_q[h]\}=0$.
+\paragraph{Learning equations.}
+Differentiating the expected losses of Definition~\ref{def:fusion-losses} in the direction $v$ and multiplying by $-\tfrac12$ gives Equations~\eqref{eq:drf-learning-equation} and~\eqref{eq:rf-learning-equation}. For $r=r_0$, exact transport gives $\mathbb E_O(r_0f)=\mathbb E_R(f)$ for each integrable $f(X)$, and Assumption~\ref{ass:trial} gives $\mathbb E_R\{\chi(A,X)\mid X\}=1$, so the two terms of each OBS bracket cancel, which gives the reduced forms displayed after Definition~\ref{def:learning-equations}.
 
-For the $m$-direction, direct differentiation of the first term of
-Equation~\eqref{eq:rf-learning-equation} gives
+\paragraph{Proof of Proposition~\ref{prop:cate-orthogonality-audit}.}
+For a pair $h=(h_0,h_1)$ write $c(h)\triangleq\{A-e(X)\}\{h_1(X)/e(X)+h_0(X)/[1-e(X)]\}$. Differentiating $\varphi(V;q)$ in Definition~\ref{def:rct-aipw-score} along $q+\varepsilon h$ gives $-c(h)$, and $\mathbb E_R\{c(h)\mid X\}=0$ by conditional randomization. Along $\widehat\mu_R+\varepsilon h$, the fused pair $\widehat\mu_\lambda$ moves by $(1-\lambda)h$ and $m_\lambda$ moves by $(1-\lambda)\{e(X)h_1(X)+[1-e(X)]h_0(X)\}$, while $\widehat g$ does not move. Hence
 \begin{align*}
-D_m\Psi_{\mathrm{RF}}[h,v]
-&=-\mathbb E_R\left[v(X)\frac{A-e(X)}{e(X)\{1-e(X)\}}h(X)\right]=0.
+D_{\widehat\mu_R}\Psi_{\mathrm{DRF}}[h,v]&=-(1-\lambda)\mathbb E_R\{v(X)c(h)\}=0,
+\\
+D_{\widehat\mu_R}\Psi_{\mathrm{RF}}[h,v]&=-(1-\lambda)\mathbb E_R\left[v(X)\frac{A-e(X)}{e(X)\{1-e(X)\}}\{e(X)h_1(X)+[1-e(X)]h_0(X)\}\right]=0,
 \end{align*}
-The last equality again uses conditional randomization.
-
-For the prediction path $\widehat{g}_\varepsilon=\widehat{g}+\varepsilon u$, only the transported
-correction changes. Exact transport, and $\mathbb E_R(\chi\mid X)=1$
-for RF, give
-\begin{align*}
-\left.\frac{d}{d\varepsilon}
-\Psi_j(\widehat{g}_\varepsilon)[v]\right|_{\varepsilon=0}
-&=\omega\mathbb E_O[\{r-r_0\}uv],\\
-\left.\frac{d}{d\varepsilon}
-\mathbb E\{\widehat L_j(\widehat{g}_\varepsilon)\}
-\right|_{\varepsilon=0}
-&=2\omega\mathbb E_O[\{r-r_0\}(\widehat{g}-\zeta)u],
-\end{align*}
-which proves Equations~\eqref{eq:cate-g-score-derivative} and
-\eqref{eq:cate-g-loss-derivative}. A ratio path
-$r_\varepsilon=r+\varepsilon h_r$ affects only the positive OBS term, so
-\begin{align*}
-D_r\Psi_j[h_r,v]
-&=\omega\mathbb E_O[h_rv(\widehat{g}-\zeta)],\\
-D_r\mathbb E(\widehat L_j)[h_r]
-&=\omega\mathbb E_O[h_r(\widehat{g}-\zeta)^2].
-\end{align*}
-This proves Equations~\eqref{eq:cate-ratio-score-derivative} and
-\eqref{eq:drf-ratio-derivative}.
-
-To prove Proposition~\ref{prop:cate-ratio-nonorthogonality}, take any
-$f=v(\widehat{g}-\zeta)\in L_2(P_O^X)$. Its inner product with every element of
-$L_0^2(P_O^X)$ is zero if and only if $f$ lies in the orthogonal
-complement of that space, which consists of the almost-sure constants.
-For example, the centered direction $h=f-\mathbb E_O(f)$ has pairing
-$\mathbb E_O(hf)=\operatorname{Var}_O(f)$. Multiplication by nonzero
-$\omega$ does not change the zero set.
+because $v$ and $h$ are functions of $X$ and $\mathbb E_R\{A-e(X)\mid X\}=0$. This proves item 1. Along $\widehat\mu_O+\varepsilon h$, the same two contributions appear with $\lambda$ in place of $1-\lambda$ and vanish for the same reason, and in addition $\widehat g$ moves by $u=h_1-h_0$. Only the OBS bracket depends on $\widehat g$, and its derivative is $\omega[\mathbb E_O\{r(X)v(X)u(X)\}-\mathbb E_R\{v(X)u(X)\}]$ for DRF and $\omega[\mathbb E_O\{r(X)v(X)u(X)\}-\mathbb E_R\{\chi(A,X)v(X)u(X)\}]$ for RF. Exact transport and $\mathbb E_R\{\chi(A,X)\mid X\}=1$ turn both into $\omega\mathbb E_O[\{r(X)-r_0(X)\}u(X)v(X)]$, which proves item 2. Along $r+\varepsilon h_r$, only the positive OBS term moves, so $D_r\Psi_j[h_r,v]=\omega\mathbb E_O[h_r(X)v(X)\{\widehat g(X)-\zeta(X)\}]$. For the last claim of item 3, take $f\triangleq v(\widehat g-\zeta)\in L_2(P_O^X)$. Its inner product with every mean-zero element of $L_2(P_O^X)$ is zero if and only if $f$ lies in the orthogonal complement of the mean-zero functions, which consists of the almost-sure constants; for example, the centered direction $h_r=f-\mathbb E_O(f)$ has pairing $\mathbb E_O(h_rf)=\operatorname{Var}_O(f)$. Multiplication by nonzero $\omega$ does not change the zero set.
 
 For Proposition~\ref{prop:cate-sieve-normal-equations}, expand each quadratic
 objective in $\beta$.  The DRF curvature and right-hand side are
@@ -394,26 +261,8 @@ For Corollary~\ref{cor:cate-estimated-r-validation}, direct expansion with
 the evaluation-independent approximate ratio perturbs the expectation at
 each grid pair by
 $\omega\mathbb E_O[(\widehat r-r_0)G_{j,\lambda,\omega}]$.
-The main-text quantity $\Delta_r$ bounds these perturbations uniformly, so
-the same selector comparison adds $2\Delta_r$.  Hoeffding's inequality
-applied to the actual scores gives
-$2\widehat\varepsilon_{\mathrm{eval}}(\delta)$, proving both displayed
-bounds.
+Their maximum over the grid bounds these perturbations uniformly, so the same selector comparison adds twice that maximum. Hoeffding's inequality applied to the actual scores gives $2\widehat\varepsilon_{\mathrm{eval}}(\alpha)$, proving the displayed bound and its RCT-only form.
 
-For Theorem~\ref{thm:cate-general-selected-risk}, assign fitting failure
-probability $\delta_f/M$ to each of the $M$ fixed candidates.  A union
-bound makes all candidate-specific fitting inequalities hold simultaneously
-with probability at least $1-\delta_f$.  On that event, the ideal risk of
-candidate $k$ is at most $B_k$.  Independently, the validation event in
-Corollary~\ref{cor:cate-estimated-r-validation} holds with probability at
-least $1-\delta_v$ and compares the selected fitted candidate with the
-best fitted candidate, adding
-$2\widehat\varepsilon_{\mathrm{eval}}(\delta_v)
-+2\Delta_r^{\mathrm{eval}}$.  Intersecting the fitting and validation events
-and then minimizing the simultaneous upper bounds over $k$ proves
-Equation~\eqref{eq:cate-general-selected-risk}.  No independence among the
-candidate fits is required; only their joint independence from final
-validation is used.
 
 For Theorem~\ref{thm:cate-sieve-identity}, the first-order condition is
 $(\widehat H_j+\rho P)\widehat\beta_j=\widehat h_j$. Subtracting its value at

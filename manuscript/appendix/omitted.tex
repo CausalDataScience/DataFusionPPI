@@ -1,0 +1,26 @@
+\section{Omitted Results}
+\label{app:omitted}
+
+\subsection{Closed-form noise-floor coefficients}
+\label{app:noise-floor}
+
+A closed-form choice of $\lambda$ minimizes the noise floors of Proposition~\ref{prop:cate-target} instead of the CATE risk of the fitted learner in Definition~\ref{def:fitted-fusion-learner}. It is recorded here because the validation route of Section~\ref{sec:cate-risk-selection} targets the fitted risk directly and also chooses $\omega$.
+
+\begin{proposition}[Noise-floor coefficients]
+\label{prop:cate-noise-floor-lambda}
+Suppose Assumptions~\ref{ass:trial} and~\ref{ass:honest-separation} hold and the displayed moments are finite. Recall $Z_0$, $Z_1$, and $\Delta=Z_1-Z_0$ from Section~\ref{sec:rct-obs-setting}, so that $Z_\lambda=Z_0+\lambda\Delta$, and write $d_m\triangleq m_O-m_R$, so that $m_\lambda=m_R+\lambda d_m$. Let $\operatorname{Proj}_{[0,1]}(u)\triangleq\min\{1,\max(0,u)\}$. If $\mathbb E_R(\Delta^2)>0$, then
+\begin{align}
+\operatorname*{arg\,min}_{\lambda\in[0,1]}Q_{\mathrm{DR}}(\lambda)
+&=\operatorname{Proj}_{[0,1]}\left\{-\frac{\mathbb E_R(Z_0\Delta)}{\mathbb E_R(\Delta^2)}\right\},
+\label{eq:cate-dr-noise-lambda}
+\end{align}
+and if $\mathbb E_R[d_m(X)^2/\{e(X)(1-e(X))\}]>0$, then
+\begin{align}
+\operatorname*{arg\,min}_{\lambda\in[0,1]}Q_R(\lambda)
+&=\operatorname{Proj}_{[0,1]}\left[
+\frac{\mathbb E_R[\{Y-m_R(X)\}d_m(X)/\{e(X)(1-e(X))\}]}
+{\mathbb E_R[d_m(X)^2/\{e(X)(1-e(X))\}]}\right].
+\label{eq:cate-r-noise-lambda}
+\end{align}
+If a denominator is zero, the corresponding noise floor is constant in $\lambda$. Both minimizers can be estimated by replacing the moments with tuning-sample averages.
+\end{proposition}

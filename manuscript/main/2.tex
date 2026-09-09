@@ -137,7 +137,7 @@ combined without changing the conditional causal target.
 \label{def:fusion-score}
 	For $\lambda\in\mathbb R$, define
 	\begin{align}
-		\widehat{\mu}_{\lambda} &\triangleq (1-\lambda)\widehat\mu_R+\lambda\widehat\mu_O,
+		\widehat{\mu}_{\lambda} &\triangleq (1-\lambda)\widehat\mu_R+\lambda\widehat\mu_O, \label{eq:fused-regression}
 	\end{align}
 	and the fused score as
 	\begin{align}
@@ -150,8 +150,25 @@ From $Z_0 = \varphi(V;\widehat\mu_R)$, $Z_1 = \varphi(V;\widehat\mu_O)$ and $\De
 	Z_{\lambda} = Z_0 + \lambda \Delta.
 \end{align}
 
-
-
+Section~\ref{sec:cate} asks how a fitted nuisance enters the first-order condition of a loss. The following two definitions fix the language.
+\begin{definition}[Gateaux derivative {\citep[Chapter~20]{vandervaart1998asymptotic}}]
+\label{def:gateaux}
+Let $F$ be a functional of a function-valued argument $\eta$, and let $h$ be a direction such that $\eta+\varepsilon h$ stays in the domain of $F$ for all sufficiently small $|\varepsilon|$. Whenever the limit exists, the Gateaux derivative of $F$ at $\eta$ in the direction $h$ is
+\begin{align}
+	D_\eta F(\eta)[h]&\triangleq\left.\frac{d}{d\varepsilon}F(\eta+\varepsilon h)\right|_{\varepsilon=0}
+	\label{eq:gateaux-derivative}
+\end{align}
+\end{definition}
+\begin{definition}[Learning equation and orthogonality {\citep{chernozhukov2018dml,foster2023orthogonal}}]
+\label{def:orthogonality}
+Let $L(\zeta;\eta)$ be a population loss with a target argument $\zeta$ in a linear class and a nuisance argument $\eta$, and let $\eta_0$ denote the true nuisance. The learning equation of $L$ is
+\begin{align}
+\Psi(\zeta;\eta)[v]&\triangleq-\frac12D_\zeta L(\zeta;\eta)[v]
+\label{eq:learning-equation-generic}
+\end{align}
+for target directions $v$ in the class.  The loss is orthogonal to $\eta$ if $D_\eta\Psi(\zeta^\star;\eta_0)[h,v]=0$ for every admissible nuisance direction $h$ and every target direction $v$.
+\end{definition}
+When $L$ is convex in $\zeta$, a function $\zeta^\star$ minimizes $L(\cdot\,;\eta_0)$ over the class exactly when $\Psi(\zeta^\star;\eta_0)[v]=0$ for every $v$ in the class, which is why $\Psi$ is called the learning equation.
 
 \subsection{Existing data-fusion estimators}
 \label{sec:existing-fusion}
