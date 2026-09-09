@@ -153,7 +153,19 @@ Item 1 is the classical orthogonality of the AIPW score and of the R loss to the
 \subsection{Fitting the learners and choosing the fusion coefficients}
 \label{sec:cate-risk-selection}
 
-The DRF and RF learners have three inputs that the data must supply: the fitted CATE function for given coefficients, the coefficients $(\lambda,\omega)$, and the ratio $r$. This subsection treats the three in turn.
+The DRF and RF learners have three inputs that the data must supply: the fitted CATE function for given coefficients, the coefficients $(\lambda,\omega)$, and the ratio $r$. Algorithm~\ref{alg:cate-fusion-selection} states the procedure; the rest of this subsection defines its objects and analyzes its output, treating the three inputs in turn.
+
+\begin{algorithm}[H]
+\caption{Honest fitting and selection of the CATE fusion learner}
+\label{alg:cate-fusion-selection}
+\DontPrintSemicolon
+\KwIn{Nuisance, tuning, and evaluation samples; the class $\mathcal Z$; a prespecified finite grid $\mathcal G_j\subseteq[0,1]^2$ containing $(0,0)$; a density-ratio estimator.}
+Fit $\widehat\mu_R$, $\widehat\mu_O$, $\widehat g$, and $r$ on the nuisance samples.\;
+For every $(\lambda,\omega)\in\mathcal G_j$, fit $\widehat\zeta_j(\cdot;\lambda,\omega,r)$ on the tuning samples by minimizing $\widehat L_j(\zeta;\lambda,\omega,r)$ of Definition~\ref{def:fusion-losses} over $\zeta\in\mathcal Z$.\;
+For every $(\lambda,\omega)\in\mathcal G_j$, compute on the evaluation samples, with $G\triangleq\{\widehat g(X)-\widehat\zeta_j(X;\lambda,\omega,r)\}^2$, the validation score $\widehat C_j(\lambda,\omega)\triangleq\mathbb P_{R,n}[\{Z_0-\widehat\zeta_j(X;\lambda,\omega,r)\}^2-\omega G]+\mathbb P_{O,N}\{\omega r(X)G\}$.\;
+Select $(\widehat\lambda_j,\widehat\omega_j)$ by minimizing $\widehat C_j$ over $\mathcal G_j$, with deterministic tie-breaking.\;
+\KwOut{$(\widehat\lambda_j,\widehat\omega_j)$ and $\widehat\zeta_j(\cdot;\widehat\lambda_j,\widehat\omega_j,r)$.}
+\end{algorithm}
 
 \begin{definition}[Fitted fusion learner]
 \label{def:fitted-fusion-learner}
@@ -167,14 +179,7 @@ with ties broken by a prespecified deterministic rule, and its CATE risk is $\ma
 \end{definition}
 Two abbreviations are used below: $\widehat\zeta_j(\cdot;\lambda,\omega)\triangleq\widehat\zeta_j(\cdot;\lambda,\omega,r_0)$, and $\widehat\zeta_j(\cdot;0,0)$ is the RCT-only learner, which uses neither $\omega$ nor $r$.
 
-The minimization in Equation~\eqref{eq:fitted-fusion-learner} is a least-squares problem. Collecting the terms of $\widehat L_j$ that are quadratic in $\zeta$ gives
-\begin{align}
-\text{DRF: }&(1-\omega)\,\mathbb P_R^{\mathrm{tune}}\{\zeta(X)^2\}+\omega\,\mathbb P_O^{\mathrm{tune}}\{r(X)\zeta(X)^2\},
-\notag\\
-\text{RF: }&(1-\omega)\,\mathbb P_R^{\mathrm{tune}}\{\chi(A,X)\zeta(X)^2\}+\omega\,\mathbb P_O^{\mathrm{tune}}\{r(X)\zeta(X)^2\}.
-\label{eq:fusion-curvature}
-\end{align}
-Both are nonnegative for $\omega\in[0,1]$ and $r\geq0$, which is why $\Omega\subseteq[0,1]$.
+Step 2 of Algorithm~\ref{alg:cate-fusion-selection} is a convex least-squares problem, because the losses of Definition~\ref{def:fusion-losses} are quadratic in $\zeta$ with a nonnegative second-order part; the expansion is recorded in Appendix~\ref{app:fusion-convexity}.
 
 In DRF, $\lambda$ changes $Z_\lambda$; in RF, it changes $m_\lambda$; in both, $\omega$ scales the OBS correction and $r$ weights it. The fitted function therefore depends on $(\lambda,\omega,r)$, even though by Proposition~\ref{prop:cate-target} the expected loss at a fixed $\zeta$ does not depend on $\omega$ at $r=r_0$. Whenever the minimum is attained, the infeasible risk oracle is
 \begin{align}
@@ -192,7 +197,7 @@ and, because $(0,0)$ is feasible,
 The oracle is infeasible because $\tau$ is unknown, and Equation~\eqref{eq:conditional-rct-oracle-comparison} is a comparison of oracles, not a guarantee for estimated coefficients.
 
 
-The coefficients are chosen by comparing fitted functions on the evaluation samples. A closed-form alternative for $\lambda$ alone, which minimizes the noise floors $Q_{\mathrm{DR}}(\lambda)$ and $Q_R(\lambda)$ of Proposition~\ref{prop:cate-target} instead of the risk of the fitted function, is recorded in Appendix~\ref{app:noise-floor}; it cannot choose $\omega$, because by Proposition~\ref{prop:cate-target} the expected loss at a fixed function is constant in $\omega$ at $r=r_0$.
+The coefficients are chosen by comparing fitted functions on the evaluation samples, as in steps 3 and 4 of Algorithm~\ref{alg:cate-fusion-selection}.
 
 \begin{definition}[Honest finite-grid candidates and validation score]
 \label{def:cate-finite-grid-validation}
@@ -213,20 +218,20 @@ S_{R,j,\lambda,\omega}
 S_{O,j,\lambda,\omega}
 &\triangleq\omega r_0(X)G_{j,\lambda,\omega}(X),
 \end{align*}
-and the validation score
+so that the validation score of step 3 in Algorithm~\ref{alg:cate-fusion-selection}, with $r=r_0$, is
 \begin{align}
 \widehat C_j(\lambda,\omega)
 &\triangleq\mathbb P_{R,n}S_{R,j,\lambda,\omega}+\mathbb P_{O,N}S_{O,j,\lambda,\omega}.
 \label{eq:common-reference-validation}
 \end{align}
-The selected coefficients are $(\widehat\lambda_j,\widehat\omega_j)\in\operatorname*{arg\,min}_{(\lambda,\omega)\in\mathcal G_j}\widehat C_j(\lambda,\omega)$, with deterministic tie-breaking.
+Step 4 of Algorithm~\ref{alg:cate-fusion-selection} selects $(\widehat\lambda_j,\widehat\omega_j)\in\operatorname*{arg\,min}_{(\lambda,\omega)\in\mathcal G_j}\widehat C_j(\lambda,\omega)$, with deterministic tie-breaking.
 \end{definition}
 
 The score uses the same pseudo-outcome $Z_0$ for every candidate, so that candidates differ only through their fitted functions, and it adds the transported correction $\omega\{\mathbb P_{O,N}(r_0G_{j,\lambda,\omega})-\mathbb P_{R,n}(G_{j,\lambda,\omega})\}$, whose conditional mean is zero under exact transport, exactly as the control variate in Equation~\eqref{eq:ate-estimator}.
 
 \begin{proposition}[Validation identity]
 \label{prop:cate-validation-identity}
-Suppose Assumptions~\ref{ass:trial} and~\ref{ass:honest-separation} hold, either Assumption~\ref{ass:common-marginal} holds with $r_0=1$ or Assumption~\ref{ass:exact-transport} holds with $r_0=dP_R^X/dP_O^X$, and the displayed expectations are finite. Conditional on all fitted objects, for every $(\lambda,\omega)\in\mathcal G_j$,
+Suppose Assumptions~\ref{ass:honest-separation} and \ref{ass:trial} hold, either Assumption~\ref{ass:common-marginal} holds with $r_0=1$ or Assumption~\ref{ass:exact-transport} holds with $r_0=dP_R^X/dP_O^X$, and the displayed expectations are finite. Conditional on all fitted objects, for every $(\lambda,\omega)\in\mathcal G_j$,
 \begin{align}
 \mathbb E\{\widehat C_j(\lambda,\omega)\}
 &=Q_{\mathrm{DR}}(0)+\mathcal R\{\widehat\zeta_j(\cdot;\lambda,\omega)\}.
@@ -236,29 +241,16 @@ Suppose Assumptions~\ref{ass:trial} and~\ref{ass:honest-separation} hold, either
 
 The term $Q_{\mathrm{DR}}(0)$ is common to every candidate, so the score identifies risk differences between candidates although it is not an unbiased estimate of $\mathcal R$ itself.
 
-\begin{algorithm}[H]
-\caption{Honest selection of the CATE fusion coefficients}
-\label{alg:cate-fusion-selection}
-\DontPrintSemicolon
-\KwIn{Nuisance, tuning, and evaluation samples; the class $\mathcal Z$; the grid $\mathcal G_j$; a ratio $r$.}
-Fit $\widehat\mu_R$, $\widehat\mu_O$, $\widehat g$, and $r$ on the nuisance samples.\;
-For every $(\lambda,\omega)\in\mathcal G_j$, fit $\widehat\zeta_j(\cdot;\lambda,\omega,r)$ on the tuning samples.\;
-Compute $\widehat C_j(\lambda,\omega)$ in Equation~\eqref{eq:common-reference-validation} on the evaluation samples, with $r$ in place of $r_0$.\;
-Select $(\widehat\lambda_j,\widehat\omega_j)$ by minimizing $\widehat C_j$ over $\mathcal G_j$.\;
-\KwOut{$(\widehat\lambda_j,\widehat\omega_j)$ and $\widehat\zeta_j(\cdot;\widehat\lambda_j,\widehat\omega_j,r)$.}
-\end{algorithm}
-
-Let $M\triangleq|\mathcal G_j|$, let $n$ and $N$ be the evaluation sizes of Section~\ref{sec:rct-obs-setting}, and suppose the scores $S_{R,j,\lambda,\omega}$ and $S_{O,j,\lambda,\omega}$ take values in intervals of lengths at most $\ell_R$ and $\ell_O$ for every grid pair. For $\alpha\in(0,1)$, define
-\begin{align}
-\varepsilon_{\mathrm{eval}}(\alpha)
-&\triangleq\ell_R\sqrt{\frac{\log(4M/\alpha)}{2n}}+\ell_O\sqrt{\frac{\log(4M/\alpha)}{2N}},
-\label{eq:eval-radius}
-\end{align}
-the uniform deviation radius of the $M$ scores given by Hoeffding's inequality and a union bound.
 
 \begin{theorem}[Finite-grid honest validation]
 \label{thm:cate-finite-validation}
-Under the conditions of Proposition~\ref{prop:cate-validation-identity} and the range condition above, with probability at least $1-\alpha$ over the evaluation samples,
+Suppose the conditions of Proposition~\ref{prop:cate-validation-identity} hold. Let $M\triangleq|\mathcal G_j|$, let $n$ and $N$ be the evaluation sizes of Section~\ref{sec:rct-obs-setting}, suppose the scores $S_{R,j,\lambda,\omega}$ and $S_{O,j,\lambda,\omega}$ take values in intervals of lengths at most $\ell_R$ and $\ell_O$ for every grid pair, and for $\alpha\in(0,1)$ define
+\begin{align}
+\varepsilon_{\mathrm{eval}}(\alpha)
+&\triangleq\ell_R\sqrt{\frac{\log(4M/\alpha)}{2n}}+\ell_O\sqrt{\frac{\log(4M/\alpha)}{2N}}.
+\label{eq:eval-radius}
+\end{align}
+Then, with probability at least $1-\alpha$ over the evaluation samples,
 \begin{align}
 \mathcal R\{\widehat\zeta_j(\cdot;\widehat\lambda_j,\widehat\omega_j)\}
 &\leq\mathcal R\{\widehat\zeta_j(\cdot;\lambda_j^{\mathcal G},\omega_j^{\mathcal G})\}+2\varepsilon_{\mathrm{eval}}(\alpha)
@@ -267,7 +259,7 @@ Under the conditions of Proposition~\ref{prop:cate-validation-identity} and the 
 \end{align}
 \end{theorem}
 
-The selected learner is within $2\varepsilon_{\mathrm{eval}}(\alpha)$ of the best candidate on the grid, and in particular of the RCT-only learner; the price of selecting among $M$ candidates is the $\log M$ inside the radius. The theorem gives neither coefficient consistency, nor approximation of the continuous oracle in Equation~\eqref{eq:final-risk-oracle}, nor dominance for every realized sample.
+The radius $\varepsilon_{\mathrm{eval}}(\alpha)$ is the uniform deviation of the $M$ scores given by Hoeffding's inequality and a union bound. The selected learner is within $2\varepsilon_{\mathrm{eval}}(\alpha)$ of the best candidate on the grid, and in particular of the RCT-only learner; the price of selecting among $M$ candidates is the $\log M$ inside the radius. The theorem gives neither coefficient consistency, nor approximation of the continuous oracle in Equation~\eqref{eq:final-risk-oracle}, nor dominance for every realized sample.
 
 Both the fitted learner and the validation score need a ratio. With an estimated ratio of Section~\ref{sec:ratio-estimation} in place of $r_0$, item 3 of Proposition~\ref{prop:cate-orthogonality-audit} shows that the fitted function moves at first order in $\widehat r-r_0$, and the validation score acquires a drift.
 
@@ -284,8 +276,7 @@ Under the conditions of Theorem~\ref{thm:cate-finite-validation}, let $\widehat 
 and the same bound holds with $\mathcal R\{\widehat\zeta_j(\cdot;0,0)\}$ in place of the grid-oracle risk.
 \end{corollary}
 
-The last term in Equation~\eqref{eq:validation-drift-bounds} is the transport error of $\widehat r$ on the finitely many functions $G_{j,\lambda,\omega}$, and the first-order movement of the fitted learner in item 3 of Proposition~\ref{prop:cate-orthogonality-audit} is the transport error on the functions $G_\zeta$, $\zeta\in\mathcal Z$.
-The calibrated ratio of Definition~\ref{def:classifier-calibrated-balance} controls both errors through its feature map $\phi$: by Proposition~\ref{prop:automatic-ratio-balance} and linearity, $\mathbb P_O^{\mathrm{nuis}}(\widehat r_{\mathrm{BAL}}f)=\mathbb P_R^{\mathrm{nuis}}(f)$ for every $f$ in the span of $1,\phi_1,\ldots,\phi_p$. For a linear class $\mathcal Z=\{b(\cdot)^\top\beta:\beta\in\mathbb R^p\}$ with basis $b=(b_1,\ldots,b_p)$, every $G_\zeta=(\widehat g-b^\top\beta)^2$ lies in that span once $\phi$ contains $\widehat g^2$, $\widehat g\,b_k$, and $b_kb_l$ for $1\leq k\leq l\leq p$, so the OBS correction is exactly centered on the nuisance samples for every candidate function and every grid pair. The drifts of the fitted learner and of the validation score then reduce to the deviations of two nuisance-sample averages, $\mathbb P_O^{\mathrm{nuis}}(\widehat r_{\mathrm{BAL}}G_\zeta)$ and $\mathbb P_R^{\mathrm{nuis}}(G_\zeta)$, from their population values. The balancing must use the nuisance samples: enforcing it on the tuning samples would make the empirical correction identically zero in $\zeta$ and remove the OBS information from the fitted learner, and enforcing it on the evaluation samples would break the independence that Theorem~\ref{thm:cate-finite-validation} uses. Under Assumption~\ref{ass:common-marginal}, $r_0=1$ and no ratio is estimated.
+Both drifts are transport errors of $\widehat r$ on squared differences $(\widehat g-\zeta)^2$: the last term of Equation~\eqref{eq:validation-drift-bounds} on the finitely many $G_{j,\lambda,\omega}$, and the first-order movement of the fitted learner in item 3 of Proposition~\ref{prop:cate-orthogonality-audit} on every $G_\zeta$, $\zeta\in\mathcal Z$. By Proposition~\ref{prop:automatic-ratio-balance} and linearity, the calibrated ratio of Definition~\ref{def:classifier-calibrated-balance} has zero nuisance-sample transport error on the span of $1,\phi_1,\ldots,\phi_p$, so for a linear class with basis $b=(b_1,\ldots,b_p)$ it suffices that $\phi$ contain $\widehat g^2$, $\widehat g\,b_k$, and $b_kb_l$ for $1\leq k\leq l\leq p$; both drifts then reduce to the sampling error of nuisance-sample averages. The balancing must use the nuisance samples: on the tuning samples it would make the OBS correction identically zero in $\zeta$, and on the evaluation samples it would break the independence used by Theorem~\ref{thm:cate-finite-validation}. Under Assumption~\ref{ass:common-marginal}, $r_0=1$ and no ratio is estimated.
 
 In summary, $(\lambda,\omega)$ are chosen by the validation of Theorem~\ref{thm:cate-finite-validation}, and $r$ by any estimator of Section~\ref{sec:ratio-estimation}, with the calibrated ratio balanced on the features above as the recommended choice under covariate shift.
 

@@ -164,6 +164,8 @@ Fix $\zeta,\lambda,\omega$ and the fitted objects before using the tuning sample
 
 \subsection{Proofs for coefficient selection}
 
+For Proposition~\ref{prop:fusion-convexity}, expand the squares in Equations~\eqref{eq:dr-fusion-loss} and~\eqref{eq:rf-fusion-loss}. In the DRF loss, $\{Z_\lambda-\zeta(X)\}^2$ contributes $\zeta(X)^2$, and $G_\zeta(X)=\{\widehat g(X)-\zeta(X)\}^2$ contributes $\zeta(X)^2$ to each term of the OBS bracket, so the second-order part is $(1-\omega)\mathbb P_R^{\mathrm{tune}}\{\zeta(X)^2\}+\omega\mathbb P_O^{\mathrm{tune}}\{r(X)\zeta(X)^2\}$. In the RF loss, $[Y-m_\lambda(X)-\{A-e(X)\}\zeta(X)]^2/[e(X)\{1-e(X)\}]$ contributes $\chi(A,X)\zeta(X)^2$, which gives the RF part of Equation~\eqref{eq:fusion-curvature}. Since $\chi\geq0$, $r\geq0$, and $\omega\in[0,1]$, both parts are nonnegative, and a quadratic functional with a nonnegative second-order part is convex on any convex set. Taking expectations over the tuning samples with the fitted objects fixed replaces $\mathbb P_R^{\mathrm{tune}}$ and $\mathbb P_O^{\mathrm{tune}}$ by $\mathbb E_R$ and $\mathbb E_O$, which proves the claim for the expected losses.
+
 For Proposition~\ref{prop:cate-noise-floor-lambda}, pseudo-outcome validity
 gives $\mathbb E_R(\Delta\mid X)=0$.  Therefore
 \begin{align*}
@@ -211,6 +213,18 @@ $\mathbb E_O(r_0G_{j,\lambda,\omega})
 =\mathbb E_R(G_{j,\lambda,\omega})$, so the term multiplied by $\omega$
 has mean zero.  This proves Equation~\eqref{eq:common-reference-identity}.
 
+For Theorem~\ref{thm:cate-finite-validation}, Hoeffding's inequality and a union
+bound over the $M=|\mathcal G_j|$ grid pairs gives the uniform deviation
+$\varepsilon_{\mathrm{eval}}$. Comparing the selected score with the
+grid-oracle score and cancelling the common $Q_{\mathrm{DR}}(0)$ gives the
+factor two.
+
+For Corollary~\ref{cor:cate-estimated-r-validation}, direct expansion with
+the evaluation-independent approximate ratio perturbs the expectation at
+each grid pair by
+$\omega\mathbb E_O[(\widehat r-r_0)G_{j,\lambda,\omega}]$.
+Their maximum over the grid bounds these perturbations uniformly, so the same selector comparison adds twice that maximum. Hoeffding's inequality applied to the actual scores gives $2\widehat\varepsilon_{\mathrm{eval}}(\alpha)$, proving the displayed bound and its RCT-only form.
+
 
 \subsection{Proofs for the orthogonality audit}
 
@@ -250,18 +264,6 @@ Equation~\eqref{eq:linear-sieve-lambda-profile}. Substitution of the affine
 fitted function into the separate tuning criterion and expansion of its
 squares proves Equation~\eqref{eq:linear-sieve-validation-profile}. The
 coefficients are the constant, linear, and quadratic terms of that expansion.
-
-For Theorem~\ref{thm:cate-finite-validation}, Hoeffding's inequality and a union
-bound over the $M=|\mathcal G_j|$ grid pairs gives the uniform deviation
-$\varepsilon_{\mathrm{eval}}$. Comparing the selected score with the
-grid-oracle score and cancelling the common $Q_{\mathrm{DR}}(0)$ gives the
-factor two.
-
-For Corollary~\ref{cor:cate-estimated-r-validation}, direct expansion with
-the evaluation-independent approximate ratio perturbs the expectation at
-each grid pair by
-$\omega\mathbb E_O[(\widehat r-r_0)G_{j,\lambda,\omega}]$.
-Their maximum over the grid bounds these perturbations uniformly, so the same selector comparison adds twice that maximum. Hoeffding's inequality applied to the actual scores gives $2\widehat\varepsilon_{\mathrm{eval}}(\alpha)$, proving the displayed bound and its RCT-only form.
 
 
 For Theorem~\ref{thm:cate-sieve-identity}, the first-order condition is

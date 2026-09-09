@@ -1,6 +1,24 @@
 \section{Omitted Results}
 \label{app:omitted}
 
+\subsection{Convexity of the fusion losses}
+\label{app:fusion-convexity}
+
+Step 2 of Algorithm~\ref{alg:cate-fusion-selection} minimizes the losses of Definition~\ref{def:fusion-losses} over $\zeta\in\mathcal Z$. The following expansion shows that this is a convex least-squares problem. It is recorded here because the results of Section~\ref{sec:cate-risk-selection} condition on the fitted function and do not use it.
+
+\begin{proposition}[Convexity of the fusion losses]
+\label{prop:fusion-convexity}
+Fix $j\in\{\mathrm{DRF},\mathrm{RF}\}$, $\lambda\in[0,1]$, $\omega\in[0,1]$, and $r\geq0$. Expanding the squares in Definition~\ref{def:fusion-losses}, $\widehat L_j(\zeta;\lambda,\omega,r)$ is a quadratic functional of $\zeta$ whose second-order part is
+\begin{align}
+\text{DRF: }&(1-\omega)\,\mathbb P_R^{\mathrm{tune}}\{\zeta(X)^2\}+\omega\,\mathbb P_O^{\mathrm{tune}}\{r(X)\zeta(X)^2\},
+\notag\\
+\text{RF: }&(1-\omega)\,\mathbb P_R^{\mathrm{tune}}\{\chi(A,X)\zeta(X)^2\}+\omega\,\mathbb P_O^{\mathrm{tune}}\{r(X)\zeta(X)^2\}.
+\label{eq:fusion-curvature}
+\end{align}
+Both are nonnegative, so $\widehat L_j(\cdot;\lambda,\omega,r)$ is convex on any convex $\mathcal Z$. The expected loss $\mathbb E\{\widehat L_j(\zeta;\lambda,\omega,r)\}$ has the same second-order part with $\mathbb E_R$ and $\mathbb E_O$ in place of $\mathbb P_R^{\mathrm{tune}}$ and $\mathbb P_O^{\mathrm{tune}}$, and is convex as well.
+\end{proposition}
+Convexity is the condition under which, by Definition~\ref{def:orthogonality}, the minimizers of the expected losses are exactly the zeros of the learning equations in Definition~\ref{def:learning-equations}.
+
 \subsection{Closed-form noise-floor coefficients}
 \label{app:noise-floor}
 
