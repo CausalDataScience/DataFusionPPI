@@ -40,6 +40,16 @@
 \definecolor{betterred}{RGB}{228,26,28}
 \definecolor{betterblue}{RGB}{55,126,184}
 \definecolor{afblue}{RGB}{0,0,102}
+\definecolor{revisionpurple}{RGB}{128,0,128}
+
+% Visible manuscript revision markup
+\newcommand{\RevAdd}[1]{{\color{blue}#1}}
+\newcommand{\RevDel}[1]{{\color{red}\sout{#1}}}
+\newcommand{\RevComment}[1]{{\color{revisionpurple}\textit{[Comment: #1]}}}
+\newcommand{\RevAddDisplay}[1]{{%
+	\color{blue}\begin{equation*}\begin{aligned}#1\end{aligned}\end{equation*}}}
+\newcommand{\RevDelDisplay}[1]{%
+	\begin{center}\RevDel{$\displaystyle #1$}\end{center}}
 
 % Generic indicator
 \newcommand{\Ind}{\boldsymbol{1}}

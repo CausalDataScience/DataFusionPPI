@@ -255,27 +255,25 @@ the exact population targets. We now ask a different question: how does each
 fitted object enter the first-order equation that learns $\zeta$?
 
 \begin{definition}[Derivative directions and learning roles]
-For a functional $F$ of a function-valued argument $u$, let $h$ be an
-admissible direction such that $u+\varepsilon h$ remains in the domain of
+For a functional $F$ of a function-valued argument $\eta$, let $h$ be an
+admissible direction such that $\eta+\varepsilon h$ remains in the domain of
 $F$ for all sufficiently small $|\varepsilon|$. Whenever the derivative
 exists, define the Gateaux derivative by
 \begin{align}
-D_uF(u)[h]
+D_\eta F(\eta)[h]
 &\triangleq
-\left.\frac{d}{d\varepsilon}F(u+\varepsilon h)\right|_{\varepsilon=0}.
+\left.\frac{d}{d\varepsilon}F(\eta+\varepsilon h)\right|_{\varepsilon=0}.
 \label{eq:gateaux-derivative}
 \end{align}
-For an object $\eta$, let $h$ denote an admissible direction.
 The target argument is $\zeta$, and $v$ denotes an admissible target
-direction such that $\zeta+\varepsilon v$ remains in the ambient loss domain
-for all sufficiently small $\varepsilon$. The learned objects $q,m,\widehat{g},r$
+direction. The learned objects $q,m,\widehat{g},r$
 are nuisance arguments. The coefficients $\lambda$ and $\omega$ are held fixed during
 this audit: $\lambda$ selects $q_\lambda$ or $m_\lambda$, while
 $\omega$ scales the OBS correction. The trial propensity $e_0$ is known
 by design.
 \end{definition}
 
-Following \citet[Assumption~1]{foster2023orthogonal}, loss orthogonality means
+Following \citet[Assumption~1]{foster2023orthogonal}, for a population loss $L(\zeta;\eta)$ with target argument $\zeta$ and nuisance argument $\eta$, loss orthogonality means
 that the mixed derivative $D_\eta D_\zeta L$ vanishes at the population target
 and nuisance truth. Equivalently, up to scaling, it means $D_\eta\Psi=0$ for
 $\Psi\triangleq-D_\zeta L/2$. This definition alone does not establish an
@@ -370,7 +368,7 @@ v(X)\frac{A-e_0(X)}{s_0(X)}h(X)\right]=0.
 $\widehat{g}_\varepsilon\triangleq\widehat{g}+\varepsilon u$. For either
 $j\in\{\mathrm{DRF},\mathrm{RF}\}$, write $\Psi_j(\widehat{g}_\varepsilon)[v]$
 and $\widehat L_j(\widehat{g}_\varepsilon)$ with all other displayed arguments
-held fixed. Then
+held fixed. By Equation~\eqref{eq:gateaux-derivative}, the two derivatives below are $D_{\widehat g}\Psi_j[u,v]$ and $D_{\widehat g}\mathbb E\{\widehat L_j\}[u]$, in the same notation as items 1 to 3 and 5. Then
 \begin{align}
 \left.\frac{d}{d\varepsilon}
 \Psi_j(\widehat{g}_\varepsilon)[v]\right|_{\varepsilon=0}

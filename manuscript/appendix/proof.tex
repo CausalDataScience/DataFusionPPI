@@ -618,6 +618,7 @@ set $A$. Uniqueness of the Radon--Nikodym derivative gives
 $\widetilde r=r_0$
 $P_O^X$-almost surely.
 
+\paragraph{Proof of Proposition~\ref{prop:ratio-riesz-characterization}.}
 If $r_0\in L_2(P_O^X)$, then for every $a\in L_2(P_O^X)$,
 \begin{align*}
 \mathcal R(a)
@@ -644,15 +645,6 @@ Equation~\eqref{eq:ratio-riesz-empirical} is twice
 \end{align*}
 The stated invertibility condition makes its unique zero
 Equation~\eqref{eq:ratio-riesz-linear}.
-
-For Equation~\eqref{eq:ratio-targeted-population}, transport identity
-\eqref{eq:ratio-transport-characterization} gives
-\begin{align*}
-\mathbb E_O(\widehat{g}^2a^2)-2\mathbb E_R(\widehat{g}^2a)
-&=
-\mathbb E_O\{\widehat{g}^2(a-r_0)^2\}-\mathbb E_O(\widehat{g}^2r_0^2),
-\end{align*}
-which proves the claimed weighted excess-risk identity.
 
 \paragraph{Classifier odds.}
 Let $p_R$ and $p_O$ be densities with respect to a common dominating
@@ -708,15 +700,7 @@ $\widehat{\operatorname{Var}}(U+V)=
 \widehat{\operatorname{Var}}(U)+2\widehat{\operatorname{Cov}}(U,V)+
 \widehat{\operatorname{Var}}(V)$ proves
 Equation~\eqref{eq:ratio-B-error}.
-When both $\widehat B_{\widehat r}$ and $\widehat B_{r_0}$ exceed $t_B$,
-\begin{align*}
-\widehat\omega_{\widehat r}-\widehat\omega_{r_0}
-&=
-\frac{\widehat D}{\widehat B_{\widehat r}}
--\frac{\widehat D}{\widehat B_{r_0}},
-\end{align*}
-which is Equation~\eqref{eq:ratio-omega-error} after taking a common
-denominator.
+The final claim follows because $\widehat D$ does not depend on the ratio.
 
 \paragraph{Proof of Proposition~\ref{prop:estimated-ratio-decomposition}.}
 Condition on the nuisance and tuning samples. At the same selected
@@ -725,68 +709,117 @@ $\widehat\theta_{\widehat r}$ and $\widehat\theta_{r_0}$ in
 Equation~\eqref{eq:ate-estimator} is
 $\widehat\omega\mathbb P_{O,N}\delta_{\widehat r}$. Adding and subtracting
 $\widehat\omega P_O\delta_{\widehat r}$ identifies the scalar drift
-$b_{\widehat r}$ and centered fluctuation $e_{\widehat r}$, proving both
-equalities in Equations~\eqref{eq:estimated-ratio-exact-decomposition} and
-\eqref{eq:estimated-ratio-mean-fluctuation}.
+$b_{\widehat r}$ and the centered fluctuation $\widehat\omega(\mathbb P_{O,N}-P_O)\delta_{\widehat r}$, proving Equation~\eqref{eq:estimated-ratio-mean-fluctuation}.
+
+
+
+
+
+
+
+
+
+
 
 \paragraph{Proof of Proposition~\ref{cor:estimated-ratio-mean-preservation}.}
-Taking the conditional expectation of
-Equation~\eqref{eq:estimated-ratio-mean-fluctuation} removes its centered
-empirical term. The remaining added mean is
-$\widehat\omega P_O\delta_{\widehat r}$, and
-transport identity \eqref{eq:ratio-transport-characterization} gives
+Condition on all fitted and selected objects. With the evaluation scores in
+Algorithm~\ref{alg:honest-ate},
+\begin{align*}
+\widehat\theta_{\widehat r}
+&=\mathbb P_{R,n}\psi_R+\mathbb P_{O,N}\psi_O.
+\end{align*}
+The exact drift identity in Equation~\eqref{eq:ate-ratio-drift} gives its
+conditional mean $\theta+b_{\widehat r}$. Independence of the two evaluation
+samples gives
+\begin{align*}
+V_n=\frac1n\operatorname{Var}_R(\psi_R)+\frac1N\operatorname{Var}_O(\psi_O).
+\end{align*}
+Each sample variance in $\widehat V$ is conditionally unbiased for
+the corresponding variance. Dividing by its sample size and adding proves
+Equation~\eqref{eq:estimated-ratio-conditional-identities}. Finally, transport
+identity \eqref{eq:ratio-transport-characterization} yields
 \begin{align*}
 P_O\delta_{\widehat r}
-&=
-\mathbb E_O(\widehat r \widehat{g})-\mathbb E_R(\widehat{g}),
+&=\mathbb E_O(\widehat r\widehat{g})-\mathbb E_R(\widehat{g}),
 \end{align*}
 which proves Equation~\eqref{eq:estimated-ratio-mean-preservation}.
 
-\paragraph{Proof of Theorem~\ref{cor:estimated-ratio-inheritance}.}
-Equation~\eqref{eq:estimated-ratio-mean-rate} makes the scaled population
-drift in Equation~\eqref{eq:estimated-ratio-mean-fluctuation} negligible. For
-the centered OBS evaluation perturbation,
+\paragraph{Proof of Theorem~\ref{thm:estimated-ratio-feasible-clt}.}
+Continue conditioning on the fitted and selected objects. Center the two
+evaluation scores at their respective conditional means. The resulting two
+independent triangular arrays sum to
+$\widehat\theta_{\widehat r}-(\theta+b_{\widehat r})$ and have total variance
+$V_n$. On the event
+$nV_n\geq\sigma^2/2$, whose probability tends to one, the uniform
+conditional $(2+\delta)$-moment bound and bounded $n/N$ make the conditional
+Lyapunov ratio bounded by an $O_p(1)$ factor times
 \begin{align*}
-\mathbb E
-\left[
-\left\{
-\sqrt n\,\widehat\omega
-(\mathbb P_{O,N}-P_O)\delta_{\widehat r}
-\right\}^2
+n^{-\delta/2}+\frac{n^{1+\delta/2}}{N^{1+\delta}}
+&=o_p(1).
+\end{align*}
+Thus its conditional law given the fitted and selected objects converges in
+probability to $N(0,1)$ after division by $\sqrt{V_n}$. This also
+implies the unconditional convergence.
+
+It remains to establish rather than assume variance consistency. Let
+$\eta\triangleq\min(\delta/2,1)$. For a centered score $\xi$, the conditional
+$(2+\delta)$-moment bound gives
+$\mathbb E(|\xi^2-\mathbb E\xi^2|^{1+\eta}\mid\text{fitted objects})=O_p(1)$.
+The von Bahr--Esseen inequality therefore bounds the conditional
+$(1+\eta)$-moment of the centered empirical second moment by
+$O_p(m^{-\eta})$ for a sample of size $m$. Moreover, the squared empirical
+mean is $o_p(1)$ because its conditional expectation is $O_p(m^{-1})$.
+Consequently, for $S\in\{R,O\}$,
+\begin{align*}
+\widehat{\operatorname{Var}}_{S,\mathrm{eval}}(\psi_S)
+-\operatorname{Var}_S(\psi_S)
+&=o_p(1).
+\end{align*}
+Consequently, because $n/N$ is bounded,
+\begin{align*}
+n\{\widehat V-V_n\}=o_p(1)+\frac nN o_p(1)=o_p(1).
+\end{align*}
+Together with $nV_n\to_p\sigma^2>0$, this proves
+$\widehat V/V_n\to_p1$. Finally,
+\begin{align*}
+\frac{\widehat\theta_{\widehat r}-\theta}{\sqrt{\widehat V}}=\frac{\widehat\theta_{\widehat r}-(\theta+b_{\widehat r})}{\sqrt{V_n}}\sqrt{\frac{V_n}{\widehat V}}+\frac{b_{\widehat r}}{\sqrt{V_n}}\sqrt{\frac{V_n}{\widehat V}}.
+\end{align*}
+The bias condition and Slutsky's theorem prove the stated limit and coverage.
+
+\paragraph{Proof of Corollary~\ref{cor:estimated-ratio-inheritance}.}
+Fix $k\in\{\mathrm{RCT},\mathrm{PPI}^{++},\mathrm{joint}\}$ and write $(\widehat\lambda,\widehat\omega)\triangleq(\widehat\lambda_k,\widehat\omega_k)$ and $(\lambda^\star,\omega^\star)\triangleq(\lambda_k^\star,\omega_k^\star)$. Then the bias condition in
+Theorem~\ref{thm:estimated-ratio-feasible-clt} makes
+$b_{\widehat r}=o_p(n^{-1/2})$. Moreover,
+\begin{align*}
+\mathbb E\left[
+\left\{\sqrt n\,\widehat\omega
+(\mathbb P_{O,N}-P_O)\delta_{\widehat r}\right\}^2
+\mathrel{\Big|}\text{fitted and selected objects}
 \right]
 &=
 \widehat\omega^2\frac nN
-\left\|
-\delta_{\widehat r}-P_O\delta_{\widehat r}
-\right\|_{L_2(P_O)}^2,
+\|\delta_{\widehat r}-P_O\delta_{\widehat r}\|_{L_2(P_O)}^2,
 \end{align*}
-so Equation~\eqref{eq:estimated-ratio-fluctuation-rate} makes this perturbation
-$o_p(1)$. Tuning-moment consistency and asymptotically inactive thresholds
-make the selected
-coefficients converge to their exact-ratio limits. Slutsky's theorem then
-transfers the normal limit. More explicitly, for the deterministic limit
-$(\lambda^\circ,\omega^\circ)$,
+so Equation~\eqref{eq:estimated-ratio-fluctuation-rate} and conditional
+Chebyshev imply that the centered ratio perturbation is $o_p(n^{-1/2})$.
+For the corresponding exact-ratio oracle $(\lambda^\star,\omega^\star)$,
 \begin{align*}
 &\widehat\theta_{r_0}(\widehat\lambda,\widehat\omega)
--\widehat\theta_{r_0}(\lambda^\circ,\omega^\circ)
+-\widehat\theta_{r_0}(\lambda^\star,\omega^\star)
 \\
 &\qquad=
-(\widehat\lambda-\lambda^\circ)\mathbb P_{R,n}\Delta
-+(\widehat\omega-\omega^\circ)
-\left\{\mathbb P_{O,N}(r_0\widehat{g})-\mathbb P_{R,n}\widehat{g}\right\}.
+(\widehat\lambda-\lambda^\star)\mathbb P_{R,n}\Delta
++(\widehat\omega-\omega^\star)
+\left\{\mathbb P_{O,N}(r_0\widehat{g})
+-\mathbb P_{R,n}\widehat{g}\right\}.
 \end{align*}
-Coefficient consistency makes both coefficient differences $o_p(1)$.
-The RCT score satisfies $\mathbb P_{R,n}\Delta=O_p(n^{-1/2})$, and exact
-transport gives
-$\mathbb P_{O,N}(r_0\widehat{g})-\mathbb P_{R,n}\widehat{g}
-=O_p(N^{-1/2}+n^{-1/2})$. Because $n/N$ is bounded, the entire display is
-$o_p(n^{-1/2})$. If each deterministic limit is the corresponding
-exact-ratio population-oracle pair in
-Theorem~\ref{thm:ate-three-way-comparison}, this replacement argument transfers
-its first-order variance ordering.
-If either ratio-error condition fails, the ratio learner's influence term,
-the OBS empirical-process term, and their covariances must enter the limiting
-variance. None of these arguments compares realized finite-sample variances.
+RCT validity gives $P_R\Delta=0$, and exact transport gives
+$P_O(r_0\widehat g)=P_R(\widehat g)$. Together with the assumed second-moment
+stability and bounded $n/N$, these identities make both empirical factors
+$O_p(n^{-1/2})$. Coefficient consistency makes
+the displayed difference $o_p(n^{-1/2})$. Combining these three differences
+proves Equation~\eqref{eq:estimated-ratio-first-order-equivalence}. Convergence of the exact-ratio second moments
+then transfers the ordering in Theorem~\ref{thm:ate-three-way-comparison}, which is Equation~\eqref{eq:estimated-ratio-inherited-ordering}.
 
 \subsection{Counterexamples to adaptive reuse}
 
