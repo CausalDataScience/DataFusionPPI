@@ -200,30 +200,7 @@ quadratic minimized over $[0,1]$ is minimized by projecting its
 unrestricted minimizer onto that interval.
 
 
-For Proposition~\ref{prop:cate-validation-identity}, condition on the fitted
-grid function at each $(\lambda,\omega)\in\mathcal G_j$.  Conditional
-pseudo-outcome validity gives
-\begin{align*}
-\mathbb E_R\{Z_0-\widehat\zeta_j(X;\lambda,\omega)\}^2
-&=Q_{\mathrm{DR}}(0)
-+\mathcal R\{\widehat\zeta_j(\cdot;\lambda,\omega)\}.
-\end{align*}
-Exact transport gives
-$\mathbb E_O(r_0G_{j,\lambda,\omega})
-=\mathbb E_R(G_{j,\lambda,\omega})$, so the term multiplied by $\omega$
-has mean zero.  This proves Equation~\eqref{eq:common-reference-identity}.
-
-For Theorem~\ref{thm:cate-finite-validation}, Hoeffding's inequality and a union
-bound over the $M=|\mathcal G_j|$ grid pairs gives the uniform deviation
-$\varepsilon_{\mathrm{eval}}$. Comparing the selected score with the
-grid-oracle score and cancelling the common $Q_{\mathrm{DR}}(0)$ gives the
-factor two.
-
-For Corollary~\ref{cor:cate-estimated-r-validation}, direct expansion with
-the evaluation-independent approximate ratio perturbs the expectation at
-each grid pair by
-$\omega\mathbb E_O[(\widehat r-r_0)G_{j,\lambda,\omega}]$.
-Their maximum over the grid bounds these perturbations uniformly, so the same selector comparison adds twice that maximum. Hoeffding's inequality applied to the actual scores gives $2\widehat\varepsilon_{\mathrm{eval}}(\alpha)$, proving the displayed bound and its RCT-only form.
+For Theorem~\ref{thm:cate-finite-validation}, condition on the fitted objects, which are independent of the evaluation samples by Assumption~\ref{ass:honest-separation}. Item 1: by Equation~\eqref{eq:pseudo-valid}, $\mathbb E_R\{Z_0-\widehat\zeta_j(X;\lambda,\omega)\}^2=Q_{\mathrm{DR}}(0)+\mathcal R\{\widehat\zeta_j(\cdot;\lambda,\omega)\}$ as in the proof of Proposition~\ref{prop:cate-target}, and exact transport gives $\mathbb E_O(r_0G_{j,\lambda,\omega})=\mathbb E_R(G_{j,\lambda,\omega})$, so the correction has mean $\omega\mathbb E_O(rG_{j,\lambda,\omega})-\omega\mathbb E_R(G_{j,\lambda,\omega})=\omega\mathbb E_O[(r-r_0)G_{j,\lambda,\omega}]$. Item 2: each RCT summand $\{Z_0-\widehat\zeta_j\}^2-\omega G_{j,\lambda,\omega}$ lies in $[-4B^2,4B^2]$ and each OBS summand $\omega rG_{j,\lambda,\omega}$ in $[0,4\bar rB^2]$, so Hoeffding's inequality bounds the deviation of the RCT average by $8B^2\sqrt{\log(4M/\alpha)/(2n)}$ and that of the OBS average by $4\bar rB^2\sqrt{\log(4M/\alpha)/(2N)}$, each with probability at least $1-\alpha/(2M)$. A union bound over the $M$ grid pairs and the two averages gives both bounds for every pair with probability at least $1-\alpha$, and the two deviations sum to $\varepsilon_{\mathrm{eval}}(\alpha)$. Item 3: write $Q$ for $Q_{\mathrm{DR}}(0)$, $b(\lambda,\omega)$ for the transport error in item 1, $\widehat s$ for the selected pair, and $s^\star$ for a grid pair minimizing the CATE risk. On the event of item 2, $\mathcal R(\widehat s)=\mathbb E\{\widehat C_j(\widehat s)\}-Q-b(\widehat s)\leq\widehat C_j(\widehat s)-Q-b(\widehat s)+\varepsilon_{\mathrm{eval}}(\alpha)\leq\widehat C_j(s^\star)-Q-b(\widehat s)+\varepsilon_{\mathrm{eval}}(\alpha)\leq\mathcal R(s^\star)+b(s^\star)-b(\widehat s)+2\varepsilon_{\mathrm{eval}}(\alpha)$, where the middle inequality holds because $\widehat s$ minimizes $\widehat C_j$ over the grid. Bounding $|b(s^\star)-b(\widehat s)|$ by twice the maximum of $|b|$ over the grid proves Equation~\eqref{eq:cate-selector-inequality}.
 
 
 \subsection{Proofs for the orthogonality audit}
