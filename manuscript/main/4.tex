@@ -361,12 +361,3 @@ For RF, Equation~\eqref{eq:sieve-quadratic} gains the cross term $-2\lambda\omeg
 Equations~\eqref{eq:sieve-quadratic} and~\eqref{eq:sieve-oracle-gain} are the sieve versions of Theorem~\ref{thm:joint-oracle} and Corollary~\ref{cor:joint-oracle-variance}: the four ATE moments are replaced by basis-weighted covariances whitened by $\Gamma_R^{-1}$, $\lambda$ trades the noise of the pseudo-outcome against its correlation with $\Delta$, and $\omega$ trades the OBS variance, which enters through $n_R^{\mathrm{tune}}/n_O^{\mathrm{tune}}$, against the correlation of the RCT residual with $\widehat g$. A larger OBS tuning sample lowers $B_p$ and raises $\omega_p^\star$. The honest validation of Theorem~\ref{thm:cate-finite-validation} finds these coefficients on a grid without estimating $A_p$ to $D_p$; the corollary explains what it finds.
 
 Three remarks close the subsection. First, with $K$-dimensional splines for an additive $\tau$ of smoothness $s$, $a_K^2=O(K^{-2s})$ while the traces in Equation~\eqref{eq:sieve-first-order-risk} grow in proportion to $K$, so the risk behaves like $K^{-2s}$ plus $K$ times a weighted sum of $1/n_R^{\mathrm{tune}}$ and $1/n_O^{\mathrm{tune}}$ whose weights depend on the learner and on $(\lambda,\omega)$; the two sample sizes do not collapse into one effective sample size. Second, with an estimated ratio $\widehat r$ in place of $r_0$, the mean of the score in item 2 of Theorem~\ref{thm:sieve-risk} becomes $\omega\,\mathbb E_O[\{\widehat r(X)-r_0(X)\}b\{\widehat g(X)-\zeta_p(X)\}]$ and $\mathbb E\{\widehat H_j(\omega)\}$ shifts by $\omega\,\mathbb E_O[\{\widehat r(X)-r_0(X)\}bb^\top]$, the sieve form of item 3 of Proposition~\ref{prop:cate-orthogonality-audit}. Third, kernel ridge regression is a sieve with a data-dependent basis and $p$ equal to the sample size: items 1 and 2 of Theorem~\ref{thm:sieve-risk} apply verbatim, but item 3 requires effective-dimension arguments in place of a fixed $p$ and is not pursued here.
-
-\subsection{Implementation boundaries and open theory}
-\label{sec:cate-scope}
-
- Estimated-ratio guarantees require uniform score, Hessian, and
-validation-loss control. Cross-fitting can recover data efficiency, but
-overlapping outer training sets do not justify a naive sum of fold variances.
-Neither target preservation nor candidate inclusion gives universal
-finite-sample improvement for estimated $(\lambda,\omega)$.
