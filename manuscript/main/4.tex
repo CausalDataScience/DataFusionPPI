@@ -227,390 +227,145 @@ and the minimum is at most $\mathcal R\{\widehat\zeta_j(\cdot;0,0)\}$ because $(
 \end{theorem}
 In words, the score orders the candidates by their CATE risk up to a constant that is common to all of them; the order is correct up to $\varepsilon_{\mathrm{eval}}(\alpha)$, which decreases like $n^{-1/2}$ and $N^{-1/2}$ and grows only like $\sqrt{\log M}$ in the number of candidates; so the selected learner is within $2\varepsilon_{\mathrm{eval}}(\alpha)$ of the best candidate, and in particular of the RCT-only learner. An estimated ratio from Section~\ref{sec:ratio-estimation} adds twice its largest transport error on the functions $G_{j,\lambda,\omega}$; under Assumption~\ref{ass:common-marginal}, $r_0=1$ and no ratio is estimated.
 
-\subsection{Linear-sieve and additive-spline specialization}
+\subsection{Linear sieves: computation and when fusion helps}
 \label{sec:cate-sieve}
 
-This specialization has two roles. It computes every fixed
-$(\lambda,\omega)$ candidate used in Section~\ref{sec:cate-risk-selection},
-and it turns the abstract two-source modulus into explicit covariance and
-approximation terms.
 
-\begin{definition}[Linear-sieve fusion estimator]
-Let $b(x)\in\mathbb R^p$ be fixed or honestly trained and define
-$\zeta_\beta(x)\triangleq b(x)^\top\beta$.  Let $P=P^\top\succeq0$ and
-$\rho\geq0$.  For $j\in\{\mathrm{DRF},\mathrm{RF}\}$, define
-\begin{align*}
-\widehat J_j(\beta;\lambda,\omega)
-&\triangleq
-\widehat L_j(\zeta_\beta;\lambda,\omega)+\rho\beta^\top P\beta,\\
-\widehat\beta_{\lambda,\omega}^j
-&\in\operatorname*{arg\,min}_{\beta\in\mathbb R^p}
-\widehat J_j(\beta;\lambda,\omega),\\
-\widehat\zeta_j(x;\lambda,\omega)
-&\triangleq b(x)^\top\widehat\beta_{\lambda,\omega}^j,
-\end{align*}
-using deterministic tie-breaking whenever needed.
+Theorem~\ref{thm:cate-finite-validation} holds for any class $\mathcal Z$ but does not say when the OBS data help. This subsection answers that question for linear sieves, where every candidate of Algorithm~\ref{alg:cate-fusion-selection} has a closed form and the risk of a fixed candidate has the same quadratic structure in $(\lambda,\omega)$ as the ATE variance in Theorem~\ref{thm:ate-variance}.
+
+\begin{definition}[Linear-sieve fusion learner]
+\label{def:linear-sieve-fusion-learner}
+Let $b:\mathcal X\to\mathbb R^p$ be a feature map fixed before the tuning samples are used, for instance splines, random features, or a neural representation trained on the nuisance samples and then frozen, and let $\mathcal Z_b\triangleq\{b(\cdot)^\top\beta:\beta\in\mathbb R^p\}$. For $\rho\geq0$ and $(j,\lambda,\omega,r)$ as in Definition~\ref{def:fitted-fusion-learner}, the sieve fusion learner is $\widehat\zeta_j(x;\lambda,\omega,r)\triangleq b(x)^\top\widehat\beta_j(\lambda,\omega)$ with
+\begin{align}
+\widehat\beta_j(\lambda,\omega)
+&\in\operatorname*{arg\,min}_{\beta\in\mathbb R^p}\left\{\widehat L_j(b^\top\beta;\lambda,\omega,r)+\rho\|\beta\|_2^2\right\},
+\label{eq:sieve-learner}
+\end{align}
+with ties broken by a prespecified deterministic rule; $\rho=0$ recovers Definition~\ref{def:fitted-fusion-learner} on $\mathcal Z_b$.
 \end{definition}
+End-to-end neural fitting is not a sieve: it is covered by Theorem~\ref{thm:cate-finite-validation} as a candidate, but not by this subsection.
 
-For DRF, define
-\begin{align*}
-\widehat\Gamma_R&\triangleq\mathbb P_R^{\mathrm{tune}}(bb^\top),
-&\widehat\Gamma_{O,r}&\triangleq\mathbb P_O^{\mathrm{tune}}(r_0bb^\top),\\
-\widehat h_\lambda&\triangleq\mathbb P_R^{\mathrm{tune}}(bZ_\lambda),
-&\widehat d_{\mathrm{OBS}}&\triangleq
-\mathbb P_O^{\mathrm{tune}}(r_0b\widehat{g})
--\mathbb P_R^{\mathrm{tune}}(b\widehat{g}).
-\end{align*}
-For RF, let
-\begin{align*}
-s_{m_\lambda}&\triangleq
-\frac{(A-e)(Y-m_\lambda)}{e(1-e)},
-&\widehat\Gamma_{R,\chi}
-&\triangleq\mathbb P_R^{\mathrm{tune}}(\chi bb^\top),\\
-\widehat h_{m_\lambda}&\triangleq
-\mathbb P_R^{\mathrm{tune}}(bs_{m_\lambda}),
-&\widehat d_{\mathrm{OBS},\chi}&\triangleq
-\mathbb P_O^{\mathrm{tune}}(r_0b\widehat{g})
--\mathbb P_R^{\mathrm{tune}}(\chi b\widehat{g}).
-\end{align*}
-
-\begin{proposition}[Normal equations and positive semidefiniteness]
-\label{prop:cate-sieve-normal-equations}
-For DRF and RF, respectively, define
-\begin{align*}
-\widehat H_{\mathrm{DRF}}(\omega)
-&\triangleq(1-\omega)\widehat\Gamma_R
-+\omega\widehat\Gamma_{O,r},
-&\widehat h_{\mathrm{DRF}}(\lambda,\omega)
-&\triangleq\widehat h_\lambda+\omega\widehat d_{\mathrm{OBS}},\\
-\widehat H_{\mathrm{RF}}(\omega)
-&\triangleq(1-\omega)\widehat\Gamma_{R,\chi}
-+\omega\widehat\Gamma_{O,r},
-&\widehat h_{\mathrm{RF}}(\lambda,\omega)
-&\triangleq\widehat h_{m_\lambda}+\omega\widehat d_{\mathrm{OBS},\chi}.
-\end{align*}
-The normal equation is
-\begin{align*}
-\{\widehat H_j(\omega)+\rho P\}
-\widehat\beta_{\lambda,\omega}^j
-&=\widehat h_j(\lambda,\omega).
-\end{align*}
-When the matrix is invertible,
+Both losses are weighted least-squares problems in $\beta$. Write
 \begin{align}
-\widehat\beta_{\lambda,\omega}^{\mathrm{DRF}}
-&=\{\widehat H_{\mathrm{DRF}}(\omega)+\rho P\}^{-1}
-\widehat h_{\mathrm{DRF}}(\lambda,\omega),
-\label{eq:linear-sieve}\\
-\widehat\beta_{\lambda,\omega}^{\mathrm{RF}}
-&=\{\widehat H_{\mathrm{RF}}(\omega)+\rho P\}^{-1}
-\widehat h_{\mathrm{RF}}(\lambda,\omega).
-\label{eq:linear-sieve-rf}
+w_{\mathrm{DRF}}&\triangleq1,
+&
+\widetilde Z_{\mathrm{DRF},\lambda}&\triangleq Z_\lambda,
+&
+w_{\mathrm{RF}}&\triangleq\chi(A,X),
+&
+\widetilde Z_{\mathrm{RF},\lambda}&\triangleq\frac{Y-m_\lambda(X)}{A-e(X)},
+\label{eq:sieve-weights}
 \end{align}
-If $0\leq\omega\leq1$, the ratio weights are nonnegative, and
-$P\succeq0$, both penalized Hessians are positive semidefinite.  The signed
-source representation alone does not imply invertibility.  A fit using
-$\widehat r$ requires nonnegative weights, a direct Hessian check, or a
-prespecified positive-semidefinite projection.
+so that $\widetilde Z_{j,\lambda}=\widetilde Z_{j,0}+\lambda\widetilde\Delta_j$ with $\widetilde\Delta_{\mathrm{DRF}}\triangleq\Delta$ and $\widetilde\Delta_{\mathrm{RF}}\triangleq-\{m_O(X)-m_R(X)\}/\{A-e(X)\}$.
+
+\begin{proposition}[Weighted least squares, closed form, and profiling]
+\label{prop:sieve-closed-form}
+Fix $j\in\{\mathrm{DRF},\mathrm{RF}\}$, $(\lambda,\omega)\in[0,1]\times\Omega$, a ratio $r\geq0$, and $\rho\geq0$.
+\begin{enumerate}
+\item (Weighted least-squares form.) The loss of Definition~\ref{def:fusion-losses} equals
+\begin{align}
+\widehat L_j(\zeta;\lambda,\omega,r)
+&=\mathbb P_R^{\mathrm{tune}}\left[w_j\{\widetilde Z_{j,\lambda}-\zeta(X)\}^2\right]
++\omega\left[\mathbb P_O^{\mathrm{tune}}\{r(X)G_\zeta(X)\}-\mathbb P_R^{\mathrm{tune}}\{w_jG_\zeta(X)\}\right],
+\label{eq:sieve-wls-form}
+\end{align}
+and under Assumption~\ref{ass:trial}, $\mathbb E_R(w_j\mid X)=1$, $\mathbb E_R(w_j\widetilde Z_{j,\lambda}\mid X)=\tau(X)$, and $\mathbb E_R(w_j\widetilde\Delta_j\mid X)=0$.
+\item (Closed form.) With $\widehat H_j(\omega)\triangleq(1-\omega)\mathbb P_R^{\mathrm{tune}}(w_jbb^\top)+\omega\,\mathbb P_O^{\mathrm{tune}}(r\,bb^\top)$, every minimizer in Equation~\eqref{eq:sieve-learner} solves
+\begin{align}
+\{\widehat H_j(\omega)+\rho I\}\beta
+&=\mathbb P_R^{\mathrm{tune}}\left[w_jb\{\widetilde Z_{j,\lambda}-\omega\widehat g(X)\}\right]+\omega\,\mathbb P_O^{\mathrm{tune}}\{r(X)\,b\,\widehat g(X)\},
+\label{eq:sieve-normal-equation}
+\end{align}
+and $\widehat H_j(\omega)$ is positive semidefinite, so the minimizer is unique whenever $\widehat H_j(\omega)+\rho I$ is invertible.
+\item (Profiling in $\lambda$.) The matrix $\widehat H_j(\omega)$ does not depend on $\lambda$ and the right-hand side of Equation~\eqref{eq:sieve-normal-equation} is affine in $\lambda$, so when $\widehat H_j(\omega)+\rho I$ is invertible,
+\begin{align}
+\widehat\beta_j(\lambda,\omega)
+&=\widehat\beta_j(0,\omega)+\lambda\{\widehat H_j(\omega)+\rho I\}^{-1}\mathbb P_R^{\mathrm{tune}}(w_jb\,\widetilde\Delta_j).
+\label{eq:sieve-lambda-path}
+\end{align}
+\end{enumerate}
 \end{proposition}
+Item 3 makes the grid of Definition~\ref{def:cate-finite-grid-validation} cheap: for each $\omega$ in the grid, all $\lambda$ candidates cost one linear solve.
 
-For fixed $\omega$, the Hessian does not depend on $\lambda$, while the
-right-hand side is affine.  This yields an efficient candidate-generation
-device, not a replacement for final honest validation.
-\begin{proposition}[Fixed-scale profiling for candidate generation]
-\label{prop:cate-sieve-lambda-profile}
-Suppose $\widehat H_j(\omega)+\rho P$ is invertible and write
-\begin{align*}
-\widehat h_j(\lambda,\omega)
-&\triangleq\widehat h_{j,0}(\omega)
-+\lambda\widehat h_{j,1}(\omega).
-\end{align*}
-Then
+The risk of a fixed candidate separates into approximation and estimation. Let $\Gamma_R\triangleq\mathbb E_R(bb^\top)\succ0$, let $\beta_p\triangleq\Gamma_R^{-1}\mathbb E_R\{b\,\tau(X)\}$ and $\zeta_p\triangleq b^\top\beta_p$ be the $L_2(P_R^X)$ projection of $\tau$ onto $\mathcal Z_b$, and let $a_p^2\triangleq\mathcal R(\zeta_p)$. For $r=r_0$ define the per-observation contributions
 \begin{align}
-\widehat\beta_{\lambda,\omega}^j
-&=\widehat\beta_{0,\omega}^j+\lambda\dot\beta_\omega^j,
-&\dot\beta_\omega^j
-&\triangleq\{\widehat H_j(\omega)+\rho P\}^{-1}
-\widehat h_{j,1}(\omega).
-\label{eq:linear-sieve-lambda-profile}
+\psi_{R,j}(\lambda,\omega)
+&\triangleq w_jb\left\{\widetilde Z_{j,\lambda}-\omega\widehat g(X)-(1-\omega)\zeta_p(X)\right\},
+&
+\psi_O(\omega)
+&\triangleq\omega\,r_0(X)\,b\left\{\widehat g(X)-\zeta_p(X)\right\},
+\label{eq:sieve-contributions}
 \end{align}
-On a separate tuning sample, the corresponding quadratic criterion has the
-form
+the sieve versions of $\psi_R$ and $\psi_O$ in Algorithm~\ref{alg:honest-ate}, and the first-order risk
 \begin{align}
-\widehat C_j^{\mathrm{tune}}(\lambda,\omega)
-&=c_0(\omega)+2c_1(\omega)\lambda+c_2(\omega)\lambda^2.
-\label{eq:linear-sieve-validation-profile}
+\mathcal J_j(\lambda,\omega)
+&\triangleq\frac{\operatorname{tr}[\Gamma_R^{-1}\operatorname{Var}_R\{\psi_{R,j}(\lambda,\omega)\}]}{n_R^{\mathrm{tune}}}
++\frac{\operatorname{tr}[\Gamma_R^{-1}\operatorname{Var}_O\{\psi_O(\omega)\}]}{n_O^{\mathrm{tune}}}.
+\label{eq:sieve-first-order-risk}
 \end{align}
-For a prespecified finite $\omega$-grid, checking the admissible stationary
-point and the endpoints of $[0,1]$ generates finitely many candidates.
-Those candidates must be fixed before the final validation used in
-Theorem~\ref{thm:cate-finite-validation}.  Continuous profiling on the final
-evaluation sample requires a separate uniform-convergence argument.
-\end{proposition}
 
-We now separate sieve approximation from estimation. Define
-\begin{align*}
-\Gamma_R&\triangleq\mathbb E_R(bb^\top),
-&\gamma_R&\triangleq\mathbb E_R(b\tau),\\
-\beta_p&\triangleq\Gamma_R^{-1}\gamma_R,
-&\zeta_p&\triangleq b^\top\beta_p,
-&a_p^2&\triangleq\mathbb E_R(\tau-\zeta_p)^2,
-\end{align*}
-and assume $\Gamma_R\succ0$.  For a fixed candidate, let
-$\widehat H_j\triangleq\widehat H_j(\omega)$,
-$\widehat h_j\triangleq\widehat h_j(\lambda,\omega)$, and define
-\begin{align*}
-\widehat u_j&\triangleq\widehat h_j-\widehat H_j\beta_p.
-\end{align*}
-
-\begin{theorem}[Exact random-Hessian sieve identity]
-\label{thm:cate-sieve-identity}
-For any realized tuning samples and fixed fitted nuisances, if
-$\widehat H_j+\rho P$ is invertible, then
+\begin{theorem}[Risk of a sieve candidate]
+\label{thm:sieve-risk}
+Suppose Assumptions~\ref{ass:honest-separation} and~\ref{ass:trial} hold, either Assumption~\ref{ass:common-marginal} holds with $r_0=1$ or Assumption~\ref{ass:exact-transport} holds with $r_0=dP_R^X/dP_O^X$, the candidate uses $r=r_0$, and the displayed moments are finite. Fix $(j,\lambda,\omega,\rho)$ and condition on the fitted objects and on $b$.
+\begin{enumerate}
+\item (Exact decomposition.) For every $\beta\in\mathbb R^p$, $\mathcal R(b^\top\beta)=a_p^2+(\beta-\beta_p)^\top\Gamma_R(\beta-\beta_p)$, and whenever $\widehat H_j(\omega)+\rho I$ is invertible,
 \begin{align}
-\widehat\beta_j-\beta_p
-&=(\widehat H_j+\rho P)^{-1}
-\{\widehat u_j-\rho P\beta_p\},
-\label{eq:sieve-coefficient-identity}\\
-\mathcal R(\widehat\zeta_j)
-&=a_p^2+(\widehat\beta_j-\beta_p)^\top
-\Gamma_R(\widehat\beta_j-\beta_p).
-\label{eq:sieve-risk-identity}
+\widehat\beta_j(\lambda,\omega)-\beta_p
+&=\{\widehat H_j(\omega)+\rho I\}^{-1}\left\{\mathbb P_R^{\mathrm{tune}}\psi_{R,j}(\lambda,\omega)+\mathbb P_O^{\mathrm{tune}}\psi_O(\omega)-\rho\beta_p\right\}.
+\label{eq:sieve-coefficient-identity}
 \end{align}
-The identity is exact, but it is not a same-sample bias-variance
-decomposition because the random inverse Hessian and score are dependent.
+\item (Exact target and variance.) $\mathbb E\{\widehat H_j(\omega)\}=\Gamma_R$, $\mathbb E\{\mathbb P_R^{\mathrm{tune}}\psi_{R,j}(\lambda,\omega)+\mathbb P_O^{\mathrm{tune}}\psi_O(\omega)\}=0$, and
+\begin{align}
+\operatorname{Var}\{\mathbb P_R^{\mathrm{tune}}\psi_{R,j}(\lambda,\omega)+\mathbb P_O^{\mathrm{tune}}\psi_O(\omega)\}
+&=\frac{\operatorname{Var}_R\{\psi_{R,j}(\lambda,\omega)\}}{n_R^{\mathrm{tune}}}+\frac{\operatorname{Var}_O\{\psi_O(\omega)\}}{n_O^{\mathrm{tune}}}.
+\label{eq:sieve-score-variance}
+\end{align}
+\item (Leading risk.) If the linearization remainder $\widehat\beta_j(\lambda,\omega)-\beta_p-\Gamma_R^{-1}\{\mathbb P_R^{\mathrm{tune}}\psi_{R,j}(\lambda,\omega)+\mathbb P_O^{\mathrm{tune}}\psi_O(\omega)\}$ has $\Gamma_R$-weighted mean square of order $o(1/n_R^{\mathrm{tune}}+1/n_O^{\mathrm{tune}})$, then
+\begin{align}
+\mathbb E\{\mathcal R(\widehat\zeta_j)\}
+&=a_p^2+\mathcal J_j(\lambda,\omega)+o(1/n_R^{\mathrm{tune}}+1/n_O^{\mathrm{tune}}).
+\label{eq:sieve-leading-risk}
+\end{align}
+\end{enumerate}
 \end{theorem}
+Item 2 is the sieve version of Theorem~\ref{thm:ate-variance}: the fitted coefficients are centered on the projection for every fixed $(\lambda,\omega)$, and the two tuning samples contribute independent variances. Item 3 keeps the linearization remainder as an explicit condition; it is the usual fixed-$p$ expansion and is not proved here.
 
-For the concentration result, define the raw source contributions explicitly:
-\begin{align*}
-\psi_{R,\mathrm{DRF}}
-&\triangleq b\{Z_\lambda-\omega\widehat{g}-(1-\omega)\zeta_p\},
-&\psi_{O,\mathrm{DRF}}
-&\triangleq\omega r_0b(\widehat{g}-\zeta_p),\\
-\psi_{R,\mathrm{RF}}
-&\triangleq b[s_{m_\lambda}
--\chi\{\omega \widehat{g}+(1-\omega)\zeta_p\}],
-&\psi_{O,\mathrm{RF}}
-&\triangleq\omega r_0b(\widehat{g}-\zeta_p).
-\end{align*}
-Under the exact-target conditions,
-$\mathbb E_R\psi_{R,j}+\mathbb E_O\psi_{O,j}=0$; the two source means need
-not vanish separately.  Let
-\begin{align*}
-\Sigma_{R,j}&\triangleq\operatorname{Var}_R(\psi_{R,j}),
-&\Sigma_{O,j}&\triangleq\operatorname{Var}_O(\psi_{O,j}).
-\end{align*}
-For $S\in\{R,O\}$, define
-\begin{align*}
-\nu_{S,j}
-&\triangleq
-\|\Gamma_R^{-1/2}\Sigma_{S,j}\Gamma_R^{-1/2}\|_{\mathrm{op}}.
-\end{align*}
-
-\begin{theorem}[Fixed-candidate covariance-sensitive bound]
-\label{thm:cate-fixed-candidate-bound}
-Assume RCT consistency and conditional randomization, known strict-overlap
-$e$, exact $r_0$, honestly fixed nuisances and basis, fixed
-$(j,\lambda,\omega,p,\rho)$, and independent tuning samples of sizes
-$n_f,N_f$.  Assume the centered source vectors are sub-Gaussian with the
-displayed covariance proxies and the weighted designs satisfy, with failure
-probability at most $\delta_H$,
-\begin{align*}
-\mathcal E_H
-&\triangleq\{\|\Gamma_R^{-1/2}
-(\widehat H_j-\Gamma_R)\Gamma_R^{-1/2}\|_{\mathrm{op}}
-\leq\eta\},\qquad 0\leq\eta<1.
-\end{align*}
-Then, with probability at least $1-\delta_H-\delta_S$,
+\begin{theoremcorollary}[Oracle sieve coefficients]
+\label{cor:sieve-oracle}
+Under the conditions of Theorem~\ref{thm:sieve-risk}, define
 \begin{align}
-\mathcal R(\widehat\zeta_j)
-&\leq a_p^2+\frac{C_{\mathrm{sg}}}{(1-\eta)^2}
-\left[
-\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{R,j})
-+\nu_{R,j}\log(4/\delta_S)}{n_f}
-\right.\nonumber\\
-&\left.\qquad+
-\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{O,j})
-+\nu_{O,j}\log(4/\delta_S)}{N_f}
-\right]
-+\frac{C_\rho\rho^2}{(1-\eta)^2}
-\|\Gamma_R^{-1/2}P\beta_p\|_2^2,
-\label{eq:finite-sieve-bound}
+A_p&\triangleq\operatorname{tr}\{\Gamma_R^{-1}\operatorname{Var}_R(w_jb\,\widetilde\Delta_j)\},
+\notag\\
+B_p&\triangleq\operatorname{tr}[\Gamma_R^{-1}\operatorname{Var}_R\{w_jb(\widehat g-\zeta_p)\}]
++\frac{n_R^{\mathrm{tune}}}{n_O^{\mathrm{tune}}}\operatorname{tr}[\Gamma_R^{-1}\operatorname{Var}_O\{r_0b(\widehat g-\zeta_p)\}],
+\notag\\
+C_p&\triangleq\operatorname{tr}[\Gamma_R^{-1}\operatorname{Cov}_R\{w_jb(\widetilde Z_{j,0}-\zeta_p),\,w_jb\,\widetilde\Delta_j\}],
+\notag\\
+D_p&\triangleq\operatorname{tr}[\Gamma_R^{-1}\operatorname{Cov}_R\{w_jb(\widetilde Z_{j,0}-\zeta_p),\,w_jb(\widehat g-\zeta_p)\}].
+\label{eq:sieve-moments}
 \end{align}
-where $\nu_{S,j}$ bounds the corresponding whitened covariance operator
-norm and $C_{\mathrm{sg}},C_\rho$ are universal constants under the stated
-sub-Gaussian convention. Independence makes the source covariance proxies add;
-the bound has no artificial $1/\sqrt{n_fN_f}$ cross term.
-\end{theorem}
-
-The preceding theorem is a safe finite-sample upper bound.  A trace expression
-for the leading risk requires a separate fixed-dimensional asymptotic result.
-\begin{proposition}[Fixed-dimensional leading expected risk]
-\label{prop:cate-fixed-p-leading-risk}
-Assume RCT consistency and conditional randomization, known strict-overlap
-$e$, honest fixed nuisances and basis, and either a common covariate
-marginal with $r_0=1$ or $P_R^X\ll P_O^X$ with exact
-$r_0=dP_R^X/dP_O^X$. Fix $(j,\lambda,\omega,p)$, and suppose the RCT and OBS tuning samples are independent with
-$n_f,N_f\to\infty$ at a stable sample-size ratio. Assume finite
-$(2+\delta)$-moments, $\Gamma_R\succ0$, Gram convergence, and first-order
-negligible ridge. Define the linearization remainder
-\begin{align*}
-R_{n_f,N_f}
-&\triangleq \widehat\beta_j-\beta_p
--\Gamma_R^{-1}\left[
-(\mathbb P_R-P_R)\psi_{R,j}
-+(\mathbb P_O-P_O)\psi_{O,j}\right],
-\end{align*}
-and assume explicitly that
-\begin{align*}
-\mathbb E\|R_{n_f,N_f}\|_{\Gamma_R}^2
-&=o(n_f^{-1}+N_f^{-1}),
-\qquad \|a\|_{\Gamma_R}^2\triangleq a^\top\Gamma_Ra.
-\end{align*}
-Then
-\begin{align*}
-\widehat\beta_j-\beta_p
-&=\Gamma_R^{-1}\left[
-(\mathbb P_R-P_R)\psi_{R,j}
-+(\mathbb P_O-P_O)\psi_{O,j}\right]
-+R_{n_f,N_f},
-\end{align*}
-and
+For DRF,
 \begin{align}
-\mathbb E\{\mathcal R(\widehat\zeta_j)\}-a_p^2
-&=\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{R,j})}{n_f}
-+\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{O,j})}{N_f}
-+o(n_f^{-1}+N_f^{-1}).
-\label{eq:cate-fixed-p-leading-risk}
+n_R^{\mathrm{tune}}\{\mathcal J_{\mathrm{DRF}}(\lambda,\omega)-\mathcal J_{\mathrm{DRF}}(0,0)\}
+&=2C_p\lambda-2D_p\omega+A_p\lambda^2+B_p\omega^2,
+\label{eq:sieve-quadratic}
 \end{align}
-This is an asymptotic expected leading-risk expansion, not an exact
-finite-sample identity.
-\end{proposition}
-
-\begin{theoremcorollary}[First-order RCT versus fusion comparison]
-\label{cor:cate-rct-fusion-leading-risk}
-Assume RCT consistency and conditional randomization, known strict-overlap
-$e$, honest fixed nuisances and basis, and either a common covariate
-marginal with $r_0=1$ or $P_R^X\ll P_O^X$ with exact
-$r_0=dP_R^X/dP_O^X$. Assume independent RCT
-and OBS tuning samples with $n_f,N_f\to\infty$ at a stable sample-size
-ratio. Consider a fixed fusion rule $(\lambda,\omega)$ and the strict
-RCT-only comparator $(\lambda,\omega)=(0,0)$. The two rules use the same basis, penalty, RCT
-nuisance, and sample split. Assume finite $(2+\delta)$-moments,
-$\Gamma_R\succ0$, Gram convergence, first-order negligible ridge, and for
-each rule the mean-square linearization remainder is
-$o(n_f^{-1}+N_f^{-1})$. Their difference in first-order expected excess
-risk is
+so if $A_p,B_p>0$ the first-order risk over $\mathbb R^2$ is minimized at $\lambda_p^\star=-C_p/A_p$ and $\omega_p^\star=D_p/B_p$, the minimizer over $[0,1]\times\Omega$ is its coordinatewise projection, and the first-order improvement over the RCT-only candidate is
 \begin{align}
-\mathcal V_{\mathrm{FUS}}^{(1)}-\mathcal V_{\mathrm{RCT}}^{(1)}
-&\triangleq
-\frac{\operatorname{tr}\!\left[
-\Gamma_R^{-1}\{\Sigma_{R,j}(\lambda,\omega)
--\Sigma_{R,j}(0,0)\}\right]}{n_f}
-+\frac{\operatorname{tr}\!\left[
-\Gamma_R^{-1}\Sigma_{O,j}(\lambda,\omega)\right]}{N_f}.
-\label{eq:cate-rct-fusion-leading-gap}
+\mathcal J_{\mathrm{DRF}}(0,0)-\mathcal J_{\mathrm{DRF}}(\lambda_p^\star,\omega_p^\star)
+&=\frac{1}{n_R^{\mathrm{tune}}}\left(\frac{C_p^2}{A_p}+\frac{D_p^2}{B_p}\right)\geq0.
+\label{eq:sieve-oracle-gain}
 \end{align}
-The fixed fusion rule improves on the strict RCT-only comparator at first
-order if and only if the right-hand side of
-Equation~\eqref{eq:cate-rct-fusion-leading-gap} is negative. Equality does
-not order the higher-order remainders, and this comparison gives no universal
-finite-sample dominance.
+For RF, Equation~\eqref{eq:sieve-quadratic} gains the cross term $-2\lambda\omega\operatorname{tr}[\Gamma_R^{-1}\operatorname{Cov}_R\{\chi b\,\widetilde\Delta_{\mathrm{RF}},\chi b(\widehat g-\zeta_p)\}]$, which vanishes when $e\equiv1/2$, and the minimizer solves the corresponding two-by-two linear system.
 \end{theoremcorollary}
+Equations~\eqref{eq:sieve-quadratic} and~\eqref{eq:sieve-oracle-gain} are the sieve versions of Theorem~\ref{thm:joint-oracle} and Corollary~\ref{cor:joint-oracle-variance}: the four ATE moments are replaced by basis-weighted covariances whitened by $\Gamma_R^{-1}$, $\lambda$ trades the noise of the pseudo-outcome against its correlation with $\Delta$, and $\omega$ trades the OBS variance, which enters through $n_R^{\mathrm{tune}}/n_O^{\mathrm{tune}}$, against the correlation of the RCT residual with $\widehat g$. A larger OBS tuning sample lowers $B_p$ and raises $\omega_p^\star$. The honest validation of Theorem~\ref{thm:cate-finite-validation} finds these coefficients on a grid without estimating $A_p$ to $D_p$; the corollary explains what it finds.
 
-An estimated ratio can perturb both the normal-equation right-hand side and
-its Hessian. Define
-\begin{align}
-\widehat\Delta_{h,j}
-&\triangleq\omega\mathbb P_O^{\mathrm{tune}}
-[(\widehat r-r_0)b\widehat{g}],
-\label{eq:cate-ratio-score-drift}\\
-\widehat\Delta_{H,j}
-&\triangleq\omega\mathbb P_O^{\mathrm{tune}}
-[(\widehat r-r_0)bb^\top].
-\label{eq:cate-ratio-hessian-drift}
-\end{align}
-\begin{proposition}[Estimated-ratio perturbation of a fitted sieve]
-\label{prop:cate-sieve-ratio-perturbation}
-Condition on an independent ratio-training sample and use the same candidate
-specification with $r_0$ and $\widehat r$. If both penalized Hessians are
-invertible, then
-\begin{align*}
-\widehat\beta_j^{\widehat r}-\widehat\beta_j^{r_0}
-&=\{\widehat H_j^{\widehat r}+\rho P\}^{-1}
-\{\widehat\Delta_{h,j}
--\widehat\Delta_{H,j}\widehat\beta_j^{r_0}\}.
-\end{align*}
-Thus ratio normalization alone controls neither the score nor Hessian
-perturbation. This proposition is the sieve form of item 3 of Proposition~\ref{prop:cate-orthogonality-audit}; it is not an orthogonality result.
-\end{proposition}
-
-Finally, the additive specialization exposes how the two sample sizes enter
-the rate through method-specific variance constants rather than a generic
-effective sample size.
-\begin{theoremcorollary}[Operational additive-spline rate]
-\label{cor:cate-spline-rate}
-Suppose $\tau(x)=\sum_{\ell=1}^d\tau_\ell(x_\ell)$, with fixed $d$ and
-smoothness $s>0$.  Let $K$ denote the spline dimension and suppose
-$a_K^2=O(K^{-2s})$. Assume RCT consistency and randomization, known
-strict-overlap $e$, exact $r_0$ unless an explicit fitting-drift term is
-retained, honest fixed nuisances and basis, independent tuning samples, and
-uniformly bounded eigenvalues of $\Gamma_R$. Assume the centered source
-scores and weighted designs have uniformly bounded sub-Gaussian norms,
-$K+\log(1/\delta)=o\{\min(n_f,N_f)\}$, and the Gram event holds with
-probability tending to one. Define the per-dimension
-variance scale
-\begin{align*}
-c_{S,j}(K;\lambda,\omega)
-&\triangleq K^{-1}\operatorname{tr}
-\{\Gamma_R(K)^{-1}\Sigma_{S,j}^{(K)}(\lambda,\omega)\},
-\qquad S\in\{R,O\},\\
-v_j(K;\lambda,\omega)
-&\triangleq
-\frac{c_{R,j}(K;\lambda,\omega)}{n_f}
-+\frac{c_{O,j}(K;\lambda,\omega)}{N_f},
-\end{align*}
-and suppress $\lambda$ from $c_{O,j}$ only when the OBS score contribution
-is invariant to it.
-If the fitting ratio drift and ridge bias are $B_{r,j}^{\mathrm{tune}}$ and
-$B_{\rho,j}$, then
-\begin{align}
-\mathcal R(\widehat\zeta_j)
-&=O_p\{K^{-2s}+Kv_j(K;\lambda,\omega)
-+B_{r,j}^{\mathrm{tune}}+B_{\rho,j}\}.
-\label{eq:cate-spline-rate}
-\end{align}
-For a prespecified admissible dimension set $\mathcal K_n$, define the
-noncircular oracle dimension by
-\begin{align*}
-K_j^\star(\lambda,\omega)
-&\in\operatorname*{arg\,min}_{K\in\mathcal K_n}
-\{K^{-2s}+K v_j(K;\lambda,\omega)\}.
-\end{align*}
-If, along the admissible sequence and uniformly over the coefficient
-candidates under consideration,
-$c_{S,j}(K;\lambda,\omega)\to
-c_{S,j}^\infty(\lambda,\omega)$, where the limiting constants are uniformly
-bounded away from zero and infinity, define
-\begin{align*}
-v_j^\infty(\lambda,\omega)
-&\triangleq
-\frac{c_{R,j}^\infty(\lambda,\omega)}{n_f}
-+\frac{c_{O,j}^\infty(\lambda,\omega)}{N_f}.
-\end{align*}
-Then a rate-optimal admissible choice satisfies
-$K\asymp\{v_j^\infty(\lambda,\omega)\}^{-1/(2s+1)}$, and the first two
-terms are of order
-$\{v_j^\infty(\lambda,\omega)\}^{2s/(2s+1)}$. For a validation-selected learner, the validation radius and ratio drift of Theorem~\ref{thm:cate-finite-validation} must also be added.  The harmonic
-size $(1/n_f+1/N_f)^{-1}$ is only a rough simplification when the two
-variance constants have comparable, uniformly bounded order.
-\end{theoremcorollary}
+Three remarks close the subsection. First, with $K$-dimensional splines for an additive $\tau$ of smoothness $s$, $a_K^2=O(K^{-2s})$ while the traces in Equation~\eqref{eq:sieve-first-order-risk} grow in proportion to $K$, so the risk behaves like $K^{-2s}$ plus $K$ times a weighted sum of $1/n_R^{\mathrm{tune}}$ and $1/n_O^{\mathrm{tune}}$ whose weights depend on the learner and on $(\lambda,\omega)$; the two sample sizes do not collapse into one effective sample size. Second, with an estimated ratio $\widehat r$ in place of $r_0$, the mean of the score in item 2 of Theorem~\ref{thm:sieve-risk} becomes $\omega\,\mathbb E_O[\{\widehat r(X)-r_0(X)\}b\{\widehat g(X)-\zeta_p(X)\}]$ and $\mathbb E\{\widehat H_j(\omega)\}$ shifts by $\omega\,\mathbb E_O[\{\widehat r(X)-r_0(X)\}bb^\top]$, the sieve form of item 3 of Proposition~\ref{prop:cate-orthogonality-audit}. Third, kernel ridge regression is a sieve with a data-dependent basis and $p$ equal to the sample size: items 1 and 2 of Theorem~\ref{thm:sieve-risk} apply verbatim, but item 3 requires effective-dimension arguments in place of a fixed $p$ and is not pursued here.
 
 \subsection{Implementation boundaries and open theory}
 \label{sec:cate-scope}
 
-A fixed or honestly trained frozen neural representation can replace $b$,
-conditional on that representation. End-to-end neural fitting is nonconvex and
-is not covered. Estimated-ratio guarantees require uniform score, Hessian, and
+ Estimated-ratio guarantees require uniform score, Hessian, and
 validation-loss control. Cross-fitting can recover data efficiency, but
 overlapping outer training sets do not justify a naive sum of fold variances.
 Neither target preservation nor candidate inclusion gives universal

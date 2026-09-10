@@ -220,105 +220,15 @@ D_{\widehat\mu_R}\Psi_{\mathrm{RF}}[h,v]&=-(1-\lambda)\mathbb E_R\left[v(X)\frac
 \end{align*}
 because $v$ and $h$ are functions of $X$ and $\mathbb E_R\{A-e(X)\mid X\}=0$. This proves item 1. Along $\widehat\mu_O+\varepsilon h$, the same two contributions appear with $\lambda$ in place of $1-\lambda$ and vanish for the same reason, and in addition $\widehat g$ moves by $u=h_1-h_0$. Only the OBS bracket depends on $\widehat g$, and its derivative is $\omega[\mathbb E_O\{r(X)v(X)u(X)\}-\mathbb E_R\{v(X)u(X)\}]$ for DRF and $\omega[\mathbb E_O\{r(X)v(X)u(X)\}-\mathbb E_R\{\chi(A,X)v(X)u(X)\}]$ for RF. Exact transport and $\mathbb E_R\{\chi(A,X)\mid X\}=1$ turn both into $\omega\mathbb E_O[\{r(X)-r_0(X)\}u(X)v(X)]$, which proves item 2. Along $r+\varepsilon h_r$, only the positive OBS term moves, so $D_r\Psi_j[h_r,v]=\omega\mathbb E_O[h_r(X)v(X)\{\widehat g(X)-\zeta(X)\}]$. For the last claim of item 3, take $f\triangleq v(\widehat g-\zeta)\in L_2(P_O^X)$. Its inner product with every mean-zero element of $L_2(P_O^X)$ is zero if and only if $f$ lies in the orthogonal complement of the mean-zero functions, which consists of the almost-sure constants; for example, the centered direction $h_r=f-\mathbb E_O(f)$ has pairing $\mathbb E_O(h_rf)=\operatorname{Var}_O(f)$. Multiplication by nonzero $\omega$ does not change the zero set.
 
-For Proposition~\ref{prop:cate-sieve-normal-equations}, expand each quadratic
-objective in $\beta$.  The DRF curvature and right-hand side are
-$(1-\omega)\widehat\Gamma_R+\omega\widehat\Gamma_{O,r}+\rho P$ and
-$\widehat h_\lambda+\omega\widehat d_{\mathrm{OBS}}$.  The RF counterparts are
-$(1-\omega)\widehat\Gamma_{R,\chi}
-+\omega\widehat\Gamma_{O,r}+\rho P$ and
-$\widehat h_{m_\lambda}+\omega\widehat d_{\mathrm{OBS},\chi}$.  Setting the
-gradients to zero proves Equations~\eqref{eq:linear-sieve} and
-\eqref{eq:linear-sieve-rf}.  For $0\leq\omega\leq1$, each unpenalized
-Hessian is a convex combination of positive-semidefinite weighted Gram
-matrices; adding $\rho P\succeq0$ preserves positive semidefiniteness.
 
-For Proposition~\ref{prop:cate-sieve-lambda-profile}, fixed $\omega$ makes
-the Hessian independent of $\lambda$, while
-$Z_\lambda=Z_0+\lambda\Delta$ and
-$m_\lambda=m_R+\lambda d_m$ make the right-hand side affine. Multiplication
-by the fixed inverse Hessian proves
-Equation~\eqref{eq:linear-sieve-lambda-profile}. Substitution of the affine
-fitted function into the separate tuning criterion and expansion of its
-squares proves Equation~\eqref{eq:linear-sieve-validation-profile}. The
-coefficients are the constant, linear, and quadratic terms of that expansion.
+\subsection{Proofs for the linear sieve}
+\label{app:sieve-proofs}
 
+For Proposition~\ref{prop:sieve-closed-form}, item 1: for DRF the two displays coincide. For RF, $\chi(A,X)\{\widetilde Z_{\mathrm{RF},\lambda}-\zeta(X)\}^2=\{A-e(X)\}^2\left[\{Y-m_\lambda(X)\}/\{A-e(X)\}-\zeta(X)\right]^2/[e(X)\{1-e(X)\}]=[Y-m_\lambda(X)-\{A-e(X)\}\zeta(X)]^2/[e(X)\{1-e(X)\}]$, which is the first term of Equation~\eqref{eq:rf-fusion-loss}, and the OBS brackets agree by the definition of $w_j$. Under Assumption~\ref{ass:trial}, $\mathbb E_R\{\chi(A,X)\mid X\}=1$ as noted in Definition~\ref{def:fusion-losses}; $\mathbb E_R(w_{\mathrm{DRF}}\widetilde Z_{\mathrm{DRF},\lambda}\mid X)=\tau(X)$ is Equation~\eqref{eq:pseudo-valid}; and $\mathbb E_R[\{A-e(X)\}Y\mid X]=e(X)\{1-e(X)\}\tau(X)$ with $\mathbb E_R\{A-e(X)\mid X\}=0$ give $\mathbb E_R(w_{\mathrm{RF}}\widetilde Z_{\mathrm{RF},\lambda}\mid X)=\mathbb E_R[\{A-e(X)\}\{Y-m_\lambda(X)\}\mid X]/[e(X)\{1-e(X)\}]=\tau(X)$. Since $m_\lambda=(1-\lambda)m_R+\lambda m_O$ and $Z_\lambda=Z_0+\lambda\Delta$, $\widetilde Z_{j,\lambda}$ is affine in $\lambda$ with the displayed $\widetilde\Delta_j$, and $\mathbb E_R(w_j\widetilde\Delta_j\mid X)=0$ follows by differencing the previous identity between $\lambda=1$ and $\lambda=0$. Item 2: with $\zeta=b^\top\beta$, the second-order part of Equation~\eqref{eq:sieve-wls-form} is $\beta^\top\widehat H_j(\omega)\beta$, as in Proposition~\ref{prop:fusion-convexity}, and setting the gradient of the ridge-penalized objective to zero gives Equation~\eqref{eq:sieve-normal-equation}; $\widehat H_j(\omega)$ is a nonnegative combination of averages of $c\,bb^\top$ with $c\geq0$, hence positive semidefinite. Item 3: substitute $\widetilde Z_{j,\lambda}=\widetilde Z_{j,0}+\lambda\widetilde\Delta_j$ into the right-hand side of Equation~\eqref{eq:sieve-normal-equation} and multiply by the inverse.
 
-For Theorem~\ref{thm:cate-sieve-identity}, the first-order condition is
-$(\widehat H_j+\rho P)\widehat\beta_j=\widehat h_j$. Subtracting its value at
-$\beta_p$ proves Equation~\eqref{eq:sieve-coefficient-identity}. Projection
-orthogonality, $\mathbb E_R[b(\zeta_p-\tau)]=0$, removes the risk cross term and
-proves Equation~\eqref{eq:sieve-risk-identity}.
+For Theorem~\ref{thm:sieve-risk}, item 1: $\mathbb E_R\{b(\tau-\zeta_p)\}=\mathbb E_R(b\tau)-\Gamma_R\beta_p=0$, so expanding $\mathcal R(b^\top\beta)=\mathbb E_R[b^\top(\beta-\beta_p)+\{\zeta_p(X)-\tau(X)\}]^2$ leaves no cross term. Subtracting $\{\widehat H_j(\omega)+\rho I\}\beta_p$ from both sides of Equation~\eqref{eq:sieve-normal-equation} and using $\widehat H_j(\omega)\beta_p=(1-\omega)\mathbb P_R^{\mathrm{tune}}(w_jb\zeta_p)+\omega\mathbb P_O^{\mathrm{tune}}(r_0b\zeta_p)$ gives Equation~\eqref{eq:sieve-coefficient-identity}. Item 2: by item 1 of Proposition~\ref{prop:sieve-closed-form}, $\mathbb E_R(w_jbb^\top)=\Gamma_R$, and exact transport gives $\mathbb E_O(r_0bb^\top)=\Gamma_R$, so $\mathbb E\{\widehat H_j(\omega)\}=\Gamma_R$. Likewise $\mathbb E_R\{\psi_{R,j}(\lambda,\omega)\}=\mathbb E_R[b\{\tau-\omega\widehat g-(1-\omega)\zeta_p\}]=-\omega\,\mathbb E_R\{b(\widehat g-\zeta_p)\}$ and $\mathbb E_O\{\psi_O(\omega)\}=\omega\,\mathbb E_O\{r_0b(\widehat g-\zeta_p)\}=\omega\,\mathbb E_R\{b(\widehat g-\zeta_p)\}$, which cancel. The variance formula holds because the two tuning samples are independent by Assumption~\ref{ass:honest-separation} and each consists of independent observations. Item 3: write $\widehat\beta_j-\beta_p$ as the leading term $\Gamma_R^{-1}\{\mathbb P_R^{\mathrm{tune}}\psi_{R,j}+\mathbb P_O^{\mathrm{tune}}\psi_O\}$ plus the remainder. By item 1, $\mathbb E\{\mathcal R(\widehat\zeta_j)\}-a_p^2$ is the expected squared $\Gamma_R$-norm of this sum. The leading term has mean zero by item 2, so its expected squared $\Gamma_R$-norm equals $\operatorname{tr}[\Gamma_R^{-1}\operatorname{Var}\{\mathbb P_R^{\mathrm{tune}}\psi_{R,j}+\mathbb P_O^{\mathrm{tune}}\psi_O\}]=\mathcal J_j(\lambda,\omega)$ by Equation~\eqref{eq:sieve-score-variance}; the cross term is $o(1/n_R^{\mathrm{tune}}+1/n_O^{\mathrm{tune}})$ by the Cauchy--Schwarz inequality and the remainder condition, and the squared remainder is of the same smaller order.
 
-For Theorem~\ref{thm:cate-fixed-candidate-bound}, let $\psi_{R,j}$ and
-$\psi_{O,j}$ be the explicit raw contributions in the main text. Their
-source means need not vanish separately, but exact transport gives
-$P_R\psi_{R,j}+P_O\psi_{O,j}=0$. Center each source by its own mean. Since
-the centered RCT and OBS sample means are independent, their covariance
-proxies add:
-\begin{align*}
-\operatorname{Cov}\left(
-\mathbb P_R\psi_{R,j}+\mathbb P_O\psi_{O,j}\right)
-&=\frac{\Sigma_{R,j}}{n_f}+\frac{\Sigma_{O,j}}{N_f}.
-\end{align*}
-The stated sub-Gaussian vector concentration inequality bounds the squared
-$\Gamma_R^{-1/2}$-norm by the sum of the two trace terms and their operator
-norm tail terms, without applying a triangle inequality between sources. On
-$\mathcal E_H$, the whitened inverse penalized Hessian has norm at most
-$(1-\eta)^{-1}$. Combining this fact with
-Equation~\eqref{eq:sieve-coefficient-identity} and bounding the ridge vector
-separately proves Equation~\eqref{eq:finite-sieve-bound}.
-
-For Proposition~\ref{prop:cate-fixed-p-leading-risk}, write the leading term
-as
-$A_{n_f,N_f}\triangleq\Gamma_R^{-1}\{(\mathbb P_R-P_R)\psi_{R,j}
-+(\mathbb P_O-P_O)\psi_{O,j}\}$, so the remainder defined in the
-proposition gives
-$\widehat\beta_j-\beta_p=A_{n_f,N_f}+R_{n_f,N_f}$.
-Insert this identity into Equation~\eqref{eq:sieve-risk-identity}.
-Independence removes the cross covariance between the RCT and OBS components
-of $A_{n_f,N_f}$, and hence
-\begin{align*}
-\mathbb E\|A_{n_f,N_f}\|_{\Gamma_R}^2
-&=\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{R,j})}{n_f}
-+\frac{\operatorname{tr}(\Gamma_R^{-1}\Sigma_{O,j})}{N_f}.
-\end{align*}
-Moreover, Cauchy--Schwarz and the stated mean-square remainder condition give
-\begin{align*}
-\left|\mathbb E\langle A_{n_f,N_f},R_{n_f,N_f}\rangle_{\Gamma_R}\right|
-&\leq
-\{\mathbb E\|A_{n_f,N_f}\|_{\Gamma_R}^2\}^{1/2}
-\{\mathbb E\|R_{n_f,N_f}\|_{\Gamma_R}^2\}^{1/2}
-=o(n_f^{-1}+N_f^{-1}),
-\end{align*}
-and the expected squared remainder has the same smaller order. The identities
-$\operatorname{tr}(AB)=\operatorname{tr}(BA)$ then give
-Equation~\eqref{eq:cate-fixed-p-leading-risk}. The comparison in
-Corollary~\ref{cor:cate-rct-fusion-leading-risk} follows by subtracting the two
-leading expansions; it is not a finite-sample comparison.
-
-For Proposition~\ref{prop:cate-sieve-ratio-perturbation}, write the estimated-
-ratio normal equation as
-$(\widehat H_j^{r_0}+\widehat\Delta_{H,j}+\rho P)
-\widehat\beta_j^{\widehat r}
-=\widehat h_j^{r_0}+\widehat\Delta_{h,j}$. Subtract the exact-ratio equation
-and rearrange. Invertibility gives the displayed resolvent identity.
-
-Finally, substitute $a_K^2=O(K^{-2s})$ and the covariance scales
-\begin{align*}
-\frac{Kc_{R,j}(K;\lambda,\omega)}{n_f}
-&&\text{and}&&
-\frac{Kc_{O,j}(K;\lambda,\omega)}{N_f}
-\end{align*}
-into the finite-sample result. Adding
-the stated ridge and fitting-ratio terms proves
-Equation~\eqref{eq:cate-spline-rate}. Minimizing the resulting criterion over
-$\mathcal K_n$ gives the displayed definition of $K_j^\star$. Under the
-stated uniform positive finite limits, that criterion is asymptotically
-equivalent, uniformly over the coefficient candidates, to
-$K^{-2s}+K v_j^\infty$. Balancing its two terms gives
-$K\asymp(v_j^\infty)^{-1/(2s+1)}$ and rate
-$(v_j^\infty)^{2s/(2s+1)}$, proving
-Corollary~\ref{cor:cate-spline-rate}.
+For Corollary~\ref{cor:sieve-oracle}, $\psi_{R,j}(\lambda,\omega)=w_jb(\widetilde Z_{j,0}-\zeta_p)+\lambda\,w_jb\widetilde\Delta_j-\omega\,w_jb(\widehat g-\zeta_p)$ and $\psi_O(\omega)=\omega r_0b(\widehat g-\zeta_p)$. Expanding the two variances in Equation~\eqref{eq:sieve-first-order-risk} and using $\operatorname{tr}(\Gamma_R^{-1}M)=\operatorname{tr}(\Gamma_R^{-1}M^\top)$ gives $n_R^{\mathrm{tune}}\{\mathcal J_j(\lambda,\omega)-\mathcal J_j(0,0)\}=2C_p\lambda-2D_p\omega+A_p\lambda^2+B_p\omega^2-2\lambda\omega\operatorname{tr}[\Gamma_R^{-1}\operatorname{Cov}_R\{w_jb\widetilde\Delta_j,w_jb(\widehat g-\zeta_p)\}]$. The cross covariance equals $\mathbb E_R[bb^\top\{\widehat g(X)-\zeta_p(X)\}\,\mathbb E_R(w_j^2\widetilde\Delta_j\mid X)]$ because $\mathbb E_R(w_j\widetilde\Delta_j\mid X)=0$. For DRF, $w_j=1$ and $\mathbb E_R(\Delta\mid X)=0$, so it vanishes; for RF, $\mathbb E_R(\chi^2\widetilde\Delta_{\mathrm{RF}}\mid X)=-\{m_O(X)-m_R(X)\}\{1-2e(X)\}/[e(X)\{1-e(X)\}]$, which vanishes when $e\equiv1/2$. For DRF the minimizer, its projection, and the improvement follow by completing the two squares, as in the proof of Theorem~\ref{thm:joint-oracle}.
 
 \subsection{A two-stratum oracle calculation}
 
