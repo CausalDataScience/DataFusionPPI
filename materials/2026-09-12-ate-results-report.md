@@ -51,11 +51,14 @@ procedure variance by 2.34 percent, with paired-bootstrap 95 percent interval
 is 4.11 percent [3.06, 5.02]. The joint estimator has pooled coverage 0.9423,
 against 0.9416 for trial-only.
 
-In synthetic ATE-2 under strong covariate shift, the joint estimator's mean
-absolute cell bias is 0.0255 with the oracle ratio, 0.0298 with the classifier,
-0.0275 with BAL-X, 0.0303 with BAL-X+g, and 0.0943 when the ratio is set to one.
-The result isolates transport: ignoring the ratio adds substantial bias, while
-the three estimated weighted routes remain close to the oracle route.
+In synthetic ATE-2, the joint estimator's mean absolute cell bias under mild
+shift is 0.0290 with the oracle ratio, 0.0295 with the classifier, 0.0288 with
+BAL-X, 0.0302 with BAL-X+g, and 0.0626 when the ratio is set to one. Under
+strong shift, the corresponding values are 0.0261, 0.0305, 0.0283, 0.0324,
+and 0.0945. Figure 4 reports the same statistic with paired within-cell
+bootstrap intervals. The result isolates transport: ignoring the ratio adds
+substantial bias, while the three estimated weighted routes remain close to
+the oracle route.
 
 Across the 105 frozen-fit and coefficient-rule comparisons, every empirical
 variance lies within three Monte Carlo standard errors of the Theorem 1 value;

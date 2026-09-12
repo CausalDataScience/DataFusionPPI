@@ -45,9 +45,15 @@ def test_reporting_identity():
 def test_shift_statistic_is_mean_absolute_cell_bias_and_deterministic():
     d=pd.read_csv(M/"ate2_shift_replications.csv"); d=d[(d.panel=="synthetic")&(d.estimator=="joint")]
     routes=["oracle","classifier","balanced_x","balanced_x_ghat","unit"]
-    p1,c1=_shift_bootstrap(d,"strong",routes,100,7); p2,c2=_shift_bootstrap(d,"strong",routes,100,7)
-    assert np.array_equal(p1,p2) and np.array_equal(c1,c2)
-    assert p1[-1]>p1[0]
+    for shift in ["mild","strong"]:
+        p1,c1=_shift_bootstrap(d,shift,routes,100,7); p2,c2=_shift_bootstrap(d,shift,routes,100,7)
+        assert np.array_equal(p1,p2) and np.array_equal(c1,c2)
+        expected=[]
+        for route in routes:
+            cell_bias=(d[(d["shift"]==shift)&(d.ratio==route)]
+                       .groupby(["family","n_rct"],sort=True).error.mean())
+            expected.append(cell_bias.abs().mean())
+        assert np.allclose(p1,np.asarray(expected),rtol=0,atol=1e-15)
 
 
 def test_star_driver_seed_estimand_schema_parity():
