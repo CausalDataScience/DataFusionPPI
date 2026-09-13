@@ -1,0 +1,37 @@
+{
+  "failed": 0,
+  "passed": 6,
+  "rows": [
+    {
+      "check": "groups/complete",
+      "detail": "40 groups present, 40 expected; missing []",
+      "status": "PASS"
+    },
+    {
+      "check": "accounting/scheduled_equals_recorded",
+      "detail": "every group carries [1] replications against 1 scheduled, with 0 failures",
+      "status": "PASS"
+    },
+    {
+      "check": "decomposition/identity_holds",
+      "detail": "largest relative gap between the mean risk and its decomposition 0.00e+00",
+      "status": "PASS"
+    },
+    {
+      "check": "routes/omega_zero_agrees",
+      "detail": "largest difference between routes at omega zero 0.00e+00",
+      "status": "PASS"
+    },
+    {
+      "check": "rules/rct_only_is_the_origin",
+      "detail": "8 rct_only rows, all at omega zero",
+      "status": "PASS"
+    },
+    {
+      "check": "ratio/shared_is_exactly_one",
+      "detail": "1 shared-cell ratio means, largest deviation from one 0.00e+00",
+      "status": "PASS"
+    }
+  ],
+  "total": 6
+}

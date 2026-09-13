@@ -1,0 +1,216 @@
+{
+  "base": 20260912,
+  "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+  "schedule_hash": "a89e40e06782dc16d350c75d9873f0a1bac3bab5ef270913f19bc818e483029d",
+  "stage": "M1_fixtures",
+  "units": [
+    {
+      "base": 20260912,
+      "entropy_hex": "7ea754d1b6b4978e45cab7d783ac13d0",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 709243238,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L0O0/base"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "ff186e67404f102ebf8df52400aa359c",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 1710997628,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L1O0/base"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "71d4731587aa7df2c705635c8e7ac696",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 34665039,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L0O1/base"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "07d1b7c6a85951d64105797a7bcfc27a",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 2589179913,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L1O1/base"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "7fade200b7c2faf6c7e66cff425201f1",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 2928843219,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L0O0/mutation/sign"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "a4e73747ea4643a0419da96ee63f1967",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 2543035913,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L0O0/mutation/role_substitution"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "24e7ef6f81a3d08bab6f5f2f638e5537",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 4232942131,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L0O0/mutation/missing_projection"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "41cb946984c44cac349f2734d18c316b",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 3981165072,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L0O0/mutation/ratio"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "cd400dc87e12ca1eda125b2ab4af44fa",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 2024422775,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L1O0/mutation/sign"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "75a6901021761faf50e8b2913cfc8233",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 518772480,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L1O0/mutation/role_substitution"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "98aa02dfcef6d1086b04bc4bfc8dcda5",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 3101090130,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L1O0/mutation/missing_projection"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "17c9d4c6fda7a9ac0409da6326865814",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 1179987680,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L1O0/mutation/ratio"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "ea9e9d771b32090b3eae34b24cd514f3",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 1891249813,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L0O1/mutation/sign"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "d43183541b7aa7c26ac23f47c74864e8",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 2870619370,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L0O1/mutation/role_substitution"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "94bd240535bb5e84e53d2411106cf731",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 935518409,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L0O1/mutation/missing_projection"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "6e1f4232c278b1c8bbd2b12d4de0835a",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 1386654652,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L0O1/mutation/ratio"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "f186c4b094b33664a7f7dae3167eb8dc",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 3525419180,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L1O1/mutation/sign"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "603639b5a6d48661c6e711cf7619a32b",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 4204726179,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L1O1/mutation/role_substitution"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "816ab728c5eaf2f03f75bd89c6953084",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 2196510082,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L1O1/mutation/missing_projection"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "fbc095121db071ab0507a0cd524254e7",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 2504576693,
+      "stage": "M1_fixtures",
+      "unit": "quadrant/L1O1/mutation/ratio"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "c28d7b095e2bf766a08b65e4b9daf29c",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 493928317,
+      "stage": "M1_fixtures",
+      "unit": "rf_cross_term/e/0.2"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "21d9f0a0de1e5709f16fb1fe89067a36",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 2594861732,
+      "stage": "M1_fixtures",
+      "unit": "rf_cross_term/e/0.5"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "06625807276988f67956f7df99c506eb",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 1006351255,
+      "stage": "M1_fixtures",
+      "unit": "rf_cross_term/e/0.6"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "06337362650702c0317d9bdf894614bc",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 3162228884,
+      "stage": "M1_fixtures",
+      "unit": "rf_cross_term/e/0.8"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "0f61cabfa3e269a60529bff2c4acd9b8",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 1439833198,
+      "stage": "M1_fixtures",
+      "unit": "production_tie/sampler"
+    },
+    {
+      "base": 20260912,
+      "entropy_hex": "6f31c62fbdcf00a7a756dab14b212b9b",
+      "protocol_id": "DataFusionPPI-CATE-confirm-M1-v2",
+      "seed32": 1951009502,
+      "stage": "M1_fixtures",
+      "unit": "production_tie/bootstrap"
+    }
+  ]
+}

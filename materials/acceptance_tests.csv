@@ -1,0 +1,16 @@
+test,passed,detail
+1_determinism,True,two runs produced identical bytes
+2_rct_only_is_plain_aipw,True,|pipeline - direct AIPW| = 0.00e+00
+4_oracle_ordering,True,"44 cells, 0 with oracle RMSE above RCT-only by more than 3 Monte Carlo SE"
+5_calibrated_balance,True,largest balance residual = 7.54e-09
+6_sieve_fit_minimizes_loss,True,largest loss gap between the normal equation and direct minimization = 1.53e-13
+7_score_identity,True,"mean(score gap - risk gap) = -0.1951, Monte Carlo SE 0.1359, z = -1.44"
+8_cate2_construction,True,mean naive observational contrast 1.001 against the experimental 0.168; 27 covariate patterns in every replication; observational size 1200
+9_star_common_covariate_law,True,"the two samplers agree within five standard errors on all 27 patterns, largest difference 2.13e-03; a perturbed law is detected"
+10_selection_independent_of_reporting,True,perturbing only the reporting half left the selection unchanged in 12/12 replications and moved the reported score in 12/12
+11_source_indicator_prediction,True,"the production rule matches the direct product to 8.9e-16; the earlier rule differs by 2.419, so the check would have caught it"
+12_combination_weight_from_tuning,True,perturbing the evaluation outcomes left gamma and the test decision unchanged and moved the estimate by 0.213
+13_balanced_with_prediction,True,the two maps differ by 9.353e-01 and the loss-targeted map balances to 8.8e-10
+14_feasible_selection_uses_score,True,single-channel rules select on the validation score; the true-risk versions are reported separately under oracle names
+15_aggregation_error_injection,True,a mid-table missing value: caught; a duplicated replication: caught; the identity at two replications: caught; a pooled interval narrower than the endpoint average: caught
+16_bounded_design_assumptions,True,"|Y| max 0.618 against 1, |Z0| max 1.403 against 9.0, |ghat| max 0.328 against 2.0; the returned effect is exact"

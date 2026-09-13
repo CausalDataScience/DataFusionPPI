@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "status": "preserved",
+  "preserved_at": "2026-09-13T11:12:25-0500",
+  "stage": "materials/confirm/MM-main-66e93079cbd7",
+  "run_fingerprint": "66e93079cbd7fd5ae116f02734b6866a7e2b26c6a8e5bffd520e24471fb5f4aa",
+  "run_plan": "manuscript-minimal-v1",
+  "simulation_rerun": false,
+  "analysis_rerun": false,
+  "analysis_command_recorded": "cd code && python3 -m confirm.mm_analyze --stage MM-main-66e93079cbd7",
+  "analysis_parameters": {
+    "bootstrap_resamples": 2000,
+    "bootstrap_seed": 91307,
+    "resampling_unit": "whole replication seed bundle",
+    "truth_grid_size": 50000
+  },
+  "analysis_source": {
+    "path": "code/confirm/mm_analyze.py",
+    "sha256": "49ea6b1fce33f8d8f3b150601ebbe98e5665a07f40ce8af60e66b940e71981fe",
+    "included_in_original_run_code_manifest": false,
+    "git_status_at_preservation": "untracked",
+    "note": "The simulation code manifest is retained as the run-time snapshot. The post-run analysis source is frozen separately here."
+  },
+  "analysis_inputs": {
+    "config.json": {
+      "bytes": 894,
+      "sha256": "0521d5dcb8d3972f4f196107e0387e1be38f65959c5188111c77e3efce0b5882"
+    },
+    "sufficient_statistics.json": {
+      "bytes": 48297735,
+      "sha256": "3945efd2bed614a175c30f934ef9a9c7d1689b421129107b252199ffb11f2ef3"
+    }
+  },
+  "analysis_outputs": {
+    "analysis.json": "911d27b70d90a802bc4ec4db74400694a85df61ec385bd4b9fad42b16e1004c6",
+    "figure1_risk_comparison.png": "124ff1fe4144ac037e8ea6ce6703cf96ceee8317ed3cb6ff7838a8ad5c83c30f",
+    "figure2_risk_decomposition.png": "9da8228a45d86d49f72dd6ee7943c6adfcf801bc750405f1d66821866b486234",
+    "table1_results.csv": "93a7f1fd6eebec7d6a95b6f5392f1d1bdd8d536e87feefc7d203146dd56d3a93",
+    "tail_diagnostics.csv": "2007dad533dbf0b90495161329c07d68ed1a3914db7a8fd663b21106bbeea4da"
+  },
+  "tail_diagnostics": {
+    "source": "sufficient_statistics.json only",
+    "formula": "risk_k = G[k,k] - 2 v[k] + t",
+    "quantile_method": "numpy default linear interpolation",
+    "paired_comparator": "same replication, same cell, same learner, same route, rct_only rule",
+    "rows_expected": 8
+  },
+  "immutable_baseline": {
+    "FINGERPRINT": "3c2a4f49f0bc44e571e89bded4a940a0b1f6e92b6ccbdf5766d11a28179e9060",
+    "analysis.json": "911d27b70d90a802bc4ec4db74400694a85df61ec385bd4b9fad42b16e1004c6",
+    "checks.json": "166242648169a02ba3ef81095c7c3d069f31801281647d70cec1afe20cdc871b",
+    "code_manifest.json": "5c77a42c8836d47f3313d2f2cb888275adaf438c2061c58c34c1c970356027e7",
+    "config.json": "0521d5dcb8d3972f4f196107e0387e1be38f65959c5188111c77e3efce0b5882",
+    "environment.json": "b01bad07aaeb2dea9db4751329adb16e32a27ee0223e6505cc74c0898f897c83",
+    "failures.json": "796c4c14e96a550c0a864f3ea98bceabdd5dec430e60f965354d02a6da03fcd0",
+    "figure1_risk_comparison.png": "124ff1fe4144ac037e8ea6ce6703cf96ceee8317ed3cb6ff7838a8ad5c83c30f",
+    "figure2_risk_decomposition.png": "9da8228a45d86d49f72dd6ee7943c6adfcf801bc750405f1d66821866b486234",
+    "raw/rows.csv": "043ed52c950ac32054f0bd8b4f8db42a46aa25a3c908ec006a607f3c9cf14be5",
+    "runtime.json": "34a8870cb9510c45a680bd0849403645505978870c67ec534955a5b941c4a9fe",
+    "sufficient_statistics.json": "3945efd2bed614a175c30f934ef9a9c7d1689b421129107b252199ffb11f2ef3",
+    "table1_results.csv": "93a7f1fd6eebec7d6a95b6f5392f1d1bdd8d536e87feefc7d203146dd56d3a93"
+  },
+  "boundaries": {
+    "manuscript_modified": false,
+    "mirror_modified": false,
+    "git_commit_created": false,
+    "git_push_performed": false
+  }
+}

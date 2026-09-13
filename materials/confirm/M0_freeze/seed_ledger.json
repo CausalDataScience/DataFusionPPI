@@ -1,0 +1,86 @@
+{
+  "base": 20260912,
+  "stage": "M1",
+  "units": [
+    {
+      "seed": 913353964163663720,
+      "stage": "M1",
+      "unit": "L0O0|fixture"
+    },
+    {
+      "seed": 763042281912754012,
+      "stage": "M1",
+      "unit": "L1O0|fixture"
+    },
+    {
+      "seed": 937462685729057918,
+      "stage": "M1",
+      "unit": "L0O1|fixture"
+    },
+    {
+      "seed": 36843557391946075,
+      "stage": "M1",
+      "unit": "L1O1|fixture"
+    },
+    {
+      "seed": 1143956681115636869,
+      "stage": "M1",
+      "unit": "L0O0|mutation|sign"
+    },
+    {
+      "seed": 530581686483598303,
+      "stage": "M1",
+      "unit": "L0O0|mutation|role"
+    },
+    {
+      "seed": 642196013090429624,
+      "stage": "M1",
+      "unit": "L0O0|mutation|ratio"
+    },
+    {
+      "seed": 974440648463258397,
+      "stage": "M1",
+      "unit": "L1O0|mutation|sign"
+    },
+    {
+      "seed": 328838626887979153,
+      "stage": "M1",
+      "unit": "L1O0|mutation|role"
+    },
+    {
+      "seed": 1143766260123542328,
+      "stage": "M1",
+      "unit": "L1O0|mutation|ratio"
+    },
+    {
+      "seed": 478006880704971454,
+      "stage": "M1",
+      "unit": "L0O1|mutation|sign"
+    },
+    {
+      "seed": 555231883908558,
+      "stage": "M1",
+      "unit": "L0O1|mutation|role"
+    },
+    {
+      "seed": 904213710503086406,
+      "stage": "M1",
+      "unit": "L0O1|mutation|ratio"
+    },
+    {
+      "seed": 146496329072903086,
+      "stage": "M1",
+      "unit": "L1O1|mutation|sign"
+    },
+    {
+      "seed": 1070714787063562004,
+      "stage": "M1",
+      "unit": "L1O1|mutation|role"
+    },
+    {
+      "seed": 626170532740872363,
+      "stage": "M1",
+      "unit": "L1O1|mutation|ratio"
+    }
+  ]
+}

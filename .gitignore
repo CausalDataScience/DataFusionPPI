@@ -23,3 +23,8 @@ manuscript/*.bcf
 *~
 *.swp
 *.swo
+
+# Abandoned stage scratch.  A stage is written into a scratch directory and
+# promoted by one atomic rename; a scratch directory that still exists belongs to
+# a run that stopped before promotion, so it is debris rather than evidence.
+materials/confirm/.*staging*
