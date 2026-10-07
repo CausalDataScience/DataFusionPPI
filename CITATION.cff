@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+title: "dfppi: prediction-powered data fusion for treatment effect estimation"
+version: 0.1.0
+date-released: 2026-10-07
+license: MIT
+repository-code: "https://github.com/CausalDataScience/DataFusionPPI"
+authors:
+  - family-names: Jung
+    given-names: Yonghan
+    affiliation: "University of Illinois Urbana-Champaign"
+    email: yonghan@illinois.edu
+  - family-names: Yang
+    given-names: Shu
+    affiliation: "North Carolina State University"
+    email: syang24@ncsu.edu
+preferred-citation:
+  type: article
+  title: "Prediction-Powered Data Fusion for Treatment Effect Estimation"
+  authors:
+    - family-names: Jung
+      given-names: Yonghan
+    - family-names: Yang
+      given-names: Shu
+  year: 2026
+  notes: "Manuscript (manuscript/ in this repository); the arXiv identifier will be added once it is posted."

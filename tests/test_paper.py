@@ -262,6 +262,8 @@ class DesignChecks(unittest.TestCase):
         self.assertLess(abs(np.corrcoef(mirrored_effect, three.tau(x))[0, 1]), 0.1)        # unrelated to tau_0
         self.assertGreater(np.mean(obs1["a"] != obs3["a"]), 0.2)                           # other treatment rule
 
+    @unittest.skipUnless((ROOT / "experiments" / ".cache" / "intfrt" / "lungcancer.csv").exists(),
+                         "optional intFRT files (written with R, see data.py); not used in the paper")
     def test_lung_cancer_pair(self):
         lung = LungCancer()
         self.assertEqual((len(lung.x_R), len(lung.x_O), lung.x_R.shape[1]), (335, 16217, 5))

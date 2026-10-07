@@ -1,5 +1,7 @@
 # DataFusionPPI: prediction-powered data fusion for treatment effect estimation
 
+[![tests](https://github.com/CausalDataScience/DataFusionPPI/actions/workflows/tests.yml/badge.svg)](https://github.com/CausalDataScience/DataFusionPPI/actions/workflows/tests.yml)
+
 Code and working manuscript of "Prediction-Powered Data Fusion for Treatment Effect Estimation" (an earlier
 version was submitted to AISTATS 2027). The method estimates the treatment effect in the population of a randomized trial and uses a larger
 observational sample, which may be confounded, to reduce the error without changing the target.
@@ -47,3 +49,25 @@ From the shell: `python -m dfppi ate --trial trial.csv --obs obs.csv --trial-pro
 
 Requirements: Python 3.9 or later with numpy, scipy and scikit-learn; the experiments also need pandas and
 matplotlib (`pip install -e ".[experiments]"`).
+
+## Authors
+
+* Yonghan Jung, University of Illinois Urbana-Champaign, yonghan@illinois.edu
+* Shu Yang, North Carolina State University, syang24@ncsu.edu
+
+## Citation
+
+```bibtex
+@misc{jung2026dfppi,
+  title  = {Prediction-Powered Data Fusion for Treatment Effect Estimation},
+  author = {Jung, Yonghan and Yang, Shu},
+  year   = {2026},
+  note   = {Manuscript; the arXiv identifier will be added once it is posted}
+}
+```
+
+`CITATION.cff` holds the same information for GitHub's "Cite this repository".
+
+## License
+
+MIT; see `LICENSE`.
