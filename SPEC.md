@@ -113,6 +113,10 @@ trial sizes n = 300 to 3,000, OBS N = 15,000, cross-fitted.
 
 ## 9. Paper to code
 
+Definitions, lemmas, propositions, theorems, assumptions and algorithms have the same numbers in the AISTATS 2027
+submission and in the manuscript of `manuscript/`. Equation numbers (here and in the code's docstrings) are those
+of the AISTATS 2027 submission.
+
 | Paper | Code |
 |---|---|
 | Lemma 1, Eq. (1): AIPW score | `dfppi.method.aipw_score` |

@@ -1,12 +1,12 @@
 # DataFusionPPI: prediction-powered data fusion for treatment effect estimation
 
-Code and manuscript of "Prediction-Powered Data Fusion for Treatment Effect Estimation" (submitted to AISTATS
-2027). The method estimates the treatment effect in the population of a randomized trial and uses a larger
+Code and working manuscript of "Prediction-Powered Data Fusion for Treatment Effect Estimation" (an earlier
+version was submitted to AISTATS 2027). The method estimates the treatment effect in the population of a randomized trial and uses a larger
 observational sample, which may be confounded, to reduce the error without changing the target.
 
 * **AI agents:** read [`SPEC.md`](SPEC.md) (how to call the library, assumptions, when not to use it) and
   [`AGENTS.md`](AGENTS.md) (rules for changing the code).
-* **Paper:** [`manuscript/`](manuscript/) (the submitted PDF).
+* **Paper:** [`manuscript/`](manuscript/) (the working manuscript, PDF).
 * **Reproducing the paper:** [`experiments/README.md`](experiments/README.md).
 
 ## Quick start
@@ -43,7 +43,7 @@ From the shell: `python -m dfppi ate --trial trial.csv --obs obs.csv --trial-pro
 | `schemas/` | JSON Schemas of the outputs |
 | `tests/` | unit tests against the paper's definitions and against the experiment code |
 | `experiments/` | the simulation study of Sec. 5 and Appendix C: code, figures, tables |
-| `manuscript/` | the submitted manuscript (PDF) |
+| `manuscript/` | the working manuscript (PDF, arXiv version) |
 
 Requirements: Python 3.9 or later with numpy, scipy and scikit-learn; the experiments also need pandas and
 matplotlib (`pip install -e ".[experiments]"`).

@@ -1,5 +1,8 @@
 # Experiments: the simulation study of Sec. 5 and Appendix C
 
+Section, figure and table numbers below are those of the AISTATS 2027 submission. The manuscript in
+`../manuscript/` moves Appendix C into Section 5 (Secs. 5.1 to 5.5) and renumbers the tables.
+
 This folder reproduces the figures and tables of the paper. The estimators themselves are the package `dfppi`
 (`../dfppi/`); the scripts here import it from the repository root, so no installation is needed.
 

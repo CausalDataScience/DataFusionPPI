@@ -8,7 +8,7 @@
 | `dfppi/` | the library: `api.py` (public functions), `cli.py`, `crossfit.py`, and the estimators `aipwf.py`, `drf.py`, `rf.py`, `method.py` | yes, under the invariants below |
 | `tests/` | `test_paper.py` (the code computes the paper's quantities), `test_api.py` (the library equals the experiment code) | add tests; do not weaken them |
 | `experiments/` | the code that produced Sec. 5 and Appendix C, and its figures and tables | only to reproduce or extend the study |
-| `manuscript/` | the submitted manuscript (PDF only) | no |
+| `manuscript/` | the working manuscript (PDF only) | no |
 | `schemas/` | JSON Schemas of the outputs | with `api.py` |
 
 ## Commands
