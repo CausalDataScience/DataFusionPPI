@@ -1,0 +1,28 @@
+\begin{table}[h]
+\caption{ATE mean squared error relative to trial-only AIPW: $\lambda$ only, PPI\textsuperscript{++}, fusion ($\hat\omega=\hat D/(\hat B+\hat B_{\mathrm{cal}})$), and fusion with the rule $\hat\omega=\hat D/\hat B$.}
+\label{tab:ate-extra}
+\begin{center}\footnotesize
+\begin{tabular}{@{}llccccccccc@{}}
+\toprule
+& & \multicolumn{3}{c}{Synthetic} & \multicolumn{3}{c}{IHDP} & \multicolumn{3}{c}{ACIC~2016}\\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+$n$ & Method & $r_0{=}1$ & weak & strong & $r_0{=}1$ & weak & strong & $r_0{=}1$ & weak & strong\\
+\midrule
+300 & $\lambda$ only & 0.60 & 0.60 & 0.60 & 0.47 & 0.46 & 0.46 & 0.46 & 0.46 & 0.46 \\
+ & PPI\textsuperscript{++} & 0.95 & 1.01 & 1.01 & 1.00 & 1.04 & 1.05 & 1.00 & 1.02 & 1.02 \\
+ & Fusion & 0.55 & 0.60 & 0.60 & 0.46 & 0.47 & 0.48 & 0.45 & 0.46 & 0.47 \\
+ & Fusion, $\omega=\hat D/\hat B$ & 0.55 & 0.62 & 0.62 & 0.46 & 0.49 & 0.50 & 0.45 & 0.47 & 0.48 \\
+\addlinespace
+900 & $\lambda$ only & 0.78 & 0.78 & 0.78 & 0.83 & 0.84 & 0.83 & 0.42 & 0.42 & 0.43 \\
+ & PPI\textsuperscript{++} & 0.97 & 1.04 & 1.05 & 1.00 & 1.02 & 1.02 & 1.00 & 1.01 & 1.01 \\
+ & Fusion & 0.75 & 0.79 & 0.80 & 0.82 & 0.84 & 0.84 & 0.42 & 0.42 & 0.43 \\
+ & Fusion, $\omega=\hat D/\hat B$ & 0.75 & 0.82 & 0.83 & 0.82 & 0.86 & 0.85 & 0.42 & 0.43 & 0.44 \\
+\addlinespace
+3{,}000 & $\lambda$ only & 0.97 & 0.97 & 0.97 & 0.95 & 0.96 & 0.97 & 0.78 & 0.77 & 0.78 \\
+ & PPI\textsuperscript{++} & 0.99 & 1.06 & 1.06 & 0.97 & 1.04 & 1.00 & 1.00 & 1.02 & 1.01 \\
+ & Fusion & 0.96 & 1.00 & 1.00 & 0.92 & 0.98 & 0.96 & 0.77 & 0.79 & 0.79 \\
+ & Fusion, $\omega=\hat D/\hat B$ & 0.96 & 1.04 & 1.04 & 0.92 & 1.01 & 0.97 & 0.77 & 0.80 & 0.80 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}

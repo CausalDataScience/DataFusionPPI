@@ -1,0 +1,28 @@
+\begin{table}[h]
+\caption{The trial loss on the sieve with $\hat g$ relative to the trial-only DR-learner, and DRF and RF relative to it.}
+\label{tab:samesieve}
+\begin{center}\footnotesize
+\begin{tabular}{@{}llccccccccc@{}}
+\toprule
+& & \multicolumn{3}{c}{Synthetic} & \multicolumn{3}{c}{IHDP} & \multicolumn{3}{c}{ACIC~2016}\\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+$n$ & Method & $r_0{=}1$ & weak & strong & $r_0{=}1$ & weak & strong & $r_0{=}1$ & weak & strong\\
+\midrule
+300 & Trial loss, sieve with $\hat g$ (DR) & 0.84 & 0.83 & 0.83 & 0.84 & 0.84 & 0.85 & 0.90 & 0.92 & 0.93 \\
+ & Trial loss, sieve with $\hat g$ (R) & 0.79 & 0.78 & 0.78 & 0.75 & 0.76 & 0.76 & 0.88 & 0.90 & 0.91 \\
+ & DRF / same sieve (DR) & 0.69 & 0.70 & 0.72 & 0.67 & 0.68 & 0.68 & 0.60 & 0.59 & 0.60 \\
+ & RF / same sieve (R) & 0.74 & 0.74 & 0.76 & 0.74 & 0.74 & 0.74 & 0.61 & 0.59 & 0.61 \\
+\addlinespace
+900 & Trial loss, sieve with $\hat g$ (DR) & 0.68 & 0.67 & 0.67 & 0.63 & 0.64 & 0.65 & 0.76 & 0.78 & 0.79 \\
+ & Trial loss, sieve with $\hat g$ (R) & 0.67 & 0.66 & 0.65 & 0.62 & 0.63 & 0.63 & 0.70 & 0.72 & 0.73 \\
+ & DRF / same sieve (DR) & 0.94 & 0.96 & 0.97 & 0.95 & 0.96 & 0.96 & 0.77 & 0.78 & 0.79 \\
+ & RF / same sieve (R) & 0.96 & 0.98 & 1.00 & 0.97 & 0.97 & 0.98 & 0.82 & 0.84 & 0.84 \\
+\addlinespace
+3{,}000 & Trial loss, sieve with $\hat g$ (DR) & 0.64 & 0.63 & 0.62 & 0.55 & 0.56 & 0.57 & 0.64 & 0.66 & 0.67 \\
+ & Trial loss, sieve with $\hat g$ (R) & 0.64 & 0.63 & 0.62 & 0.55 & 0.56 & 0.57 & 0.63 & 0.65 & 0.67 \\
+ & DRF / same sieve (DR) & 1.00 & 1.02 & 1.02 & 1.00 & 1.01 & 1.01 & 0.98 & 0.99 & 1.00 \\
+ & RF / same sieve (R) & 1.01 & 1.02 & 1.03 & 1.00 & 1.01 & 1.01 & 0.99 & 1.00 & 1.01 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}

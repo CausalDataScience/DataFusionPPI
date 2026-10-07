@@ -1,5 +1,0 @@
-a stage is invisible until it is promoted: True
-promotion produced True
-a different fingerprint is refused: True
-an identical fingerprint still needs consent: True
-the original payload survived both attempts: True

@@ -1,9 +1,0 @@
-{
-  "git_head": "f5b4fb582878ec5122a7c89adf1abf7777715528",
-  "numpy": "2.4.6",
-  "pandas": "3.0.3",
-  "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
-  "python": "3.14.7",
-  "sklearn": "1.9.0",
-  "torch": "2.13.0"
-}

@@ -1,30 +1,9 @@
-.DS_Store
 __pycache__/
-*.py[cod]
-.venv/
-venv/
-
-# LaTeX build auxiliaries (the compiled main.pdf remains trackable)
-manuscript/*.aux
-manuscript/*.bbl
-manuscript/*.blg
-manuscript/*.fdb_latexmk
-manuscript/*.fls
-manuscript/*.log
-manuscript/*.out
-manuscript/*.synctex.gz
-manuscript/*.toc
-manuscript/*.lof
-manuscript/*.lot
-manuscript/*.run.xml
-manuscript/*.bcf
-
-# Editor and temporary files
-*~
-*.swp
-*.swo
-
-# Abandoned stage scratch.  A stage is written into a scratch directory and
-# promoted by one atomic rename; a scratch directory that still exists belongs to
-# a run that stopped before promotion, so it is debris rather than evidence.
-materials/confirm/.*staging*
+*.pyc
+*.egg-info/
+build/
+dist/
+.DS_Store
+experiments/.cache/
+experiments/results/
+experiments/smoke_results/

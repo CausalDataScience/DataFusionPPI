@@ -1,0 +1,31 @@
+\begin{table}[h]
+\caption{ATE mean squared error relative to trial-only AIPW (cross-fitted), by trial size $n$ and covariate law of the OBS.}
+\label{tab:app-ate-ratio}
+\begin{center}\footnotesize
+\begin{tabular}{@{}llccccccccc@{}}
+\toprule
+& & \multicolumn{3}{c}{Synthetic} & \multicolumn{3}{c}{IHDP} & \multicolumn{3}{c}{ACIC~2016}\\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){9-11}
+$n$ & Method & $r_0{=}1$ & weak & strong & $r_0{=}1$ & weak & strong & $r_0{=}1$ & weak & strong\\
+\midrule
+300 & PPI\textsuperscript{++} & 0.95 & 1.01 & 1.01 & 1.00 & 1.04 & 1.05 & 1.00 & 1.02 & 1.02 \\
+ & Fusion & 0.55 & 0.60 & 0.60 & 0.46 & 0.47 & 0.48 & 0.45 & 0.46 & 0.47 \\
+ & Shrinkage & 1.17 & 1.18 & 1.18 & 1.21 & 1.21 & 1.22 & 1.25 & 1.26 & 1.26 \\
+ & Pretest & 1.17 & 1.16 & 1.20 & 1.71 & 1.70 & 1.76 & 2.07 & 2.09 & 2.16 \\
+ & Naive pool & 17.41 & 16.92 & 16.24 & 11.05 & 10.92 & 10.69 & 9.16 & 8.93 & 8.56 \\
+\addlinespace
+900 & PPI\textsuperscript{++} & 0.97 & 1.04 & 1.05 & 1.00 & 1.02 & 1.02 & 1.00 & 1.01 & 1.01 \\
+ & Fusion & 0.75 & 0.79 & 0.80 & 0.82 & 0.84 & 0.84 & 0.42 & 0.42 & 0.43 \\
+ & Shrinkage & 1.03 & 1.03 & 1.03 & 1.05 & 1.05 & 1.06 & 1.10 & 1.11 & 1.12 \\
+ & Pretest & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.03 & 1.04 & 1.02 \\
+ & Naive pool & 72.74 & 67.82 & 61.71 & 51.00 & 48.97 & 45.79 & 24.50 & 23.25 & 21.62 \\
+\addlinespace
+3{,}000 & PPI\textsuperscript{++} & 0.99 & 1.06 & 1.06 & 0.97 & 1.04 & 1.00 & 1.00 & 1.02 & 1.01 \\
+ & Fusion & 0.96 & 1.00 & 1.00 & 0.92 & 0.98 & 0.96 & 0.77 & 0.79 & 0.79 \\
+ & Shrinkage & 1.01 & 1.01 & 1.01 & 1.02 & 1.02 & 1.02 & 1.03 & 1.03 & 1.04 \\
+ & Pretest & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\
+ & Naive pool & 184.50 & 160.01 & 133.47 & 163.58 & 148.30 & 126.35 & 113.49 & 101.57 & 88.22 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}

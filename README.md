@@ -1,31 +1,49 @@
-# DataFusionPPI
+# DataFusionPPI: prediction-powered data fusion for treatment effect estimation
 
-## Purpose
+Code and manuscript of "Prediction-Powered Data Fusion for Treatment Effect Estimation" (submitted to AISTATS
+2027). The method estimates the treatment effect in the population of a randomized trial and uses a larger
+observational sample, which may be confounded, to reduce the error without changing the target.
 
-DataFusionPPI is a model-agnostic paper workspace for prediction-powered fusion of randomized-trial (RCT) and observational-study (OBS) data, targeting conditional average treatment effects (CATE) and average treatment effects (ATE) in the RCT population.
+* **AI agents:** read [`SPEC.md`](SPEC.md) (how to call the library, assumptions, when not to use it) and
+  [`AGENTS.md`](AGENTS.md) (rules for changing the code).
+* **Paper:** [`manuscript/`](manuscript/) (the submitted PDF).
+* **Reproducing the paper:** [`experiments/README.md`](experiments/README.md).
 
-The canonical seed is `memo/PPI-Fusion.md`. It was copied verbatim from `research/papers/DataFusionPFN/study/PPI-Fusion.md` during project initialization.
+## Quick start
 
-## Project Boundary
+```
+python3 -m pip install -e .
+```
 
-- `DataFusionPPI` develops the model-agnostic PPI data-fusion formulation.
-- `DataFusionPFN` is the sibling workspace for PFN-specific implementation and experiments.
-- Claims, results, and implementation status are not transferred between the projects without explicit verification.
+```python
+import numpy as np, dfppi
 
-## Reconstruction Provenance
+rng = np.random.default_rng(0)
+x_R, x_O = rng.normal(size=(600, 5)), rng.normal(size=(15000, 5))
+a_R, a_O = rng.binomial(1, 0.5, 600), rng.binomial(1, 0.5, 15000)
+y_R = x_R[:, 0] + a_R * (1 + x_R[:, 1]) + rng.normal(size=600)
+y_O = x_O[:, 0] + a_O * (1 + x_O[:, 1]) + 0.5 * a_O + rng.normal(size=15000)   # a confounded OBS
+trial, obs = {"x": x_R, "a": a_R, "y": y_R}, {"x": x_O, "a": a_O, "y": y_O}
 
-This workspace was freshly reconstructed on 2026-08-14 CDT. Preflight found no existing `research/papers/DataFusionPPI/` path and no Git history for that exact path. A similarly named nested draft surface under `DataFusionPFN` was not treated as prior history for this sibling project.
+out = dfppi.fuse_ate(trial, obs, trial_propensity=0.5, covariate_shift=False)
+print(out["estimate"], out["ci"], out["trial_only"]["estimate"], out["warnings"])
 
-The manuscript was materialized from `research/templates/paper/latex_skeleton_itbound_struct_v2/manuscript/*.tpl`. Initialization changed only the paper title and template claim placeholders. The template text is scaffolding, not a verified novelty, theorem, or empirical-result statement for this project.
+fit = dfppi.fuse_cate(trial, obs, trial_propensity=0.5, covariate_shift=False)
+print(fit.predict(x_R[:5]), fit.summary()["chosen"])
+```
 
-## Structure
+From the shell: `python -m dfppi ate --trial trial.csv --obs obs.csv --trial-propensity 0.5` (JSON on stdout).
 
-- `memo/PPI-Fusion.md`: canonical seed
-- `manuscript/`: materialized LaTeX scaffold
-- `code/`: reserved for future approved implementation
-- `materials/`: reserved for future approved source artifacts
-- `STATUS.md`: current project state and verification boundary
+## Layout
 
-## Current State
+| Path | Content |
+|---|---|
+| `SPEC.md`, `AGENTS.md` | specification and change rules, written for AI agents |
+| `dfppi/` | the library: `fuse_ate`, `fuse_cate` (`api.py`), the command line (`cli.py`), and the estimators of Algorithms 1 and 2 (`aipwf.py`, `drf.py`, `rf.py`, `method.py`, `crossfit.py`) |
+| `schemas/` | JSON Schemas of the outputs |
+| `tests/` | unit tests against the paper's definitions and against the experiment code |
+| `experiments/` | the simulation study of Sec. 5 and Appendix C: code, figures, tables |
+| `manuscript/` | the submitted manuscript (PDF) |
 
-The project is waiting for substantive research specification and validation. No novelty claim, theorem, proof, estimator guarantee, simulation result, or empirical result has been verified or asserted during this structural setup.
+Requirements: Python 3.9 or later with numpy, scipy and scikit-learn; the experiments also need pandas and
+matplotlib (`pip install -e ".[experiments]"`).

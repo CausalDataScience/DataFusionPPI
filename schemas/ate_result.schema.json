@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "dfppi.fuse_ate result",
+  "type": "object",
+  "required": [
+    "estimand",
+    "estimate",
+    "se",
+    "ci",
+    "level",
+    "trial_only",
+    "variance_ratio_to_trial_only",
+    "coefficients",
+    "diagnostics",
+    "warnings"
+  ],
+  "properties": {
+    "estimand": {
+      "const": "ATE"
+    },
+    "estimate": {
+      "type": "number"
+    },
+    "se": {
+      "type": "number"
+    },
+    "ci": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "level": {
+      "type": "number"
+    },
+    "trial_only": {
+      "type": "object",
+      "properties": {
+        "estimate": {
+          "type": "number"
+        },
+        "se": {
+          "type": "number"
+        },
+        "ci": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    },
+    "variance_ratio_to_trial_only": {
+      "type": "number"
+    },
+    "coefficients": {
+      "type": "object",
+      "properties": {
+        "lambda": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "omega": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "omega_rule": {
+          "type": "string"
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "properties": {
+        "effective_obs_fraction": {
+          "type": "number"
+        },
+        "g_variance_share": {
+          "type": "number"
+        }
+      }
+    },
+    "version": {
+      "type": "string"
+    },
+    "method": {
+      "type": "string"
+    },
+    "covariate_shift": {
+      "type": "boolean"
+    },
+    "density_ratio": {
+      "type": "string"
+    },
+    "sizes": {
+      "type": "object",
+      "properties": {
+        "n_trial": {
+          "type": "integer"
+        },
+        "n_obs": {
+          "type": "integer"
+        },
+        "treated_share_trial": {
+          "type": "number"
+        },
+        "trial_blocks": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "obs_nuis_tune_eval": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "shuffle": {
+      "type": "boolean"
+    }
+  }
+}

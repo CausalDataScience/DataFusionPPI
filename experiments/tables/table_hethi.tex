@@ -1,0 +1,46 @@
+\begin{table}[h]
+\caption{Synthetic design with large effect heterogeneity (outcome noise 0.2, $\mathrm{Var}_R\tau_0=5.88$, confounding bias $0.75\,\mathrm{sd}_R\tau_0$), cross-fitted. MSE ratio: relative to RCT only.}
+\begin{center}\footnotesize
+\begin{tabular}{@{}lllrrrrr@{}}
+\toprule
+Design & $n$ & Method & Bias & SD & RMSE & Cov. & MSE ratio \\
+\midrule
+$r_0{=}1$ & 300 & RCT only & 0.008 & 0.307 & 0.307 & 0.96 & 1.00 \\
+ &  & PPI\textsuperscript{++} & 0.007 & 0.281 & 0.281 & 0.96 & 0.84 \\
+ &  & $\lambda$ only & 0.013 & 0.237 & 0.238 & 0.95 & 0.60 \\
+ &  & Fusion & 0.012 & 0.205 & 0.206 & 0.95 & 0.45 \\
+ &  & Fusion, $\hat\omega=\hat D/\hat B$ & 0.012 & 0.205 & 0.206 & 0.95 & 0.45 \\
+\addlinespace
+ & 900 & RCT only & 0.000 & 0.149 & 0.149 & 0.95 & 1.00 \\
+ &  & PPI\textsuperscript{++} & -0.003 & 0.136 & 0.136 & 0.95 & 0.83 \\
+ &  & $\lambda$ only & 0.000 & 0.138 & 0.138 & 0.95 & 0.86 \\
+ &  & Fusion & -0.003 & 0.122 & 0.122 & 0.95 & 0.67 \\
+ &  & Fusion, $\hat\omega=\hat D/\hat B$ & -0.003 & 0.122 & 0.122 & 0.95 & 0.67 \\
+\addlinespace
+ & 3{,}000 & RCT only & 0.002 & 0.074 & 0.074 & 0.95 & 1.00 \\
+ &  & PPI\textsuperscript{++} & 0.003 & 0.072 & 0.072 & 0.95 & 0.93 \\
+ &  & $\lambda$ only & 0.002 & 0.073 & 0.073 & 0.96 & 0.96 \\
+ &  & Fusion & 0.003 & 0.070 & 0.070 & 0.95 & 0.89 \\
+ &  & Fusion, $\hat\omega=\hat D/\hat B$ & 0.003 & 0.070 & 0.070 & 0.95 & 0.89 \\
+\midrule
+strong & 300 & RCT only & 0.008 & 0.307 & 0.307 & 0.96 & 1.00 \\
+ &  & PPI\textsuperscript{++} & 0.008 & 0.317 & 0.317 & 0.96 & 1.07 \\
+ &  & $\lambda$ only & 0.013 & 0.238 & 0.238 & 0.96 & 0.60 \\
+ &  & Fusion & 0.014 & 0.241 & 0.241 & 0.95 & 0.62 \\
+ &  & Fusion, $\hat\omega=\hat D/\hat B$ & 0.013 & 0.250 & 0.250 & 0.95 & 0.66 \\
+\addlinespace
+ & 900 & RCT only & 0.000 & 0.149 & 0.149 & 0.95 & 1.00 \\
+ &  & PPI\textsuperscript{++} & -0.004 & 0.156 & 0.156 & 0.96 & 1.10 \\
+ &  & $\lambda$ only & 0.000 & 0.138 & 0.138 & 0.95 & 0.86 \\
+ &  & Fusion & -0.001 & 0.140 & 0.140 & 0.95 & 0.89 \\
+ &  & Fusion, $\hat\omega=\hat D/\hat B$ & -0.003 & 0.147 & 0.147 & 0.95 & 0.97 \\
+\addlinespace
+ & 3{,}000 & RCT only & 0.002 & 0.074 & 0.074 & 0.95 & 1.00 \\
+ &  & PPI\textsuperscript{++} & 0.003 & 0.085 & 0.085 & 0.95 & 1.30 \\
+ &  & $\lambda$ only & 0.002 & 0.073 & 0.073 & 0.96 & 0.96 \\
+ &  & Fusion & 0.003 & 0.077 & 0.077 & 0.95 & 1.06 \\
+ &  & Fusion, $\hat\omega=\hat D/\hat B$ & 0.003 & 0.083 & 0.083 & 0.95 & 1.26 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}

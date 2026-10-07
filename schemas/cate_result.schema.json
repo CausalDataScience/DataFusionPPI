@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "dfppi.fuse_cate summary (and the CLI output)",
+  "type": "object",
+  "required": [
+    "estimand",
+    "learner",
+    "sieve",
+    "chosen",
+    "diagnostics",
+    "warnings"
+  ],
+  "properties": {
+    "estimand": {
+      "const": "CATE"
+    },
+    "learner": {
+      "enum": [
+        "DR",
+        "R"
+      ]
+    },
+    "sieve": {
+      "type": "string"
+    },
+    "grid": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "ridge": {
+      "type": "number"
+    },
+    "chosen": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "properties": {
+          "lambda": {
+            "type": "number"
+          },
+          "omega": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "properties": {
+        "effective_obs_fraction": {
+          "type": "number"
+        }
+      }
+    },
+    "predictions": {
+      "type": "object",
+      "properties": {
+        "cate": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "cate_trial_only": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "predictions_file": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "method": {
+      "type": "string"
+    },
+    "covariate_shift": {
+      "type": "boolean"
+    },
+    "density_ratio": {
+      "type": "string"
+    },
+    "sizes": {
+      "type": "object",
+      "properties": {
+        "n_trial": {
+          "type": "integer"
+        },
+        "n_obs": {
+          "type": "integer"
+        },
+        "treated_share_trial": {
+          "type": "number"
+        },
+        "trial_blocks": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "obs_nuis_tune_eval": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "shuffle": {
+      "type": "boolean"
+    }
+  }
+}
